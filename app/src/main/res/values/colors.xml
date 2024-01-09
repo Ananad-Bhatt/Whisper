@@ -6,4 +6,6 @@
     <color name="primary_light">#FFDD95</color>
     <color name="secondary_light">#86A7FC</color>
     <color name="secondary">#3468C0</color>
+    <color name="btn_primary">#7BD3EA</color>
+
 </resources>

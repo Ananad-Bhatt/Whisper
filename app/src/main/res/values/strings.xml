@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">Whisper</string>
+
+
+<!--    Login Page-->
+    <!--    Login-->
+        <string name="login_title">Login</string>
+        <string name="email_hint">Email</string>
+        <string name="password_hint">Password</string>
+        <string name="login_btn">Login</string>
+        <string name="reset_password">Forgot Password?</string>
+
+<!--    New User-->
+        <string name="new_user">Create Account</string>
+
+
+
+
+
+
 </resources>
