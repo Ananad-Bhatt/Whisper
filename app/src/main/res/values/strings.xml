@@ -2,20 +2,20 @@
     <string name="app_name">Whisper</string>
 
 
-<!--    Login Page-->
+    <!--    Login Page-->
     <!--    Login-->
-        <string name="login_title">Login</string>
-        <string name="email_hint">Email</string>
-        <string name="password_hint">Password</string>
-        <string name="login_btn">Login</string>
-        <string name="reset_password">Forgot Password?</string>
+    <string name="login_title">Login</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="login_btn">Login</string>
+    <string name="reset_password">Forgot Password?</string>
 
-<!--    New User-->
-        <string name="new_user">Create Account</string>
+    <!--    New User/ Registration -->
+    <string name="new_user">Create Account</string>
+    <string name="register_title">Create Account</string>
 
-
-
-
-
+<!--    Greeting-->
+    <string name="greeting">Welcome</string>
+    <string name="greeting_message">Deep dive into the world of Whisper</string>
 
 </resources>

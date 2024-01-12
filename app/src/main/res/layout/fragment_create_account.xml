@@ -6,16 +6,16 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".LoginActivity">
+    tools:context="Fragments.CreateAccountFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-<!--    Login sender -->
+        <!--    Login sender -->
         <androidx.cardview.widget.CardView
-            android:layout_width="@dimen/_200sdp"
+            android:layout_width="@dimen/_290sdp"
             android:layout_height="wrap_content"
             app:cardElevation="5dp"
             app:cardCornerRadius="35dp"
@@ -32,7 +32,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/login_title"
+                    android:text="@string/register_title"
                     android:textSize="@dimen/_34ssp"
                     android:textColor="@color/secondary"
                     android:textStyle="bold"/>
@@ -51,7 +51,7 @@
 
         </androidx.cardview.widget.CardView>
 
-    <!--    Reply (login form)-->
+        <!--    Reply (login form)-->
         <androidx.cardview.widget.CardView
             android:layout_width="@dimen/_300sdp"
             android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
                 android:padding="@dimen/_15sdp"
                 android:orientation="vertical">
 
-    <!--            Email-->
+                <!--            Email-->
 
                 <EditText
                     android:id="@+id/emailId"
@@ -83,7 +83,7 @@
                     android:inputType="textEmailAddress"
                     android:autofillHints="emailAddress"/>
 
-    <!--            password-->
+                <!--            password-->
 
                 <EditText
                     android:id="@+id/password"
@@ -100,7 +100,7 @@
                     android:inputType="textPassword"
                     android:autofillHints="password"/>
 
-    <!--            Button-->
+                <!--            Button-->
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:layout_width="wrap_content"
@@ -128,7 +128,7 @@
 
         </androidx.cardview.widget.CardView>
 
-    <!--    Forgot password-->
+        <!--    Forgot password-->
 
         <androidx.cardview.widget.CardView
             android:layout_width="@dimen/_285sdp"
