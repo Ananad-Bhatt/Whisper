@@ -10,76 +10,124 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_gravity="center">
 
-<!--        Lottie animation-->
-        <com.airbnb.lottie.LottieAnimationView
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_200sdp"
-            app:lottie_rawRes="@raw/login_screen"/>
+        <androidx.cardview.widget.CardView
+            android:layout_width="@dimen/_280sdp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:cardCornerRadius="10dp"
+            app:cardUseCompatPadding="true">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/login_title"
+                    style="@style/TEXT"
+                    android:textColor="@color/secondary"
+                    android:textStyle="bold"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/_45ssp"/>
+
+                <EditText
+                    android:id="@+id/edt_log_email"
+                    style="@style/EDITTEXT"
+                    android:hint="@string/email_hint"
+                    android:layout_marginTop="@dimen/_30sdp"
+                    android:autofillHints="emailAddress"
+                    android:inputType="textEmailAddress"
+                    android:drawableStart="@drawable/email"
+                    android:drawablePadding="@dimen/_10sdp" />
+
+                <EditText
+                    android:id="@+id/edt_log_password"
+                    style="@style/EDITTEXT"
+                    android:hint="@string/password_hint"
+                    android:autofillHints="password"
+                    android:inputType="textPassword"
+                    android:layout_marginTop="@dimen/_20sdp"
+                    android:drawableStart="@drawable/password"
+                    android:drawablePadding="@dimen/_10sdp" />
+
+                <TextView
+                    android:id="@+id/txt_log_reset_pass"
+                    android:layout_width="@dimen/_250sdp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/reset_password"
+                    android:layout_marginTop="@dimen/_15sdp"
+                    android:textColor="@color/secondary"
+                    android:textSize="@dimen/_17ssp"
+                    android:gravity="end"
+                    android:layout_gravity="center"/>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_log_login"
+                    style="@style/BUTTON_FILL"
+                    android:text="@string/login_btn"
+                    android:layout_marginTop="@dimen/_35sdp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginTop="@dimen/_35sdp">
+
+                    <LinearLayout
+                        android:layout_width="@dimen/_105sdp"
+                        android:layout_height="@dimen/_10sdp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/line"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/another_option"
+                        android:textColor="@color/secondary"
+                        android:layout_marginStart="@dimen/_10sdp"
+                        android:layout_marginEnd="@dimen/_10sdp"
+                        android:textSize="@dimen/_17ssp" />
+
+                    <LinearLayout
+                        android:layout_width="@dimen/_105sdp"
+                        android:layout_height="@dimen/_10sdp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/line"/>
+
+                </LinearLayout>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_log_google"
+                    style="@style/BUTTON_OUTLINED"
+                    android:layout_marginTop="@dimen/_15sdp"
+                    android:layout_marginBottom="@dimen/_20sdp"
+                    android:text="@string/google_login"
+                    android:drawableStart="@drawable/google"/>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/login_title"
             style="@style/TEXT"
-            android:textColor="@color/secondary"
-            android:textStyle="bold"
-            android:textAlignment="center"
-            android:textSize="@dimen/_45ssp"/>
-
-        <EditText
-            android:id="@+id/edt_log_email"
-            style="@style/EDITTEXT"
-            android:hint="@string/email_hint"
-            android:layout_marginTop="@dimen/_30sdp"
-            android:autofillHints="emailAddress"
-            android:inputType="textEmailAddress"
-            android:drawableStart="@drawable/email"
-            android:drawablePadding="@dimen/_10sdp" />
-
-        <EditText
-            android:id="@+id/edt_log_password"
-            style="@style/EDITTEXT"
-            android:hint="@string/password_hint"
-            android:autofillHints="password"
-            android:inputType="textPassword"
-            android:layout_marginTop="@dimen/_15sdp"
-            android:drawableStart="@drawable/password"
-            android:drawablePadding="@dimen/_10sdp" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_log_login"
-            style="@style/BUTTON_FILL"
-            android:text="@string/login_btn"
-            android:layout_marginTop="@dimen/_35sdp"/>
-
-        <TextView
-            android:id="@+id/txt_log_reset_pass"
-            android:layout_width="@dimen/_250sdp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/reset_password"
-            android:layout_marginTop="@dimen/_15sdp"
-            android:textColor="@color/secondary"
+            android:text="@string/new_account"
             android:textSize="@dimen/_17ssp"
-            android:gravity="end"
+            android:layout_marginTop="@dimen/_35sdp"
             android:layout_gravity="center"/>
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_log_google"
             style="@style/BUTTON_OUTLINED"
-            android:layout_marginTop="@dimen/_30sdp"
-            android:text="@string/google_login"
-            android:drawableStart="@drawable/google"/>
-
-        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_log_signup"
-            style="@style/BUTTON_OUTLINED"
-            android:layout_marginTop="@dimen/_20sdp"
-            android:layout_marginBottom="@dimen/_20sdp"
             android:text="@string/register_title"
-            android:drawableEnd="@drawable/arrow_right"/>
+            android:drawableEnd="@drawable/arrow_right"
+            android:layout_marginTop="@dimen/_20sdp"/>
     </LinearLayout>
 
 </ScrollView>

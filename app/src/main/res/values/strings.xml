@@ -10,9 +10,16 @@
     <string name="login_btn">Login</string>
     <string name="reset_password">Forgot Password?</string>
     <string name="google_login">Login with Google</string>
+    <string name="another_option">Or</string>
+    <string name="new_account">Don\'t have account?</string>
 
     <!--    New User/ Registration -->
     <string name="register_title">Create Account</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="verify_email">Verify email</string>
+    <string name="google_register">Continue with Google</string>
+    <string name="login">Login</string>
+    <string name="already_have_account">Already have account?</string>
 
 <!--    Greeting-->
     <string name="greeting">Welcome</string>

@@ -26,15 +26,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TEXT"
-            android:textSize="@dimen/_30ssp"
+            android:textSize="@dimen/_25ssp"
             android:text="@string/greeting_message"
             android:textAlignment="center"
+            android:padding="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_20sdp"/>
 
     <!--    Lottie animation tag-->
         <com.airbnb.lottie.LottieAnimationView
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_350sdp"
+            android:layout_height="@dimen/_300sdp"
             android:layout_marginTop="@dimen/_20sdp"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
