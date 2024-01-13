@@ -12,7 +12,6 @@ import project.social.whisper.databinding.ActivitySplashBinding
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_splash)
 
         //Binding View
         val b = ActivitySplashBinding.inflate(layoutInflater)
@@ -29,7 +28,7 @@ class SplashActivity : AppCompatActivity() {
 
         //Creating delay for splash screen
         Handler(Looper.getMainLooper()).postDelayed({
-            val login = Intent(this, LoginActivity::class.java)
+            val login = Intent(this, MainActivity::class.java)
             startActivity(login)
             finish()
         }, 5000)
