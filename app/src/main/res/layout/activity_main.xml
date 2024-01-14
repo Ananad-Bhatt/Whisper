@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     style="@style/BODY"
     tools:context=".MainActivity">
 
@@ -14,11 +13,10 @@
         android:orientation="vertical">
 
         <TextView
+            style="@style/TEXT"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/greeting"
-            android:textColor="@color/secondary"
-            android:textStyle="bold"
             android:textAlignment="center"
             android:textSize="@dimen/_45ssp"/>
 

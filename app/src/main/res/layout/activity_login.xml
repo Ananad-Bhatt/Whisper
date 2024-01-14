@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
+    style="@style/BODY"
     tools:context=".LoginActivity">
 
     <LinearLayout
@@ -30,9 +31,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/login_title"
-                    style="@style/TEXT"
-                    android:textColor="@color/secondary"
-                    android:textStyle="bold"
+                    android:textColor="@color/primary"
                     android:textAlignment="center"
                     android:textSize="@dimen/_45ssp"/>
 
@@ -58,11 +57,11 @@
 
                 <TextView
                     android:id="@+id/txt_log_reset_pass"
+                    android:textColor="@color/primary"
                     android:layout_width="@dimen/_250sdp"
                     android:layout_height="wrap_content"
                     android:text="@string/reset_password"
                     android:layout_marginTop="@dimen/_15sdp"
-                    android:textColor="@color/secondary"
                     android:textSize="@dimen/_17ssp"
                     android:gravity="end"
                     android:layout_gravity="center"/>
@@ -88,8 +87,9 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textColor="@color/primary"
+                        android:textStyle="bold"
                         android:text="@string/another_option"
-                        android:textColor="@color/secondary"
                         android:layout_marginStart="@dimen/_10sdp"
                         android:layout_marginEnd="@dimen/_10sdp"
                         android:textSize="@dimen/_17ssp" />
@@ -104,7 +104,7 @@
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_log_google"
-                    style="@style/BUTTON_OUTLINED"
+                    style="@style/BUTTON_FILL"
                     android:layout_marginTop="@dimen/_15sdp"
                     android:layout_marginBottom="@dimen/_20sdp"
                     android:text="@string/google_login"
@@ -127,6 +127,7 @@
             android:id="@+id/btn_log_signup"
             android:text="@string/register_title"
             android:drawableEnd="@drawable/arrow_right"
+            android:layout_marginBottom="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_20sdp"/>
     </LinearLayout>
 
