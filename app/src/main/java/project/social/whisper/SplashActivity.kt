@@ -28,7 +28,7 @@ class SplashActivity : AppCompatActivity() {
 
         //Creating delay for splash screen
         Handler(Looper.getMainLooper()).postDelayed({
-            val login = Intent(this, MainActivity::class.java)
+            val login = Intent(this, StartUpActivity::class.java)
             startActivity(login)
             finish()
         }, 4000)
