@@ -30,6 +30,11 @@
     <string name="chat_page">Chat</string>
     <string name="reel_page">Reels</string>
     <string name="profile_page">Profile</string>
+
+    <!--    Home fragment toolbar-->
+    <string name="search">Search</string>
+    <string name="create_post">New</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

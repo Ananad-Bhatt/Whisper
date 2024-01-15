@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     style="@style/BODY"
-    tools:context="Fragments.CreateAccountFragment">
+    tools:context="fragments.CreateAccountFragment">
 
     <LinearLayout
         android:layout_width="match_parent"

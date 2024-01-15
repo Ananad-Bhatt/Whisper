@@ -1,9 +1,8 @@
 package project.social.whisper
 
-import Fragments.CreateAccountFragment
+import fragments.CreateAccountFragment
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import project.social.whisper.databinding.ActivityRegistrationBinding
