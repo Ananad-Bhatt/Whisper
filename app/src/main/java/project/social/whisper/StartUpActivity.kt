@@ -3,14 +3,14 @@ package project.social.whisper
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import project.social.whisper.databinding.ActivityMainBinding
+import project.social.whisper.databinding.ActivityStartUpBinding
 
 class StartUpActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         //View Binding
-        val b = ActivityMainBinding.inflate(layoutInflater)
+        val b = ActivityStartUpBinding.inflate(layoutInflater)
         val view = b.root
         setContentView(view)
 
