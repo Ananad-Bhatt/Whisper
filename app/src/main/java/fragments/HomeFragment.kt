@@ -51,10 +51,6 @@ class HomeFragment : Fragment() {
         val tab = b.homeFragTabLayout
         val vp = b.homeFragViewPager
 
-//        Setting title and changing color of it in Toolbar
-        b.homeFragToolbar.title = getString(R.string.app_name)
-        b.homeFragToolbar.setTitleTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
-
         val fa = HomeViewPagerAdapter(this)
         vp.adapter = fa
 

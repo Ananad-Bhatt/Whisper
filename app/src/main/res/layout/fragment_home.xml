@@ -15,6 +15,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:menu="@menu/home_frag_toolbar"
+            app:title="@string/app_name"
+            app:titleTextColor="@color/white"
             android:background="@color/main_act_primary"/>
 
     </com.google.android.material.appbar.AppBarLayout>

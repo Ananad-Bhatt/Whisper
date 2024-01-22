@@ -1,16 +1,11 @@
 package fragments
 
-import adapters.ChatViewPagerAdapter
-import adapters.HomeViewPagerAdapter
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
-import com.google.android.material.tabs.TabLayoutMediator
 import project.social.whisper.R
-import project.social.whisper.databinding.FragmentChatBinding
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -19,10 +14,10 @@ private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
- * Use the [ChatFragment.newInstance] factory method to
+ * Use the [ChatCurrentFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class ChatFragment : Fragment() {
+class ChatCurrentFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -38,34 +33,9 @@ class ChatFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        // View binding
-        val b = FragmentChatBinding.inflate(inflater, container, false)
-
-        val tab = b.chatFragTabLayout
-        val vp = b.chatFragViewPager
-
-        val fa = ChatViewPagerAdapter(this)
-        vp.adapter = fa
-
-        val labels = arrayOf("Chats", "Requests")
-
-        tab.setTabTextColors(
-            ContextCompat.getColor(requireContext(), R.color.unselected_tab), // Text color for unselected tabs
-            ContextCompat.getColor(requireContext(), R.color.selected_tab)   // Text color for selected tab
-        )
-
-        tab.setSelectedTabIndicatorColor(
-            ContextCompat.getColor(requireContext(), R.color.selected_tab)
-        )
-
-//        Assigning title to the tabs
-        TabLayoutMediator(tab, vp
-        ) { tab1, position ->
-            tab1.text = labels[position]
-        }.attach()
-
-        return b.root
+    ): View? {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_chat_current, container, false)
     }
 
     companion object {
@@ -75,12 +45,12 @@ class ChatFragment : Fragment() {
          *
          * @param param1 Parameter 1.
          * @param param2 Parameter 2.
-         * @return A new instance of fragment ChatFragment.
+         * @return A new instance of fragment ChatCurrentFragment.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            ChatFragment().apply {
+            ChatCurrentFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
                     putString(ARG_PARAM2, param2)

@@ -30,7 +30,7 @@
             android:layout_height="@dimen/_40sdp"
             app:menu="@menu/bottom_nav_bar_items"
             app:itemIconSize="@dimen/_20sdp"
-            app:itemIconTint="@color/main_act_secondary"
+            app:itemIconTint="@color/white"
             android:background="@color/main_act_primary"
             app:labelVisibilityMode="unlabeled"/>
     </androidx.cardview.widget.CardView>
