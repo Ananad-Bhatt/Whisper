@@ -1,7 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!--Colors for Light theme-->
+
 <resources>
+
+<!--    Black and white-->
+
+    <color name="white">#FFF</color>
+    <color name="black">#000</color>
+
+<!--    Login and registration screen-->
     <color name="primary">#20308C</color>
     <color name="secondary">#B9D4FD</color>
     <color name="btn_fill_text">#FFF</color>
     <color name="btn_outlined_text">#000</color>
+
+<!--    Main Activity-->
+
+    <color name="main_act_primary">#20308C</color>
+    <color name="main_act_secondary">#B9D4FD</color>
+    <color name="main_act_fill_txt">#FFF</color>
+
+<!--    Tab Layout-->
+
+    <color name="selected_tab">#FFF</color>
+    <color name="unselected_tab">#BABABA</color>
 </resources>

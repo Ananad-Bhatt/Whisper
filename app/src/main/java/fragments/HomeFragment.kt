@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayout
@@ -44,16 +45,31 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
+//        View binding
         val b = FragmentHomeBinding.inflate(inflater, container, false)
 
         val tab = b.homeFragTabLayout
         val vp = b.homeFragViewPager
+
+//        Setting title and changing color of it in Toolbar
+        b.homeFragToolbar.title = getString(R.string.app_name)
+        b.homeFragToolbar.setTitleTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
 
         val fa = HomeViewPagerAdapter(this)
         vp.adapter = fa
 
         val labels = arrayOf("Explore new", "Following")
 
+        tab.setTabTextColors(
+            ContextCompat.getColor(requireContext(), R.color.unselected_tab), // Text color for unselected tabs
+            ContextCompat.getColor(requireContext(), R.color.selected_tab)   // Text color for selected tab
+        )
+
+        tab.setSelectedTabIndicatorColor(
+            ContextCompat.getColor(requireContext(), R.color.selected_tab)
+        )
+
+//        Assigning title to the tabs
         TabLayoutMediator(tab, vp
         ) { tab1, position ->
             tab1.text = labels[position]
@@ -63,18 +79,15 @@ class HomeFragment : Fragment() {
 
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val itemId = item.itemId
-
-        if(itemId == R.id.home_tool_search)
+        when(item.itemId)
         {
-            Toast.makeText(activity, "Search",Toast.LENGTH_SHORT).show()
+            R.id.home_tool_search -> {
+                Toast.makeText(activity, "Search", Toast.LENGTH_SHORT).show()
+            }
+            else -> {
+                Toast.makeText(activity, "Create New", Toast.LENGTH_SHORT).show()
+            }
         }
-
-        else
-        {
-            Toast.makeText(activity, "Create Post", Toast.LENGTH_SHORT).show()
-        }
-
         return super.onOptionsItemSelected(item)
     }
 

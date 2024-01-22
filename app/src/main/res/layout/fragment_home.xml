@@ -15,13 +15,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:menu="@menu/home_frag_toolbar"
-            android:background="@color/secondary"/>
+            android:background="@color/main_act_primary"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/home_frag_tab_layout"
-        android:background="@color/secondary"
+        android:background="@color/main_act_primary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
