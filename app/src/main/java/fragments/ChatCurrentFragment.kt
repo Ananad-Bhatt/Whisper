@@ -1,11 +1,16 @@
 package fragments
 
+import adapters.ChatRecyclerViewAdapter
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import models.ChatModel
 import project.social.whisper.R
+import project.social.whisper.databinding.FragmentChatCurrentBinding
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -33,9 +38,34 @@ class ChatCurrentFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_chat_current, container, false)
+    ): View {
+        // View binding
+        val b = FragmentChatCurrentBinding.inflate(inflater, container, false)
+
+        val users = ArrayList<ChatModel>()
+
+        b.chatCurrentFragRecyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL ,false)
+
+        users.add(ChatModel("Het",R.mipmap.ic_launcher_round, "Hello"))
+        users.add(ChatModel("Het2",R.mipmap.ic_launcher_round, "Hello"))
+        users.add(ChatModel("Het3",R.mipmap.ic_launcher_round, "Hello"))
+        users.add(ChatModel("Het4",R.mipmap.ic_launcher_round, "Hello"))
+        users.add(ChatModel("Het5",R.mipmap.ic_launcher_round, "Hello"))
+        users.add(ChatModel("Het6",R.mipmap.ic_launcher_round, "Hello"))
+        users.add(ChatModel("Het7",R.mipmap.ic_launcher_round, "Hello"))
+        users.add(ChatModel("Het8",R.mipmap.ic_launcher_round, "Hello"))
+        users.add(ChatModel("Het9",R.mipmap.ic_launcher_round, "Hello"))
+        users.add(ChatModel("Het10",R.mipmap.ic_launcher_round, "Hello"))
+        users.add(ChatModel("Het11",R.mipmap.ic_launcher_round, "Hello"))
+        users.add(ChatModel("Het12",R.mipmap.ic_launcher_round, "Hello"))
+        users.add(ChatModel("Het13",R.mipmap.ic_launcher_round, "Hello"))
+        users.add(ChatModel("Het14",R.mipmap.ic_launcher_round, "Hello"))
+
+        val adapter = ChatRecyclerViewAdapter(users)
+
+        b.chatCurrentFragRecyclerView.adapter = adapter
+
+        return b.root
     }
 
     companion object {
