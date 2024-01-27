@@ -107,6 +107,15 @@
                     android:background="#00FFFFFF"
                     android:layout_marginStart="20dp"/>
 
+                <ImageButton
+                    android:id="@+id/reel_frag_video_send"
+                    android:layout_width="@dimen/_35sdp"
+                    android:layout_height="@dimen/_35sdp"
+                    android:src="@drawable/send"
+                    android:background="#00FFFFFF"
+                    android:layout_gravity="end"
+                    android:layout_marginStart="20dp"/>
+
             </LinearLayout>
 
         </LinearLayout>

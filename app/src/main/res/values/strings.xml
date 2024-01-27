@@ -34,7 +34,8 @@
     <!--    Home fragment toolbar-->
     <string name="search">Search</string>
     <string name="create_post">New</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+<!--    Reel Fragment-->
+    <string name="follow">Follow</string>
 
 </resources>
