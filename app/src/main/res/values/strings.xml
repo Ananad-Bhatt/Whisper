@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Whisper</string>
 
+    <string name="default_web_client_id">205632923696-ji3n529jgh4nahn0me7d5qa14imh0l7t.apps.googleusercontent.com</string>
 
     <!--    Login Page-->
     <!--    Login-->
