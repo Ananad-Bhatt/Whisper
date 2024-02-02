@@ -1,12 +1,18 @@
 package fragments
 
+import adapters.DatabaseAdapter
 import android.content.Intent
 import android.os.Bundle
+import android.provider.ContactsContract.CommonDataKinds.Email
+import android.util.Log
+import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import project.social.whisper.LoginActivity
+import project.social.whisper.RegistrationActivity
 import project.social.whisper.databinding.FragmentCreateAccountBinding
 
 // TODO: Rename parameter arguments, choose names that match
@@ -20,7 +26,7 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class CreateAccountFragment : Fragment() {
-    // TODO: Rename and change types of parameters
+
     private var param1: String? = null
     private var param2: String? = null
 
@@ -45,6 +51,70 @@ class CreateAccountFragment : Fragment() {
             startActivity(login)
         }
 
+        //Verify email
+        b.btnRegVerify.setOnClickListener {
+            if(b.edtRegEmail.text.toString().isEmpty())
+            {
+                Toast.makeText(context,"Email cannot be empty!",Toast.LENGTH_LONG).show()
+                b.edtRegEmail.error = "Enter email"
+                b.edtRegEmail.requestFocus()
+                return@setOnClickListener
+            }
+            else if(!Patterns.EMAIL_ADDRESS.matcher(b.edtRegEmail.text.toString()).matches()) {
+                Toast.makeText(context, "Enter valid email address", Toast.LENGTH_LONG).show()
+                b.edtRegEmail.error = "Enter valid email"
+                b.edtRegEmail.requestFocus()
+                return@setOnClickListener
+            }
+
+            if(b.edtRegPassword.text.toString().isEmpty())
+            {
+                Toast.makeText(context,"Password cannot be empty!",Toast.LENGTH_LONG).show()
+                b.edtRegPassword.error = "Enter password"
+                b.edtRegPassword.requestFocus()
+                return@setOnClickListener
+            }
+
+            if(b.edtRegConPassword.text.toString().isEmpty())
+            {
+                Toast.makeText(context,"Confirm your password",Toast.LENGTH_LONG).show()
+                b.edtRegConPassword.error = "Confirm password"
+                b.edtRegConPassword.requestFocus()
+                return@setOnClickListener
+            }
+
+            if(b.edtRegPassword.text.toString().length < 6)
+            {
+                Toast.makeText(context,"Password length should be more than 6 letters",Toast.LENGTH_LONG).show()
+                b.edtRegPassword.error = "Too weak"
+                b.edtRegPassword.requestFocus()
+                return@setOnClickListener
+            }
+
+            if(!b.edtRegPassword.text.toString().equals(b.edtRegConPassword.text.toString()))
+            {
+                Toast.makeText(context,"Confirm password is different",Toast.LENGTH_LONG).show()
+                b.edtRegConPassword.error = "Password does not match"
+                b.edtRegConPassword.requestFocus()
+                return@setOnClickListener
+            }
+
+            //If everything perfect
+            DatabaseAdapter.signUpWithMail(b.edtRegEmail.text.toString(), b.edtRegPassword.text.toString()) {
+                if(it)
+                {
+                    //TODO: Create and Move to the next fragment
+                    Toast.makeText(context,"Done : ${DatabaseAdapter.returnUser()?.email}",Toast.LENGTH_LONG)
+                        .show()
+                }
+                else
+                {
+                    Toast.makeText(context,"Something went wrong",Toast.LENGTH_LONG).show()
+                }
+            }
+
+        }
+
         return b.root
     }
 
@@ -57,7 +127,7 @@ class CreateAccountFragment : Fragment() {
          * @param param2 Parameter 2.
          * @return A new instance of fragment CreateAccountFragment.
          */
-        // TODO: Rename and change types and number of parameters
+
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             CreateAccountFragment().apply {
