@@ -11,7 +11,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.FragmentManager
 import project.social.whisper.LoginActivity
+import project.social.whisper.R
 import project.social.whisper.RegistrationActivity
 import project.social.whisper.databinding.FragmentCreateAccountBinding
 
@@ -99,6 +101,7 @@ class CreateAccountFragment : Fragment() {
                 return@setOnClickListener
             }
 
+
             //If everything perfect
             DatabaseAdapter.signUpWithMail(b.edtRegEmail.text.toString(), b.edtRegPassword.text.toString()) {
                 if(it)
@@ -111,6 +114,12 @@ class CreateAccountFragment : Fragment() {
                         {
                             Toast.makeText(context,"Email verification link is sent to your email, Please verify your email"
                                             ,Toast.LENGTH_LONG).show()
+
+                            val fm = activity?.supportFragmentManager
+                            val ft = fm?.beginTransaction()
+                            ft?.replace(R.id.fragment_reg, AddDetailsFragment())
+                            ft?.addToBackStack(null)
+                            ft?.commit()
                         }
                     }
                 }

@@ -1,0 +1,73 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    style="@style/BODY"
+    android:gravity="center"
+    tools:context="fragments.AddDetailsFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="@dimen/_280sdp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_gravity="center"
+            app:cardCornerRadius="10dp"
+
+            app:cardUseCompatPadding="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/detail_title"
+                    android:textColor="@color/primary"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/_40ssp"/>
+
+                <EditText
+                    android:id="@+id/edt_det_email"
+                    style="@style/EDITTEXT"
+                    android:hint="@string/username"
+                    android:layout_marginTop="@dimen/_30sdp"
+                    android:autofillHints="emailAddress"
+                    android:inputType="textEmailAddress"
+                    android:drawableStart="@drawable/username"
+                    android:drawablePadding="@dimen/_10sdp" />
+
+                <TextView
+                    android:id="@+id/txt_det_is_available"
+                    android:layout_width="@dimen/_250sdp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/primary"
+                    android:layout_gravity="center"
+                    android:visibility="gone"
+                    android:layout_marginTop="5dp"
+                    android:paddingHorizontal="10dp"
+                    android:textSize="@dimen/_10ssp"/>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_det_verify"
+                    style="@style/BUTTON_FILL"
+                    android:layout_marginTop="@dimen/_25sdp"
+                    android:layout_marginBottom="@dimen/_20sdp"
+                    android:text="@string/create_acc" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+</ScrollView>

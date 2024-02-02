@@ -35,7 +35,12 @@
     <string name="search">Search</string>
     <string name="create_post">New</string>
 
-<!--    Reel Fragment-->
+    <!--    Reel Fragment-->
     <string name="follow">Follow</string>
+
+<!--    Add detail fragment-->
+    <string name="create_acc">Create Account</string>
+    <string name="username">Create Username</string>
+    <string name="detail_title">Create Username</string>
 
 </resources>
