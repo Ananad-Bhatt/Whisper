@@ -19,8 +19,7 @@ class DatabaseAdapter {
             return auth.currentUser
         }
 
-        fun verifyEmail(mail:String):Boolean{
-            var isDone:Boolean = false
+        fun verifyEmail(mail:String?, callback: (Boolean) -> Unit){
 
             auth = FirebaseAuth.getInstance()
 
@@ -28,14 +27,19 @@ class DatabaseAdapter {
 
             try {
                 user?.sendEmailVerification()?.addOnCompleteListener {
-                    isDone = it.isSuccessful
+                    if(it.isSuccessful)
+                    {
+                        callback(true)
+                    }else
+                    {
+                        callback(false)
+                        Log.d("DB_ERROR",it.toString())
+                    }
                 }
             }catch (e:Exception)
             {
                 Log.d("DB_ERROR",e.toString())
             }
-
-            return isDone
         }
 
         fun signUpWithMail(mail:String, password:String, callback:(Boolean) -> Unit)

@@ -91,7 +91,7 @@ class CreateAccountFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            if(!b.edtRegPassword.text.toString().equals(b.edtRegConPassword.text.toString()))
+            if(b.edtRegPassword.text.toString() != b.edtRegConPassword.text.toString())
             {
                 Toast.makeText(context,"Confirm password is different",Toast.LENGTH_LONG).show()
                 b.edtRegConPassword.error = "Password does not match"
@@ -103,16 +103,22 @@ class CreateAccountFragment : Fragment() {
             DatabaseAdapter.signUpWithMail(b.edtRegEmail.text.toString(), b.edtRegPassword.text.toString()) {
                 if(it)
                 {
-                    //TODO: Create and Move to the next fragment
                     Toast.makeText(context,"Done : ${DatabaseAdapter.returnUser()?.email}",Toast.LENGTH_LONG)
                         .show()
+
+                    DatabaseAdapter.verifyEmail(DatabaseAdapter.returnUser()?.email) {it1 ->
+                        if(it1)
+                        {
+                            Toast.makeText(context,"Email verification link is sent to your email, Please verify your email"
+                                            ,Toast.LENGTH_LONG).show()
+                        }
+                    }
                 }
                 else
                 {
                     Toast.makeText(context,"Something went wrong",Toast.LENGTH_LONG).show()
                 }
             }
-
         }
 
         return b.root
