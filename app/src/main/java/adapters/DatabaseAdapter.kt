@@ -3,6 +3,7 @@ package adapters
 import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
@@ -69,6 +70,50 @@ class DatabaseAdapter {
                     Log.d("DB_ERROR",it.toString())
                 }
             }catch (e:Exception)
+            {
+                Log.d("DB_ERROR",e.toString())
+            }
+        }
+
+        fun signInWithMail(mail:String, password:String, callback:(Boolean) -> Unit)
+        {
+            auth = FirebaseAuth.getInstance()
+
+            try {
+                auth.signInWithEmailAndPassword(mail, password).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        callback(true)
+                    } else {
+                        callback(false)
+                    }
+                }.addOnFailureListener {
+                    callback(false)
+                }
+            }catch(e:Exception)
+            {
+                Log.d("DB_ERROR",e.toString())
+            }
+        }
+
+        fun passwordResetMail(mail:String, callback: (String) -> Unit)
+        {
+            auth = FirebaseAuth.getInstance()
+
+            try {
+                auth.sendPasswordResetEmail(mail).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        callback("true")
+                    } else {
+                        if (it.exception is FirebaseAuthInvalidUserException) {
+                            callback("exist")
+                        } else {
+                            callback("false")
+                        }
+                    }
+                }.addOnFailureListener {
+                    callback("false")
+                }
+            }catch(e:Exception)
             {
                 Log.d("DB_ERROR",e.toString())
             }

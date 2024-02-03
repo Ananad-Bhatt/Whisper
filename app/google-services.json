@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "823234133694",
+    "project_id": "whisper-social-media",
+    "storage_bucket": "whisper-social-media.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:823234133694:android:e1845c6d030483ac3528ef",
+        "android_client_info": {
+          "package_name": "project.social.whisper"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQnVcjLXBYolhdOm93vhHctbn5EmkjqF0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

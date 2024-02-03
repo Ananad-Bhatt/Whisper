@@ -39,9 +39,11 @@
     <!--    Reel Fragment-->
     <string name="follow">Follow</string>
 
-<!--    Add detail fragment-->
+    <!--    Add detail fragment-->
     <string name="create_acc">Create Account</string>
     <string name="username">Username</string>
     <string name="detail_title">Create Username</string>
 
+<!--    Reset Password-->
+    <string name="reset_pass_title">Reset Password</string>
 </resources>
