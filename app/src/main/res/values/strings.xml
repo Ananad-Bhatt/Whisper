@@ -41,7 +41,7 @@
 
 <!--    Add detail fragment-->
     <string name="create_acc">Create Account</string>
-    <string name="username">Create Username</string>
+    <string name="username">Username</string>
     <string name="detail_title">Create Username</string>
 
 </resources>

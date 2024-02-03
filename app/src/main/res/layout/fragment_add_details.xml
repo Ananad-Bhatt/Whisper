@@ -19,7 +19,6 @@
             android:layout_marginTop="@dimen/_20sdp"
             android:layout_gravity="center"
             app:cardCornerRadius="10dp"
-
             app:cardUseCompatPadding="true">
 
             <LinearLayout
@@ -38,7 +37,7 @@
                     android:textSize="@dimen/_40ssp"/>
 
                 <EditText
-                    android:id="@+id/edt_det_email"
+                    android:id="@+id/edt_det_user_name"
                     style="@style/EDITTEXT"
                     android:hint="@string/username"
                     android:layout_marginTop="@dimen/_30sdp"
@@ -51,15 +50,16 @@
                     android:id="@+id/txt_det_is_available"
                     android:layout_width="@dimen/_250sdp"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/primary"
                     android:layout_gravity="center"
                     android:visibility="gone"
+                    android:gravity="start|center"
+                    android:drawablePadding="5dp"
                     android:layout_marginTop="5dp"
                     android:paddingHorizontal="10dp"
-                    android:textSize="@dimen/_10ssp"/>
+                    android:textSize="@dimen/_12ssp"/>
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btn_det_verify"
+                    android:id="@+id/btn_det_create_acc"
                     style="@style/BUTTON_FILL"
                     android:layout_marginTop="@dimen/_25sdp"
                     android:layout_marginBottom="@dimen/_20sdp"

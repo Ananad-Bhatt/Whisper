@@ -12,6 +12,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.FragmentManager
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import project.social.whisper.LoginActivity
 import project.social.whisper.R
 import project.social.whisper.RegistrationActivity
@@ -31,6 +35,8 @@ class CreateAccountFragment : Fragment() {
 
     private var param1: String? = null
     private var param2: String? = null
+
+    private var usersTable = Firebase.database.getReference("USERS")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -104,17 +110,40 @@ class CreateAccountFragment : Fragment() {
 
             //If everything perfect
             DatabaseAdapter.signUpWithMail(b.edtRegEmail.text.toString(), b.edtRegPassword.text.toString()) {
-                if(it)
-                {
-                    Toast.makeText(context,"Done : ${DatabaseAdapter.returnUser()?.email}",Toast.LENGTH_LONG)
-                        .show()
+                when (it) {
+                    "true" -> {
+                        Toast.makeText(context,"Done : ${DatabaseAdapter.returnUser()?.email}",Toast.LENGTH_LONG)
+                            .show()
 
-                    DatabaseAdapter.verifyEmail(DatabaseAdapter.returnUser()?.email) {it1 ->
-                        if(it1)
-                        {
-                            Toast.makeText(context,"Email verification link is sent to your email, Please verify your email"
-                                            ,Toast.LENGTH_LONG).show()
+                        DatabaseAdapter.verifyEmail(DatabaseAdapter.returnUser()?.email) {it1 ->
+                            if(it1) {
+                                Toast.makeText(context,"Email verification link is sent to your email, Please verify your email",
+                                    Toast.LENGTH_LONG).show()
+                            }
+                            else
+                            {
+                                Toast.makeText(context,"We are unable to send you verification mail",
+                                    Toast.LENGTH_LONG).show()
+                            }
 
+                            //Store user details in Real Time Database
+                            val key = DatabaseAdapter.returnUser()?.uid
+
+                            if (key != null) {
+                                try {
+                                    usersTable.child(key).child("EMAIL")
+                                        .setValue(DatabaseAdapter.returnUser()?.email?.lowercase())
+                                }catch(e:Exception)
+                                {
+                                    Log.d("DB_ERROR",e.toString())
+                                }
+                            }
+                            else
+                            {
+                                return@verifyEmail
+                            }
+
+                            //Move to diff fragment
                             val fm = activity?.supportFragmentManager
                             val ft = fm?.beginTransaction()
                             ft?.replace(R.id.fragment_reg, AddDetailsFragment())
@@ -122,10 +151,14 @@ class CreateAccountFragment : Fragment() {
                             ft?.commit()
                         }
                     }
-                }
-                else
-                {
-                    Toast.makeText(context,"Something went wrong",Toast.LENGTH_LONG).show()
+                    "exist" -> {
+                        Toast.makeText(context,"Email ID is already exist",Toast.LENGTH_LONG).show()
+                        return@signUpWithMail
+                    }
+                    else -> {
+                        Toast.makeText(context,"Something went wrong",Toast.LENGTH_LONG).show()
+                        return@signUpWithMail
+                    }
                 }
             }
         }

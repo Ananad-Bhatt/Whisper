@@ -1,9 +1,12 @@
 package adapters
 
 import android.util.Log
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
+import project.social.whisper.RegistrationActivity
 
 class DatabaseAdapter {
 
@@ -38,11 +41,12 @@ class DatabaseAdapter {
                 }
             }catch (e:Exception)
             {
+                callback(false)
                 Log.d("DB_ERROR",e.toString())
             }
         }
 
-        fun signUpWithMail(mail:String, password:String, callback:(Boolean) -> Unit)
+        fun signUpWithMail(mail:String, password:String, callback:(String) -> Unit)
         {
             auth = FirebaseAuth.getInstance()
 
@@ -50,10 +54,18 @@ class DatabaseAdapter {
                 auth.createUserWithEmailAndPassword(mail, password).addOnCompleteListener {
                     if(it.isSuccessful)
                     {
-                        callback(true)
+                        callback("true")
+                    }
+                    else{
+                        if (it.exception is FirebaseAuthUserCollisionException) {
+                            callback("exist") // Email already exists
+                        } else {
+                            Log.e("TAG", "Account creation failed: ${it.exception}")
+                            callback("false") // Other error
+                        }
                     }
                 }.addOnFailureListener {
-                    callback(false)
+                    callback("false")
                     Log.d("DB_ERROR",it.toString())
                 }
             }catch (e:Exception)
