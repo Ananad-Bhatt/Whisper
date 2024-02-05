@@ -15,6 +15,12 @@
         android:theme="@style/Theme.Whisper"
         tools:targetApi="31">
         <activity
+            android:name=".AddDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".GoogleSignIn"
+            android:exported="false" />
+        <activity
             android:name=".ForgotPasswordActivity"
             android:exported="false" />
         <activity

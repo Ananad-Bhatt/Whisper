@@ -2,6 +2,8 @@ package adapters
 
 import android.util.Log
 import android.widget.Toast
+import android.app.Activity
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
@@ -23,7 +25,7 @@ class DatabaseAdapter {
             return auth.currentUser
         }
 
-        fun verifyEmail(mail:String?, callback: (Boolean) -> Unit){
+        fun verifyEmail(callback: (Boolean) -> Unit){
 
             auth = FirebaseAuth.getInstance()
 

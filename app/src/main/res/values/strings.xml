@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Whisper</string>
 
-    <string name="default_web_client_id">205632923696-ji3n529jgh4nahn0me7d5qa14imh0l7t.apps.googleusercontent.com</string>
+    <string name="default_web_client_id">823234133694-ee5h5spupj47lb8qhv2rh2b28ndnkbr9.apps.googleusercontent.com</string>
 
     <!--    Login Page-->
     <!--    Login-->
@@ -44,6 +44,6 @@
     <string name="username">Username</string>
     <string name="detail_title">Create Username</string>
 
-<!--    Reset Password-->
+    <!--    Reset Password-->
     <string name="reset_pass_title">Reset Password</string>
 </resources>
