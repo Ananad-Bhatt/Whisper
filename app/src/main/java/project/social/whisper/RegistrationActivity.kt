@@ -149,6 +149,10 @@ class RegistrationActivity : AppCompatActivity() {
                                 try {
                                     usersTable.child(key).child("EMAIL")
                                         .setValue(DatabaseAdapter.returnUser()?.email?.lowercase())
+
+                                    usersTable.child(key).child("EMAIL_VERIFIED")
+                                        .setValue("false")
+
                                 }catch(e:Exception)
                                 {
                                     Log.d("DB_ERROR",e.toString())
@@ -227,6 +231,8 @@ class RegistrationActivity : AppCompatActivity() {
 
             usersTable.child(key).child("EMAIL")
                 .setValue(currentUser.email?.lowercase())
+
+            usersTable.child(key).child("EMAIL_VERIFIED").setValue("true")
 
             //Move to diff Activity
             val i = Intent(this, AddDetailsActivity::class.java)
