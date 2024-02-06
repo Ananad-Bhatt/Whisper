@@ -1,11 +1,19 @@
 package fragments
 
+import adapters.DatabaseAdapter
+import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import project.social.whisper.R
+import project.social.whisper.databinding.FragmentProfileBinding
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -22,6 +30,12 @@ class ProfileFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    lateinit var b:FragmentProfileBinding
+    private lateinit var key:String
+
+    private var usersDetailsTable = Firebase.database.getReference("USERS_DETAILS")
+    private var usersTable = Firebase.database.getReference("USERS")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -33,9 +47,49 @@ class ProfileFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false)
+         b = FragmentProfileBinding.inflate(inflater, container, false)
+
+        key = DatabaseAdapter.returnUser()?.uid.toString()
+        clicker()
+
+        return b.root
+    }
+
+    private fun clicker() {
+
+        b.txtProfileUserName.setOnClickListener {
+            val d = Dialog(requireContext())
+            d.setContentView(R.layout.temp_layout)
+
+            val edtVal = d.findViewById<EditText>(R.id.edt_temp_value)
+            val btnSubmit: Button = d.findViewById(R.id.btn_temp_submit)
+
+            btnSubmit.setOnClickListener {
+                b.txtProfileUserName.text = edtVal.text.toString()
+                usersTable.child(key).child("USER_NAME").setValue(edtVal.text.toString())
+            }
+
+            d.show()
+        }
+
+        b.txtProfileAbout.setOnClickListener {
+            val d = Dialog(requireContext())
+            d.setContentView(R.layout.temp_layout)
+
+            val edtVal = d.findViewById<EditText>(R.id.edt_temp_value)
+            val btnSubmit: Button = d.findViewById(R.id.btn_temp_submit)
+
+            btnSubmit.setOnClickListener {
+                b.txtProfileAbout.text = edtVal.text.toString()
+                usersDetailsTable.child(key).child("ABOUT").setValue(edtVal.text.toString())
+            }
+
+            d.show()
+
+        }
+
     }
 
     companion object {

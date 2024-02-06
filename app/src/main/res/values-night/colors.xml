@@ -25,4 +25,7 @@
     <color name="selected_tab">#FFF</color>
     <color name="unselected_tab">#BABABA</color>
 
+    <!--    Link-->
+    <color name="link">#00E1FF</color>
+
 </resources>

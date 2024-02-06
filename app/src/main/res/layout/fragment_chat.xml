@@ -18,7 +18,6 @@
             app:title="@string/app_name"
             app:titleTextColor="@color/white"
             android:background="@color/main_act_primary"/>
-
     </com.google.android.material.appbar.AppBarLayout>
 
     <com.google.android.material.tabs.TabLayout

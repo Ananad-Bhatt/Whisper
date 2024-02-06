@@ -46,4 +46,13 @@
 
     <!--    Reset Password-->
     <string name="reset_pass_title">Reset Password</string>
+
+<!--    Profile page-->
+    <string name="posts">Posts</string>
+    <string name="following">Following</string>
+    <string name="followers">Followers</string>
+    <string name="about">About</string>
+    <string name="message">Message</string>
+    <string name="recent_posts">Recent Posts</string>
+    <string name="see_all">See all </string>
 </resources>
