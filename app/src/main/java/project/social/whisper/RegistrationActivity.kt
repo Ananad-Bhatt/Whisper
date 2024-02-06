@@ -7,9 +7,6 @@ import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
 import android.widget.Toast
-import com.google.android.gms.auth.api.identity.BeginSignInRequest
-import com.google.android.gms.auth.api.identity.Identity
-import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -17,7 +14,6 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import project.social.whisper.databinding.ActivityRegistrationBinding
@@ -27,8 +23,6 @@ class RegistrationActivity : AppCompatActivity() {
     private var usersTable = Firebase.database.getReference("USERS")
 
     //Google
-    private lateinit var signInRequest:BeginSignInRequest
-    private lateinit var oneTapClient: SignInClient
     private lateinit var auth: FirebaseAuth
     private lateinit var gso:GoogleSignInOptions
     private lateinit var gClient:GoogleSignInClient
@@ -164,7 +158,7 @@ class RegistrationActivity : AppCompatActivity() {
                             }
 
                             //Move to diff activity
-                            val i = Intent(this, AddDetailsActivity::class.java)
+                            val i = Intent(this, MainActivity::class.java)
                             startActivity(i)
                         }
                     }
@@ -196,23 +190,35 @@ class RegistrationActivity : AppCompatActivity() {
                 if (account != null) {
                     val credential = GoogleAuthProvider.getCredential(account.idToken, null)
                     auth.signInWithCredential(credential)
-                        .addOnCompleteListener(this) { task ->
-                            if (task.isSuccessful) {
+                        .addOnCompleteListener(this) { t ->
+                            if (t.isSuccessful) {
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d("DB_ERROR", "signInWithCredential:success")
                                 val user = auth.currentUser
-                                updateUI(user)
+                                if(user!=null)
+                                {
+                                    val key = user.uid
+
+                                    usersTable.child(key).child("EMAIL")
+                                        .setValue(user.email?.lowercase())
+
+                                    usersTable.child(key).child("EMAIL_VERIFIED").setValue("true")
+
+                                    //Move to diff Activity
+                                    val i = Intent(this, MainActivity::class.java)
+                                    startActivity(i)
+                                }
                             } else {
                                 // If sign in fails, display a message to the user.
-                                Log.w("DB_ERROR", "signInWithCredential:failure", task.exception)
-                                updateUI(null)
+                                Log.w("DB_ERROR", "signInWithCredential:failure", t.exception)
+                                Toast.makeText(this, "Something went wrong",Toast.LENGTH_LONG).show()
                             }
                         }
                 }
             } catch (e: ApiException) {
                 // Handle exception
                 Log.d("DB_ERROR", e.toString())
-                updateUI(null)
+                Toast.makeText(this, "Something went wrong",Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -221,22 +227,14 @@ class RegistrationActivity : AppCompatActivity() {
         super.onStart()
         // Check if user is signed in (non-null) and update UI accordingly.
         val currentUser = auth.currentUser
-        updateUI(currentUser);
-    }
-
-    private fun updateUI(currentUser: FirebaseUser?) {
-        if(currentUser!=null)
+        if(currentUser != null)
         {
-            val key = currentUser.uid
-
-            usersTable.child(key).child("EMAIL")
-                .setValue(currentUser.email?.lowercase())
-
-            usersTable.child(key).child("EMAIL_VERIFIED").setValue("true")
-
             //Move to diff Activity
-            val i = Intent(this, AddDetailsActivity::class.java)
+            Toast.makeText(this, "Welcome back ${currentUser.displayName}",Toast.LENGTH_LONG).show()
+            val i = Intent(this, MainActivity::class.java)
             startActivity(i)
         }
     }
+
+
 }

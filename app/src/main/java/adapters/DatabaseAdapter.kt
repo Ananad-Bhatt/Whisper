@@ -1,22 +1,16 @@
 package adapters
 
 import android.util.Log
-import android.widget.Toast
-import android.app.Activity
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.FirebaseDatabase
-import project.social.whisper.RegistrationActivity
 
 class DatabaseAdapter {
 
     //Static methods and variables
     companion object{
         private lateinit var auth:FirebaseAuth
-        lateinit var db:FirebaseDatabase
 
         fun returnUser():FirebaseUser?
         {
