@@ -2,4 +2,5 @@ Final year project
 
 Required features
 	Every edit text should have limited char capacity.
-	
+	Channel create and setting in setting
+	Can change channel from user name(Spinner)

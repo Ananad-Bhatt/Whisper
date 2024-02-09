@@ -40,6 +40,7 @@ android {
     }
 }
 
+
 dependencies {
 
     implementation("androidx.core:core-ktx:1.12.0")
@@ -62,7 +63,14 @@ dependencies {
     //Google sign in/up
     implementation("com.google.android.gms:play-services-auth:20.7.0")
 
+    //Glide
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+
+    //Image Picker
+    implementation("com.github.dhaval2404:imagepicker:2.1")
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+
 }

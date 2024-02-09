@@ -1,15 +1,25 @@
 package fragments
 
 import adapters.DatabaseAdapter
+import android.app.Activity.RESULT_OK
+import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import project.social.whisper.R
@@ -30,11 +40,29 @@ class ProfileFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
-    lateinit var b:FragmentProfileBinding
-    private lateinit var key:String
+    lateinit var b: FragmentProfileBinding
+    private lateinit var key: String
 
     private var usersDetailsTable = Firebase.database.getReference("USERS_DETAILS")
     private var usersTable = Firebase.database.getReference("USERS")
+
+    //Activity Result Launcher
+    private lateinit var imageCapture: ActivityResultLauncher<Intent>
+
+    //Permission callback
+    private val permissionsResultCallback = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) {
+        when (it) {
+            true -> {
+                Toast.makeText(requireContext(), "Granted", Toast.LENGTH_LONG).show()
+            }
+
+            false -> {
+                Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,12 +77,147 @@ class ProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-         b = FragmentProfileBinding.inflate(inflater, container, false)
+        b = FragmentProfileBinding.inflate(inflater, container, false)
+
+        imageCapture = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) {
+            if (it.resultCode == RESULT_OK) {
+                val data = it.data
+                val uri: Uri? = data?.data
+                b.imgProfileUserImage.setImageURI(uri)
+            } else {
+                Toast.makeText(requireContext(), "Image selection canceled", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
 
         key = DatabaseAdapter.returnUser()?.uid.toString()
         clicker()
+        imgClick()
 
         return b.root
+    }
+
+    private fun imgClick() {
+        b.imgProfileUserImage.setOnClickListener {
+            val ad = AlertDialog.Builder(requireContext())
+            ad.setMessage("Take picture from")
+                .setPositiveButton("CAMERA") { _, _ ->
+                    requestCameraPermission()
+
+                    if (hasCameraPermission()) {
+                        openCamera()
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            "Please give permission of camera",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+                .setNegativeButton("TAKE FROM FOLDER") { _, _ ->
+                    requestStoragePermission()
+
+                    if (hasStoragePermission()) {
+                        openExplorer()
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            "Please give permission of storage",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            ad.create()
+            ad.show()
+        }
+    }
+
+    private fun openCamera() {
+        ImagePicker.with(this)
+            .cameraOnly()
+            .crop() //Crop image(Optional), Check Customization for more option
+            .compress(1024) //Final image size will be less than 1 MB(Optional)
+            .maxResultSize(
+                1080,
+                1080
+            ) //Final image resolution will be less than 1080 x 1080(Optional)
+            .createIntent { intent ->
+                imageCapture.launch(intent)
+            }
+    }
+
+    private fun openExplorer() {
+
+        ImagePicker.with(this)
+            .galleryOnly()
+            .crop() //Crop image(Optional), Check Customization for more option
+            .compress(1024) //Final image size will be less than 1 MB(Optional)
+            .maxResultSize(
+                1080,
+                1080
+            ) //Final image resolution will be less than 1080 x 1080(Optional)
+            .createIntent { intent ->
+                imageCapture.launch(intent)
+            }
+    }
+
+    private fun requestStoragePermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val permission = ContextCompat.checkSelfPermission(
+                requireContext(), android.Manifest.permission.READ_MEDIA_IMAGES
+            )
+
+            if (permission != PackageManager.PERMISSION_GRANTED) {
+                permissionsResultCallback.launch(android.Manifest.permission.READ_MEDIA_IMAGES)
+            } else {
+                Toast.makeText(requireContext(), "IMG granted", Toast.LENGTH_LONG).show()
+            }
+        } else {
+            val permission = ContextCompat.checkSelfPermission(
+                requireContext(), android.Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+
+            if (permission != PackageManager.PERMISSION_GRANTED) {
+                permissionsResultCallback.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+            } else {
+                Toast.makeText(requireContext(), "STORAGE granted", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    private fun hasStoragePermission(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                android.Manifest.permission.READ_MEDIA_IMAGES
+            ) == PackageManager.PERMISSION_GRANTED
+        } else {
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                android.Manifest.permission.READ_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+        }
+    }
+
+    private fun requestCameraPermission() {
+        val permission = ContextCompat.checkSelfPermission(
+            requireContext(), android.Manifest.permission.CAMERA
+        )
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            permissionsResultCallback.launch(android.Manifest.permission.CAMERA)
+        } else {
+            Toast.makeText(requireContext(), "CAMERA granted", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun hasCameraPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            requireContext(),
+            android.Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun clicker() {
@@ -112,3 +275,4 @@ class ProfileFragment : Fragment() {
             }
     }
 }
+
