@@ -9,6 +9,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,9 +20,14 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.github.dhaval2404.imagepicker.ImagePicker
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import project.social.whisper.R
 import project.social.whisper.databinding.FragmentProfileBinding
 
@@ -43,8 +49,13 @@ class ProfileFragment : Fragment() {
     lateinit var b: FragmentProfileBinding
     private lateinit var key: String
 
+//    Database
     private var usersDetailsTable = Firebase.database.getReference("USERS_DETAILS")
     private var usersTable = Firebase.database.getReference("USERS")
+
+//    Storage
+    private var userImage = FirebaseStorage.getInstance().getReference("USER_IMAGES")
+
 
     //Activity Result Launcher
     private lateinit var imageCapture: ActivityResultLauncher<Intent>
@@ -79,13 +90,15 @@ class ProfileFragment : Fragment() {
         // Inflate the layout for this fragment
         b = FragmentProfileBinding.inflate(inflater, container, false)
 
+        checkImage()
+
         imageCapture = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) {
             if (it.resultCode == RESULT_OK) {
                 val data = it.data
                 val uri: Uri? = data?.data
-                b.imgProfileUserImage.setImageURI(uri)
+                uploadImage(uri)
             } else {
                 Toast.makeText(requireContext(), "Image selection canceled", Toast.LENGTH_SHORT)
                     .show()
@@ -97,6 +110,72 @@ class ProfileFragment : Fragment() {
         imgClick()
 
         return b.root
+    }
+
+    private fun checkImage()
+    {
+        val key = DatabaseAdapter.returnUser()?.uid.toString()
+
+        try {
+            usersDetailsTable.child(key).child("IMAGE").addListenerForSingleValueEvent(object :
+                ValueEventListener {
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        val url = snapshot.getValue(String::class.java)
+                        Glide.with(requireContext()).load(url).into(b.imgProfileUserImage)
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Check your internet connection",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            })
+        }catch(e:Exception)
+        {
+            Log.d("DB_ERROR",e.toString())
+        }
+    }
+    private fun uploadImage(uri: Uri?) {
+
+        val key = DatabaseAdapter.returnUser()?.uid.toString()
+
+        try {
+            if (uri != null) {
+                userImage.child(key).putFile(uri).addOnSuccessListener {
+
+                    userImage.child(key).downloadUrl.addOnSuccessListener {img ->
+
+                        usersDetailsTable.child(key).child("IMAGE").setValue(img.toString()).addOnSuccessListener {
+
+                            usersDetailsTable.child(key).child("IMAGE").addListenerForSingleValueEvent(object :
+                                ValueEventListener {
+
+                                override fun onDataChange(snapshot: DataSnapshot) {
+                                    val url = snapshot.getValue(String::class.java)
+                                    Glide.with(requireContext()).load(url).into(b.imgProfileUserImage)
+                                }
+
+                                override fun onCancelled(error: DatabaseError) {
+                                    Toast.makeText(requireContext(), "Check your internet connection",Toast.LENGTH_LONG).show()
+                                }
+                            })
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Toast.makeText(requireContext(), "Something went wrong, try again",Toast.LENGTH_LONG).show()
+            }
+        }catch(e:Exception)
+        {
+            Log.d("DB_ERROR",e.toString())
+        }
     }
 
     private fun imgClick() {
