@@ -68,6 +68,7 @@ dependencies {
 
     //Image Picker
     implementation("com.github.dhaval2404:imagepicker:2.1")
+    implementation("com.google.firebase:firebase-storage:20.3.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
