@@ -1,6 +1,7 @@
 package fragments
 
 import adapters.HomeViewPagerAdapter
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -16,6 +17,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayoutMediator
 import project.social.whisper.R
+import project.social.whisper.SearchActivity
 import project.social.whisper.databinding.FragmentHomeBinding
 
 
@@ -53,7 +55,6 @@ class HomeFragment : Fragment() {
         val tab = b.homeFragTabLayout
         val vp = b.homeFragViewPager
         setHasOptionsMenu(true)
-        val tool = b.homeFragToolbar
 
         val activity = activity as AppCompatActivity?
         activity!!.setSupportActionBar(b.homeFragToolbar)
@@ -82,16 +83,14 @@ class HomeFragment : Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        Log.d("ABCDE","HEllo")
         inflater.inflate(R.menu.home_frag_toolbar, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        Log.d("ABCDE","HEllo")
         when(item.itemId)
         {
             R.id.home_tool_search -> {
-                Toast.makeText(activity, "Search", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(requireContext(), SearchActivity::class.java))
             }
             else -> {
                 Toast.makeText(activity, "Create New", Toast.LENGTH_SHORT).show()
