@@ -3,19 +3,21 @@ package fragments
 import adapters.HomeViewPagerAdapter
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import android.widget.Toolbar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.FragmentManager
-import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.google.android.material.tabs.TabLayout
+import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayoutMediator
 import project.social.whisper.R
 import project.social.whisper.databinding.FragmentHomeBinding
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -50,6 +52,11 @@ class HomeFragment : Fragment() {
 
         val tab = b.homeFragTabLayout
         val vp = b.homeFragViewPager
+        setHasOptionsMenu(true)
+        val tool = b.homeFragToolbar
+
+        val activity = activity as AppCompatActivity?
+        activity!!.setSupportActionBar(b.homeFragToolbar)
 
         val fa = HomeViewPagerAdapter(this)
         vp.adapter = fa
@@ -72,9 +79,15 @@ class HomeFragment : Fragment() {
         }.attach()
 
         return b.root
+    }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        Log.d("ABCDE","HEllo")
+        inflater.inflate(R.menu.home_frag_toolbar, menu)
+        super.onCreateOptionsMenu(menu, inflater)
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        Log.d("ABCDE","HEllo")
         when(item.itemId)
         {
             R.id.home_tool_search -> {
@@ -96,7 +109,6 @@ class HomeFragment : Fragment() {
          * @param param2 Parameter 2.
          * @return A new instance of fragment HomeFragment.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             HomeFragment().apply {

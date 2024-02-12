@@ -40,7 +40,6 @@ class HomeFollowingFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         val b = FragmentHomeFollowingBinding.inflate(inflater,container,false)
-
         val posts = ArrayList<HomeModel>()
 
         b.homeFollowingFragRecyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL ,false)
