@@ -4,3 +4,5 @@ Required features
 	Every edit text should have limited char capacity.
 	Channel create and setting in setting
 	Can change channel from user name(Spinner)
+	In search activity there should be limited search max 10
+	No space in username is allowed

@@ -50,7 +50,7 @@ class ProfileFragment : Fragment() {
     private lateinit var key: String
 
 //    Database
-    private var usersDetailsTable = Firebase.database.getReference("USERS_DETAILS")
+    private var usersDetailsTable = Firebase.database.getReference("USER_DETAILS")
     private var usersTable = Firebase.database.getReference("USERS")
 
 //    Storage
