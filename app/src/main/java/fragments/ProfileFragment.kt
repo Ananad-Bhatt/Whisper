@@ -25,13 +25,9 @@ import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
 import project.social.whisper.R
 import project.social.whisper.databinding.FragmentProfileBinding
 
-// TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -48,14 +44,6 @@ class ProfileFragment : Fragment() {
 
     lateinit var b: FragmentProfileBinding
     private lateinit var key: String
-
-//    Database
-    private var usersDetailsTable = Firebase.database.getReference("USER_DETAILS")
-    private var usersTable = Firebase.database.getReference("USERS")
-
-//    Storage
-    private var userImage = FirebaseStorage.getInstance().getReference("USER_IMAGES")
-
 
     //Activity Result Launcher
     private lateinit var imageCapture: ActivityResultLauncher<Intent>
@@ -117,7 +105,7 @@ class ProfileFragment : Fragment() {
         val key = DatabaseAdapter.returnUser()?.uid.toString()
 
         try {
-            usersDetailsTable.child(key).child("IMAGE").addListenerForSingleValueEvent(object :
+            DatabaseAdapter.userDetailsTable.child(key).child("IMAGE").addListenerForSingleValueEvent(object :
                 ValueEventListener {
 
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -146,13 +134,13 @@ class ProfileFragment : Fragment() {
 
         try {
             if (uri != null) {
-                userImage.child(key).putFile(uri).addOnSuccessListener {
+                DatabaseAdapter.userImage.child(key).putFile(uri).addOnSuccessListener {
 
-                    userImage.child(key).downloadUrl.addOnSuccessListener {img ->
+                    DatabaseAdapter.userImage.child(key).downloadUrl.addOnSuccessListener {img ->
 
-                        usersDetailsTable.child(key).child("IMAGE").setValue(img.toString()).addOnSuccessListener {
+                        DatabaseAdapter.userDetailsTable.child(key).child("IMAGE").setValue(img.toString()).addOnSuccessListener {
 
-                            usersDetailsTable.child(key).child("IMAGE").addListenerForSingleValueEvent(object :
+                            DatabaseAdapter.userDetailsTable.child(key).child("IMAGE").addListenerForSingleValueEvent(object :
                                 ValueEventListener {
 
                                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -310,7 +298,8 @@ class ProfileFragment : Fragment() {
 
             btnSubmit.setOnClickListener {
                 b.txtProfileUserName.text = edtVal.text.toString()
-                usersTable.child(key).child("USER_NAME").setValue(edtVal.text.toString())
+                DatabaseAdapter.usersTable.child(key).child("USER_NAME").setValue(edtVal.text.toString())
+                DatabaseAdapter.userDetailsTable.child(key).child("USER_NAME").setValue(edtVal.text.toString())
             }
 
             d.show()
@@ -325,7 +314,7 @@ class ProfileFragment : Fragment() {
 
             btnSubmit.setOnClickListener {
                 b.txtProfileAbout.text = edtVal.text.toString()
-                usersDetailsTable.child(key).child("ABOUT").setValue(edtVal.text.toString())
+                DatabaseAdapter.userDetailsTable.child(key).child("ABOUT").setValue(edtVal.text.toString())
             }
 
             d.show()

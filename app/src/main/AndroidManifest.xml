@@ -29,9 +29,6 @@
             android:name=".AddDetailsActivity"
             android:exported="false" />
         <activity
-            android:name=".GoogleSignIn"
-            android:exported="false" />
-        <activity
             android:name=".ForgotPasswordActivity"
             android:exported="false" />
         <activity

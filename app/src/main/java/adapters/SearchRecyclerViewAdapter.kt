@@ -1,5 +1,6 @@
 package adapters
 
+import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -9,11 +10,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import models.SearchModel
 import project.social.whisper.R
 import project.social.whisper.SearchActivity
 
-class SearchRecyclerViewAdapter(private val searchResults:ArrayList<SearchModel>) :
+class SearchRecyclerViewAdapter(private val context:Context,private val searchResults:ArrayList<SearchModel>) :
     RecyclerView.Adapter<SearchRecyclerViewAdapter.SearchViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
@@ -29,7 +31,7 @@ class SearchRecyclerViewAdapter(private val searchResults:ArrayList<SearchModel>
 
     override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
 
-        holder.userImg.setImageResource(searchResults[position].userImg)
+        Glide.with(context).load(searchResults[position].userImg).into(holder.userImg)
         holder.userName.text = searchResults[position].userName
 
         holder.container.setOnClickListener {

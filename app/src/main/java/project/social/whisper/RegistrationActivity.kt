@@ -12,15 +12,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import project.social.whisper.databinding.ActivityRegistrationBinding
 
 class RegistrationActivity : AppCompatActivity() {
-
-    private var usersTable = Firebase.database.getReference("USERS")
 
     //Google
     private lateinit var auth: FirebaseAuth
@@ -141,10 +136,10 @@ class RegistrationActivity : AppCompatActivity() {
 
                             if (key != null) {
                                 try {
-                                    usersTable.child(key).child("EMAIL")
+                                    DatabaseAdapter.usersTable.child(key).child("EMAIL")
                                         .setValue(DatabaseAdapter.returnUser()?.email?.lowercase())
 
-                                    usersTable.child(key).child("EMAIL_VERIFIED")
+                                    DatabaseAdapter.usersTable.child(key).child("EMAIL_VERIFIED")
                                         .setValue("false")
 
                                 }catch(e:Exception)
@@ -194,15 +189,15 @@ class RegistrationActivity : AppCompatActivity() {
                             if (t.isSuccessful) {
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d("DB_ERROR", "signInWithCredential:success")
-                                val user = auth.currentUser
+                                val user = DatabaseAdapter.returnUser()
                                 if(user!=null)
                                 {
                                     val key = user.uid
 
-                                    usersTable.child(key).child("EMAIL")
+                                    DatabaseAdapter.usersTable.child(key).child("EMAIL")
                                         .setValue(user.email?.lowercase())
 
-                                    usersTable.child(key).child("EMAIL_VERIFIED").setValue("true")
+                                    DatabaseAdapter.usersTable.child(key).child("EMAIL_VERIFIED").setValue("true")
 
                                     //Move to diff Activity
                                     val i = Intent(this, MainActivity::class.java)
@@ -226,8 +221,8 @@ class RegistrationActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         // Check if user is signed in (non-null) and update UI accordingly.
-        val currentUser = auth.currentUser
-        if(currentUser != null)
+        val currentUser = DatabaseAdapter.returnUser()
+        if( currentUser != null)
         {
             //Move to diff Activity
             Toast.makeText(this, "Welcome back ${currentUser.displayName}",Toast.LENGTH_LONG).show()

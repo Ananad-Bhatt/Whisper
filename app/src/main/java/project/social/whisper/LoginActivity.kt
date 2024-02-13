@@ -23,7 +23,6 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var gso:GoogleSignInOptions
     private lateinit var gClient: GoogleSignInClient
     private var RC_SIGN_IN = 123
-    private var usersTable = Firebase.database.getReference("USERS")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,10 +113,10 @@ class LoginActivity : AppCompatActivity() {
                                 {
                                     val key = user.uid
 
-                                    usersTable.child(key).child("EMAIL")
+                                    DatabaseAdapter.usersTable.child(key).child("EMAIL")
                                         .setValue(user.email?.lowercase())
 
-                                    usersTable.child(key).child("EMAIL_VERIFIED").setValue("true")
+                                    DatabaseAdapter.usersTable.child(key).child("EMAIL_VERIFIED").setValue("true")
 
                                     //Move to diff Activity
                                     val i = Intent(this, MainActivity::class.java)

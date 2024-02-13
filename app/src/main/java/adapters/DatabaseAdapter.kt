@@ -5,12 +5,22 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 
 class DatabaseAdapter {
 
     //Static methods and variables
     companion object{
         private lateinit var auth:FirebaseAuth
+
+        //DB tables
+        var usersTable = Firebase.database.getReference("USERS")
+        var userDetailsTable = Firebase.database.getReference("USER_DETAILS")
+
+        //Storage
+        var userImage = FirebaseStorage.getInstance().getReference("USER_IMAGES")
 
         fun returnUser():FirebaseUser?
         {

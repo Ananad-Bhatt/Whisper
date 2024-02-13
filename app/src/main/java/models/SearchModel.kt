@@ -2,5 +2,5 @@ package models
 
 data class SearchModel (
     val userName: String,
-    val userImg: Int, // Resource ID for the image
+    val userImg: String, // Url for the image
 )

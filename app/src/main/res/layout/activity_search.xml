@@ -1,46 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".SearchActivity">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/search_act_toolbar"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/search_act_app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/main_act_primary">
+            android:layout_alignParentTop="true">
 
-            <LinearLayout
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/search_act_toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="?actionBarSize"
+                android:background="@color/main_act_primary">
 
-                <EditText
-                    android:id="@+id/toolbar_search"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/search"
-                    android:backgroundTint="@color/secondary"
-                    android:padding="10dp"
-                    android:inputType="textFilter"
-                    android:background="@drawable/edt_back"/>
+                    android:layout_height="wrap_content">
 
-            </LinearLayout>
+                    <EditText
+                        android:id="@+id/toolbar_search"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/search"
+                        android:backgroundTint="@color/secondary"
+                        android:padding="10dp"
+                        android:inputType="textFilter"
+                        android:background="@drawable/edt_back"/>
 
-        </androidx.appcompat.widget.Toolbar>
+                </LinearLayout>
 
-    </com.google.android.material.appbar.AppBarLayout>
+            </androidx.appcompat.widget.Toolbar>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/search_act_rv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"/>
+        </com.google.android.material.appbar.AppBarLayout>
 
-</LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/search_act_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:layout_below="@+id/search_act_app_bar" />
+    </RelativeLayout>
+
+</ScrollView>
