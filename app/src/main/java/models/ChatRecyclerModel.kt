@@ -1,6 +1,6 @@
 package models
 
-data class ChatModel(
+data class ChatRecyclerModel(
     val title: String,
     val img: Int, // Resource ID for the image
     val subTitle: String

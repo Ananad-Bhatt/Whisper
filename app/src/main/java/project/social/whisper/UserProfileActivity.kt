@@ -15,6 +15,7 @@ class UserProfileActivity : AppCompatActivity() {
 
     private lateinit var b:ActivityUserProfileBinding
     private lateinit var imgUrl:String
+    private lateinit var key:String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +30,11 @@ class UserProfileActivity : AppCompatActivity() {
         findUser(userName)
 
         b.btnProfileActMessage.setOnClickListener {
+            val i = Intent(this, ChatActivity::class.java)
+            i.putExtra("userName",userName)
+            i.putExtra("imgUrl",imgUrl)
+            i.putExtra("key",key)
+            startActivity(i)
         }
 
     }
@@ -39,6 +45,7 @@ class UserProfileActivity : AppCompatActivity() {
 
                 for(s in snapshot.children)
                 {
+                    key = s.key!!
                     if(s.child("USER_NAME").getValue(String::class.java) == userName)
                     {
                         imgUrl = s.child("IMAGE").getValue(String::class.java)?:

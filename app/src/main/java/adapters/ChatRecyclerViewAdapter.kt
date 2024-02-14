@@ -6,10 +6,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import models.ChatModel
+import models.ChatRecyclerModel
 import project.social.whisper.R
 
-class ChatRecyclerViewAdapter(private val usersList:ArrayList<ChatModel>) :
+class ChatRecyclerViewAdapter(private val usersList:ArrayList<ChatRecyclerModel>) :
     RecyclerView.Adapter<ChatRecyclerViewAdapter.ChatViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {

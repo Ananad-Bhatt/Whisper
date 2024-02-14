@@ -6,9 +6,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
-import models.ChatModel
+import models.ChatRecyclerModel
 import project.social.whisper.R
 import project.social.whisper.databinding.FragmentChatCurrentBinding
 
@@ -41,24 +40,24 @@ class ChatCurrentFragment : Fragment() {
         // View binding
         val b = FragmentChatCurrentBinding.inflate(inflater, container, false)
 
-        val users = ArrayList<ChatModel>()
+        val users = ArrayList<ChatRecyclerModel>()
 
         b.chatCurrentFragRecyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL ,false)
 
-        users.add(ChatModel("Het",R.mipmap.ic_launcher_round, "Hello"))
-        users.add(ChatModel("Het2",R.mipmap.ic_launcher_round, "Hello"))
-        users.add(ChatModel("Het3",R.mipmap.ic_launcher_round, "Hello"))
-        users.add(ChatModel("Het4",R.mipmap.ic_launcher_round, "Hello"))
-        users.add(ChatModel("Het5",R.mipmap.ic_launcher_round, "Hello"))
-        users.add(ChatModel("Het6",R.mipmap.ic_launcher_round, "Hello"))
-        users.add(ChatModel("Het7",R.mipmap.ic_launcher_round, "Hello"))
-        users.add(ChatModel("Het8",R.mipmap.ic_launcher_round, "Hello"))
-        users.add(ChatModel("Het9",R.mipmap.ic_launcher_round, "Hello"))
-        users.add(ChatModel("Het10",R.mipmap.ic_launcher_round, "Hello"))
-        users.add(ChatModel("Het11",R.mipmap.ic_launcher_round, "Hello"))
-        users.add(ChatModel("Het12",R.mipmap.ic_launcher_round, "Hello"))
-        users.add(ChatModel("Het13",R.mipmap.ic_launcher_round, "Hello"))
-        users.add(ChatModel("Het14",R.mipmap.ic_launcher_round, "Hello"))
+        users.add(ChatRecyclerModel("Het",R.mipmap.ic_launcher_round, "Hello"))
+        users.add(ChatRecyclerModel("Het2",R.mipmap.ic_launcher_round, "Hello"))
+        users.add(ChatRecyclerModel("Het3",R.mipmap.ic_launcher_round, "Hello"))
+        users.add(ChatRecyclerModel("Het4",R.mipmap.ic_launcher_round, "Hello"))
+        users.add(ChatRecyclerModel("Het5",R.mipmap.ic_launcher_round, "Hello"))
+        users.add(ChatRecyclerModel("Het6",R.mipmap.ic_launcher_round, "Hello"))
+        users.add(ChatRecyclerModel("Het7",R.mipmap.ic_launcher_round, "Hello"))
+        users.add(ChatRecyclerModel("Het8",R.mipmap.ic_launcher_round, "Hello"))
+        users.add(ChatRecyclerModel("Het9",R.mipmap.ic_launcher_round, "Hello"))
+        users.add(ChatRecyclerModel("Het10",R.mipmap.ic_launcher_round, "Hello"))
+        users.add(ChatRecyclerModel("Het11",R.mipmap.ic_launcher_round, "Hello"))
+        users.add(ChatRecyclerModel("Het12",R.mipmap.ic_launcher_round, "Hello"))
+        users.add(ChatRecyclerModel("Het13",R.mipmap.ic_launcher_round, "Hello"))
+        users.add(ChatRecyclerModel("Het14",R.mipmap.ic_launcher_round, "Hello"))
 
         val adapter = ChatRecyclerViewAdapter(users)
 
