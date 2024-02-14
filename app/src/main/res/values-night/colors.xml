@@ -28,4 +28,8 @@
     <!--    Link-->
     <color name="link">#00E1FF</color>
 
+<!--    Chat-->
+    <color name="sender">@color/main_act_fill_txt</color>
+    <color name="receiver">#000</color>
+    <color name="text_receiver">#FFF</color>
 </resources>

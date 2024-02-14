@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_sender_chat"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:maxHeight="@dimen/_380sdp"
+    android:minHeight="@dimen/_28sdp"
+    android:layout_margin="10dp"
+    android:padding="10dp"
+    android:layout_gravity="end"
+    android:background="@drawable/sender_chat_bubble">
+
+        <TextView
+            android:id="@+id/tv_sender_chat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textColor="@color/white"
+            android:minWidth="@dimen/_45sdp"
+            android:maxWidth="@dimen/_250sdp"
+            android:textSize="@dimen/_13ssp"/>
+
+        <TextView
+            android:id="@+id/tv_sender_chat_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textSize="@dimen/_7ssp"
+            android:textColor="@color/white"
+            android:layout_gravity="end"/>
+
+</LinearLayout>
