@@ -1,6 +1,7 @@
 package adapters
 
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,7 @@ import com.bumptech.glide.Glide
 import models.SearchModel
 import project.social.whisper.R
 import project.social.whisper.SearchActivity
+import project.social.whisper.UserProfileActivity
 
 class SearchRecyclerViewAdapter(private val context:Context,private val searchResults:ArrayList<SearchModel>) :
     RecyclerView.Adapter<SearchRecyclerViewAdapter.SearchViewHolder>() {
@@ -35,7 +37,9 @@ class SearchRecyclerViewAdapter(private val context:Context,private val searchRe
         holder.userName.text = searchResults[position].userName
 
         holder.container.setOnClickListener {
-            Log.d("RESULT",holder.userName.text.toString())
+            val i = Intent(context, UserProfileActivity::class.java)
+            i.putExtra("userName",holder.userName.text.toString())
+            context.startActivity(i)
         }
 
     }
