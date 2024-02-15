@@ -62,6 +62,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_chat_act"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/search_act_app_bar"

@@ -1,33 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/ll_sender_chat"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:maxHeight="@dimen/_380sdp"
-    android:minHeight="@dimen/_28sdp"
-    android:layout_margin="10dp"
-    android:padding="10dp"
-    android:layout_gravity="end"
-    android:background="@drawable/sender_chat_bubble">
+    android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/tv_sender_chat"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:textColor="@color/white"
-            android:minWidth="@dimen/_45sdp"
-            android:maxWidth="@dimen/_250sdp"
-            android:textSize="@dimen/_13ssp"/>
+            android:background="@drawable/sender_chat_bubble"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="10dp"
+            android:padding="10dp"
+            android:maxWidth="310dp"
+            android:maxHeight="400dp"
+            android:minHeight="30dp">
 
-        <TextView
-            android:id="@+id/tv_sender_chat_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:textSize="@dimen/_7ssp"
-            android:textColor="@color/white"
-            android:layout_gravity="end"/>
+                <TextView
+                    android:id="@+id/tv_sender_chat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name"
+                    android:textColor="@color/white"
+                    android:minWidth="@dimen/_45sdp"
+                    android:maxWidth="@dimen/_250sdp"
+                    android:textSize="@dimen/_13ssp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/tv_sender_chat_time"/>
 
-</LinearLayout>
+                <TextView
+                    android:id="@+id/tv_sender_chat_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name"
+                    android:textSize="@dimen/_7ssp"
+                    android:textColor="@color/white"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_sender_chat"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+</RelativeLayout>
