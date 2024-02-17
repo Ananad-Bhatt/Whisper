@@ -58,4 +58,9 @@
 
 <!--    Chat activity-->
     <string name="enter_message">Enter Message</string>
+
+<!--    Accept request-->
+    <string name="accept_request">Do you wanted to accept message request?</string>
+    <string name="accept">Accept</string>
+    <string name="decline">Decline</string>
 </resources>

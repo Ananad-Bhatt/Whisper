@@ -19,6 +19,7 @@ class DatabaseAdapter {
         var usersTable = Firebase.database.getReference("USERS")
         var userDetailsTable = Firebase.database.getReference("USER_DETAILS")
         var chatTable = Firebase.database.getReference("CHATS")
+        var chatRooms = Firebase.database.getReference("CHAT_ROOMS")
 
         //Storage
         var userImage = FirebaseStorage.getInstance().getReference("USER_IMAGES")
