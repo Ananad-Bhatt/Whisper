@@ -2,6 +2,7 @@ package project.social.whisper
 
 import adapters.ChatAdapter
 import adapters.DatabaseAdapter
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -69,19 +70,21 @@ class ChatActivity : AppCompatActivity() {
 
         //Accept Requests buttons
         b.btnActMsgReq.setOnClickListener {
-            Log.d("BTN_PROB","hello")
             try {
-                Log.d("BTN_PROB","hello2")
                 DatabaseAdapter.chatRooms.child(receiverRoom).child("IS_ACCEPTED").setValue(true)
                     .addOnCompleteListener {
-                        Log.d("BTN_PROB","hello3")
                         b.llChatActMsgReq.visibility = View.GONE
                     }
             }catch(e:Exception)
             {
-                Log.d("BTN_PROB","hello???")
                 Log.d("DB_ERROR",e.toString())
             }
+        }
+
+        b.tvChatActUserName.setOnClickListener {
+            val i = Intent(this, UserProfileActivity::class.java)
+            i.putExtra("userName",b.tvChatActUserName.text.toString())
+            startActivity(i)
         }
 
         //Decline Requests buttons
@@ -110,7 +113,7 @@ class ChatActivity : AppCompatActivity() {
                         {
                             val key = s.key!!
 
-                            if(key.contains(senderId))
+                            if(key == receiverRoom)
                             {
                                 isAccepted = s.child("IS_ACCEPTED").getValue(Boolean::class.java)!!
 
@@ -161,8 +164,7 @@ class ChatActivity : AppCompatActivity() {
 
     private fun sendData() {
         b.imgChatActSend.setOnClickListener {
-            sendingMessage()
-            isRequesting()
+                sendingMessage()
         }
     }
 
@@ -179,6 +181,7 @@ class ChatActivity : AppCompatActivity() {
             try {
                 DatabaseAdapter.chatTable.child(senderRoom).push().setValue(chatMap)
                 DatabaseAdapter.chatTable.child(receiverRoom).push().setValue(chatMap)
+                isRequesting(msg)
             }catch(e:Exception)
             {
                 Log.d("DB_ERROR",e.toString())
@@ -188,9 +191,10 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    private fun isRequesting() {
+    private fun isRequesting(msg:String) {
 
         var request = true
+        var isSender = true
 
         try {
             DatabaseAdapter.chatRooms.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -202,6 +206,10 @@ class ChatActivity : AppCompatActivity() {
 
                             if (key == senderRoom || key == receiverRoom) {
                                 request = false
+
+                                val user = s.child("USER_1").getValue(String::class.java)!!
+
+                                isSender = user == senderId
                             }
                         }
                     }
@@ -215,6 +223,20 @@ class ChatActivity : AppCompatActivity() {
 
                             DatabaseAdapter.chatRooms.child(senderRoom).child("IS_ACCEPTED")
                                 .setValue(false)
+
+                            DatabaseAdapter.chatRooms.child(senderRoom).child("LAST_MESSAGE")
+                                .setValue(msg)
+                        }
+                        else
+                        {
+                            if(isSender) {
+                                DatabaseAdapter.chatRooms.child(senderRoom).child("LAST_MESSAGE")
+                                    .setValue(msg)
+                            }else
+                            {
+                                DatabaseAdapter.chatRooms.child(receiverRoom).child("LAST_MESSAGE")
+                                    .setValue(msg)
+                            }
                         }
 
                 }

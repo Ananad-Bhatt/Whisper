@@ -44,8 +44,6 @@ class ChatFragment : Fragment() {
         // View binding
         val b = FragmentChatBinding.inflate(inflater, container, false)
 
-        Toast.makeText(context,DatabaseAdapter.returnUser()?.email,Toast.LENGTH_LONG).show()
-
         val tab = b.chatFragTabLayout
         val vp = b.chatFragViewPager
 

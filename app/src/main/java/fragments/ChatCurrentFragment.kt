@@ -1,13 +1,20 @@
 package fragments
 
 import adapters.ChatRecyclerViewAdapter
+import adapters.DatabaseAdapter
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import models.ChatRecyclerModel
+import models.ChatUserModel
 import project.social.whisper.R
 import project.social.whisper.databinding.FragmentChatCurrentBinding
 
@@ -25,6 +32,14 @@ class ChatCurrentFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    private var senderId = DatabaseAdapter.returnUser()?.uid
+
+    private lateinit var users:ArrayList<ChatRecyclerModel>
+    private lateinit var usersKey:ArrayList<ChatUserModel>
+
+    private lateinit var b:FragmentChatCurrentBinding
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -38,32 +53,111 @@ class ChatCurrentFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         // View binding
-        val b = FragmentChatCurrentBinding.inflate(inflater, container, false)
+        b = FragmentChatCurrentBinding.inflate(inflater, container, false)
 
-        val users = ArrayList<ChatRecyclerModel>()
+        users = ArrayList()
+        usersKey = ArrayList()
 
         b.chatCurrentFragRecyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL ,false)
 
-        users.add(ChatRecyclerModel("Het",R.mipmap.ic_launcher_round, "Hello"))
-        users.add(ChatRecyclerModel("Het2",R.mipmap.ic_launcher_round, "Hello"))
-        users.add(ChatRecyclerModel("Het3",R.mipmap.ic_launcher_round, "Hello"))
-        users.add(ChatRecyclerModel("Het4",R.mipmap.ic_launcher_round, "Hello"))
-        users.add(ChatRecyclerModel("Het5",R.mipmap.ic_launcher_round, "Hello"))
-        users.add(ChatRecyclerModel("Het6",R.mipmap.ic_launcher_round, "Hello"))
-        users.add(ChatRecyclerModel("Het7",R.mipmap.ic_launcher_round, "Hello"))
-        users.add(ChatRecyclerModel("Het8",R.mipmap.ic_launcher_round, "Hello"))
-        users.add(ChatRecyclerModel("Het9",R.mipmap.ic_launcher_round, "Hello"))
-        users.add(ChatRecyclerModel("Het10",R.mipmap.ic_launcher_round, "Hello"))
-        users.add(ChatRecyclerModel("Het11",R.mipmap.ic_launcher_round, "Hello"))
-        users.add(ChatRecyclerModel("Het12",R.mipmap.ic_launcher_round, "Hello"))
-        users.add(ChatRecyclerModel("Het13",R.mipmap.ic_launcher_round, "Hello"))
-        users.add(ChatRecyclerModel("Het14",R.mipmap.ic_launcher_round, "Hello"))
-
-        val adapter = ChatRecyclerViewAdapter(users)
-
-        b.chatCurrentFragRecyclerView.adapter = adapter
+        fetchingData()
 
         return b.root
+    }
+
+    private fun fetchingData() {
+        var isSender: Boolean
+        var count = 0
+
+        try {
+            DatabaseAdapter.chatRooms.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    Log.d("IDK","onDataChange")
+                    if (snapshot.exists()) {
+                        for(s in snapshot.children)
+                        {
+                            val key = s.key!!
+
+                            if (key.contains(senderId!!)) {
+
+                                val user1 = s.child("USER_1").getValue(String::class.java)!!
+                                val user2 = s.child("USER_2").getValue(String::class.java)!!
+                                val isAccepted = s.child("IS_ACCEPTED").getValue(Boolean::class.java)!!
+                                val lastMessage = s.child("LAST_MESSAGE").getValue(String::class.java)!!
+
+                                isSender = user1 == senderId!!
+
+                                if(isSender)
+                                {
+                                    usersKey.add(ChatUserModel(user2,lastMessage))
+                                }
+                                else{
+                                    if(isAccepted)
+                                    {
+                                        usersKey.add(ChatUserModel(user1,lastMessage))
+                                    }
+                                }
+                            }
+                            count++
+                        }
+
+                        fetchingDetails()
+
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.d("DB_ERROR",error.toString())
+                }
+            })
+        }catch (e:Exception)
+        {
+            Log.d("DB_ERROR",e.toString())
+        }
+    }
+
+    private fun fetchingDetails()
+    {
+        Log.d("IDK","OK")
+        try {
+            for(k in usersKey) {
+                DatabaseAdapter.userDetailsTable.child(k.key)
+                    .addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            Log.d("IDK","onDataChangedddd")
+                            if (snapshot.exists()) {
+                                val userName =
+                                    snapshot.child("USER_NAME").getValue(String::class.java)!!
+                                val imgUrl = snapshot.child("IMAGE").getValue(String::class.java)!!
+
+                                users.add(ChatRecyclerModel(userName, imgUrl, k.lastMessage, k.key))
+                                Log.d("IDK","ADDED")
+                                if(users.size == usersKey.size)
+                                {
+                                    val adapter = ChatRecyclerViewAdapter(requireContext(),users)
+                                    b.chatCurrentFragRecyclerView.adapter = adapter
+                                }
+
+                            } else {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Something went wrong",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            Log.d("DB_ERROR", error.toString())
+                        }
+                    })
+                Log.d("IDK","First round")
+            }
+        }catch(e:Exception)
+        {
+            Log.d("DB_ERROR",e.toString())
+        }
+        Log.d("IDK","user size"+users.size.toString())
     }
 
     companion object {
