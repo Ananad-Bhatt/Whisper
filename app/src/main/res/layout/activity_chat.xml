@@ -107,19 +107,23 @@
         android:id="@+id/ll_chat_act_bottom"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_45sdp"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/_45sdp"
         android:background="@color/main_act_primary">
 
         <EditText
             android:id="@+id/edt_chat_act_message"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_margin="@dimen/_4sdp"
             android:layout_weight="1"
+            android:layout_gravity="center"
             android:textSize="@dimen/_14ssp"
             android:background="@drawable/edt_back"
             android:hint="@string/enter_message"
-            android:inputType="text"
+            android:inputType="textMultiLine"
+            android:maxLines="15"
+            android:isScrollContainer="true"
             android:padding="10dp" />
 
         <ImageView
@@ -128,6 +132,7 @@
             android:layout_height="@dimen/_40sdp"
             android:layout_margin="@dimen/_4sdp"
             android:layout_weight="0"
+            android:layout_gravity="bottom"
             android:background="@android:drawable/ic_menu_send" />
     </LinearLayout>
 

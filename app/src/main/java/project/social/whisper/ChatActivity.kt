@@ -3,13 +3,17 @@ package project.social.whisper
 import adapters.ChatAdapter
 import adapters.DatabaseAdapter
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.Canvas
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.RelativeLayout
 import android.widget.Toast
-import androidx.core.view.isVisible
+import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -17,6 +21,7 @@ import com.google.firebase.database.ValueEventListener
 import models.ChatModel
 import project.social.whisper.databinding.ActivityChatBinding
 import java.util.Date
+
 
 class ChatActivity : AppCompatActivity() {
 
@@ -52,6 +57,9 @@ class ChatActivity : AppCompatActivity() {
         lManager.stackFromEnd = true
         b.rvChatAct.layoutManager = lManager
         b.rvChatAct.adapter = chatAdapter
+
+//        val itemTouchHelper = ItemTouchHelper(simpleCallback)
+//        itemTouchHelper.attachToRecyclerView(b.rvChatAct)
 
 //        b.rvChatAct.addOnLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
 //            if (bottom < oldBottom) {
@@ -93,6 +101,52 @@ class ChatActivity : AppCompatActivity() {
             b.llChatActMsgReq.visibility = View.GONE
         }
     }
+
+//    private var simpleCallback: ItemTouchHelper.SimpleCallback = object : ItemTouchHelper.SimpleCallback(
+//        ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.START or ItemTouchHelper.END,
+//        0
+//    ) {
+//        override fun onMove(
+//            recyclerView: RecyclerView,
+//            viewHolder: RecyclerView.ViewHolder,
+//            target: RecyclerView.ViewHolder
+//        ): Boolean {
+//            return false
+//        }
+//
+//        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {}
+//
+//        override fun onChildDraw(
+//            c: Canvas,
+//            recyclerView: RecyclerView,
+//            viewHolder: RecyclerView.ViewHolder,
+//            dX: Float,
+//            dY: Float,
+//            actionState: Int,
+//            isCurrentlyActive: Boolean
+//        ) {
+//            // Get the ConstraintLayout within the item view
+//            val constraintLayout = viewHolder.itemView.findViewById<ConstraintLayout>(R.id.cl_sender_layout)
+//
+//            // Get the RelativeLayout bounds
+//            val relativeLayout = viewHolder.itemView.findViewById<RelativeLayout>(R.id.ll_sender_chat)
+//            val parentWidth = relativeLayout.width
+//            val parentHeight = relativeLayout.height
+//
+//            // Calculate the bounds of the ConstraintLayout within the RelativeLayout
+//            val layoutParams = constraintLayout.layoutParams as RelativeLayout.LayoutParams
+//            val childLeft = layoutParams.leftMargin
+//            val childTop = layoutParams.topMargin
+//            val childRight = parentWidth - layoutParams.rightMargin - constraintLayout.width
+//            val childBottom = parentHeight - layoutParams.bottomMargin - constraintLayout.height
+//
+//            // Restrict horizontal dragging within the bounds of the RelativeLayout
+//            val clampedDx = dX.coerceIn(childLeft.toFloat(), childRight.toFloat())
+//
+//            // Ensure vertical dragging is disabled
+//            super.onChildDraw(c, recyclerView, viewHolder, clampedDx, 0f, actionState, isCurrentlyActive)
+//        }
+//    }
 
     private fun receiveData() {
         receivingData()
