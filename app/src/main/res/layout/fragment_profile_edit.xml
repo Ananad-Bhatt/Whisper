@@ -6,6 +6,67 @@
     android:gravity="center"
     tools:context="fragments.ProfileEditFragment">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/edit_profile"
+        android:textAllCaps="true"
+        android:textSize="@dimen/_30ssp"
+        style="@style/TEXT"/>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="35dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/img_edit_profile_user_image"
+        android:layout_width="@dimen/_160sdp"
+        android:layout_height="@dimen/_160sdp"
+        android:layout_centerInParent="true"
+        android:src="@drawable/ic_launcher_background"/>
+
+        <ImageView
+            android:id="@+id/img_btn_edit_profile_camera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/camera_rounded"
+            android:layout_alignEnd="@+id/img_edit_profile_user_image"
+            android:layout_alignBottom="@+id/img_edit_profile_user_image"
+            android:backgroundTint="#00FF0000"/>
+    </RelativeLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/username"
+        android:layout_marginTop="25dp"
+        android:minEms="17">
+
+        <EditText
+            android:id="@+id/edt_edit_profile_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/EDITTEXT" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/about"
+        android:layout_marginTop="10dp"
+        android:minEms="17">
+
+        <EditText
+            android:id="@+id/edt_edit_profile_about"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:maxLines="17"
+            style="@style/EDITTEXT"
+            android:isScrollContainer="true" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>
