@@ -24,6 +24,13 @@
             android:textSize="@dimen/_26ssp"/>
 
         <ImageButton
+            android:id="@+id/img_btn_profile_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/edit"
+            android:backgroundTint="#000000FF"/>
+
+        <ImageButton
             android:id="@+id/img_btn_profile_setting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -159,35 +166,6 @@
             android:textSize="@dimen/_14ssp"/>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:layout_marginHorizontal="10dp">
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_profile_follow"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/_35sdp"
-            android:layout_weight="1"
-            style="@style/BUTTON_FILL"
-            android:padding="0dp"
-            android:layout_marginEnd="5dp"
-            android:textSize="@dimen/_13ssp"
-            android:text="@string/follow"/>
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_profile_message"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/_35sdp"
-            android:layout_weight="1"
-            android:padding="0dp"
-            android:layout_marginStart="5dp"
-            style="@style/BUTTON_OUTLINED"
-            android:textSize="@dimen/_13ssp"
-            android:text="@string/message"/>
-
-    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

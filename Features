@@ -7,3 +7,46 @@ Required features
 	In search activity there should be limited search max 10
 	No space in username is allowed
 	Guest username will be allocated if not created
+
+	Whisper is complete private advance chat application (Like teams), So you can only chat with the persons that is added to your list, You cannot even see the other person
+
+
+Done so far
+
+	Chatting
+		Request for message, Accept or decline
+
+	Search user
+
+	Profile page UI
+
+
+
+TODO list (Most Important to Less)
+	
+	Complete profile page (Intermediate)
+		No of Posts, Edit page, Private, public, not visible
+
+	Creating multiple channels (Hard)
+		Settings page of profile
+
+	Chat (Hard)
+		Contact sharing, Voice send, Image and video send, Notification
+
+	Make chat End to End encrypted usign Diffie-Hellman algo (Easy)
+
+	Post - also end to end encrypted (Easy)
+
+	Community - Join by code, Can/Can't be visible (Hard)
+
+	Announcement section for community (Intermediate)
+
+	Customization - Colors, start activity (Extreme)
+
+	Improve UI (Easy)
+
+	Not Compulsory :
+		Location sharing in chat (Hard)
+		Payment gateway, subscription (Extreme)
+		Voice call and video call (Extreme)
+		Swipe to reply in chat (Hard)

@@ -55,6 +55,7 @@
     <string name="message">Message</string>
     <string name="recent_posts">Recent Posts</string>
     <string name="see_all">See all </string>
+    <string name="edit_profile">Edit Profile</string>
 
 <!--    Chat activity-->
     <string name="enter_message">Enter Message</string>
