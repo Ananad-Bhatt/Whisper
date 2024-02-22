@@ -70,6 +70,14 @@ class ProfileFragment : Fragment() {
             ft1.commit()
         }
 
+        b.imgBtnProfileSetting.setOnClickListener {
+            val fm1 = requireActivity().supportFragmentManager
+            val ft1 = fm1.beginTransaction()
+            ft1.replace(R.id.main_container, ProfileSettingFragment())
+            ft1.addToBackStack(null)
+            ft1.commit()
+        }
+
         return b.root
     }
 
