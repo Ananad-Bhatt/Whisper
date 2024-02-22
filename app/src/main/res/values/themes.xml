@@ -48,4 +48,13 @@
         <item name="android:background">@drawable/edt_back</item>
         <item name="android:ems">15</item>
     </style>
+
+    <style name="EDITTEXT_FLOAT">
+        <item name="android:layout_height">@dimen/_45sdp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textSize">@dimen/_14ssp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:padding">@dimen/_10sdp</item>
+        <item name="android:ems">15</item>
+    </style>
 </resources>

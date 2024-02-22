@@ -134,7 +134,7 @@ class ChatCurrentFragment : Fragment() {
                                 Log.d("IDK","ADDED")
                                 if(users.size == usersKey.size)
                                 {
-                                    val adapter = ChatRecyclerViewAdapter(requireContext(),users)
+                                    val adapter = ChatRecyclerViewAdapter(requireActivity(),users)
                                     b.chatCurrentFragRecyclerView.adapter = adapter
                                 }
 

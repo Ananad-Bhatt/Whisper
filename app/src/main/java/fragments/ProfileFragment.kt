@@ -43,25 +43,7 @@ class ProfileFragment : Fragment() {
     private var param2: String? = null
 
     lateinit var b: FragmentProfileBinding
-    private lateinit var key: String
-
-    //Activity Result Launcher
-    private lateinit var imageCapture: ActivityResultLauncher<Intent>
-
-    //Permission callback
-    private val permissionsResultCallback = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) {
-        when (it) {
-            true -> {
-                Toast.makeText(requireContext(), "Granted", Toast.LENGTH_LONG).show()
-            }
-
-            false -> {
-                Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
+    private val key = DatabaseAdapter.returnUser()?.uid!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,7 +60,8 @@ class ProfileFragment : Fragment() {
         // Inflate the layout for this fragment
         b = FragmentProfileBinding.inflate(inflater, container, false)
 
-        checkImage()
+        //checkImage()
+        retrieveData()
 
         b.imgBtnProfileEdit.setOnClickListener {
             val fm1 = requireActivity().supportFragmentManager
@@ -88,24 +71,35 @@ class ProfileFragment : Fragment() {
             ft1.commit()
         }
 
-        imageCapture = registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()
-        ) {
-            if (it.resultCode == RESULT_OK) {
-                val data = it.data
-                val uri: Uri? = data?.data
-                uploadImage(uri)
-            } else {
-                Toast.makeText(requireContext(), "Image selection canceled", Toast.LENGTH_SHORT)
-                    .show()
-            }
-        }
-
-        key = DatabaseAdapter.returnUser()?.uid.toString()
-        clicker()
-        imgClick()
-
         return b.root
+    }
+
+    private fun retrieveData() {
+        DatabaseAdapter.userDetailsTable.child(key).addValueEventListener(object: ValueEventListener {
+            override fun onDataChange(s: DataSnapshot) {
+
+                if(s.exists())
+                {
+                    val userName = s.child("USER_NAME").getValue(String::class.java)
+
+                    val imgUrl = s.child("IMAGE").getValue(String::class.java)?:
+                    "https://53.fs1.hubspotusercontent-na1.net/hub/53/hubfs/image8-2.jpg?width=595&height=400&name=image8-2.jpg"
+
+                    val about = s.child("ABOUT").getValue(String::class.java)?:"Nothing"
+
+                    Glide.with(requireContext()).load(imgUrl).into(b.imgProfileUserImage)
+                    b.txtProfileUserName.text = userName
+                    b.txtProfileAbout.text = about
+                    return
+                }
+
+                Toast.makeText(requireContext(),"Something went horribly wrong!!!",Toast.LENGTH_LONG).show()
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(requireContext(),"We unable to fetch data",Toast.LENGTH_LONG).show()
+            }
+        })
     }
 
     private fun checkImage()
@@ -136,200 +130,8 @@ class ProfileFragment : Fragment() {
             Log.d("DB_ERROR",e.toString())
         }
     }
-    private fun uploadImage(uri: Uri?) {
 
-        val key = DatabaseAdapter.returnUser()?.uid.toString()
 
-        try {
-            if (uri != null) {
-                DatabaseAdapter.userImage.child(key).putFile(uri).addOnSuccessListener {
-
-                    DatabaseAdapter.userImage.child(key).downloadUrl.addOnSuccessListener {img ->
-
-                        DatabaseAdapter.userDetailsTable.child(key).child("IMAGE").setValue(img.toString()).addOnSuccessListener {
-
-                            DatabaseAdapter.userDetailsTable.child(key).child("IMAGE").addListenerForSingleValueEvent(object :
-                                ValueEventListener {
-
-                                override fun onDataChange(snapshot: DataSnapshot) {
-                                    val url = snapshot.getValue(String::class.java)
-                                    Glide.with(requireContext()).load(url).into(b.imgProfileUserImage)
-                                }
-
-                                override fun onCancelled(error: DatabaseError) {
-                                    Toast.makeText(requireContext(), "Check your internet connection",Toast.LENGTH_LONG).show()
-                                }
-                            })
-                        }
-                    }
-                }
-            }
-            else
-            {
-                Toast.makeText(requireContext(), "Something went wrong, try again",Toast.LENGTH_LONG).show()
-            }
-        }catch(e:Exception)
-        {
-            Log.d("DB_ERROR",e.toString())
-        }
-    }
-
-    private fun imgClick() {
-        b.imgProfileUserImage.setOnClickListener {
-            val ad = AlertDialog.Builder(requireContext())
-            ad.setMessage("Take picture from")
-                .setPositiveButton("CAMERA") { _, _ ->
-                    requestCameraPermission()
-
-                    if (hasCameraPermission()) {
-                        openCamera()
-                    } else {
-                        Toast.makeText(
-                            requireContext(),
-                            "Please give permission of camera",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                }
-                .setNegativeButton("TAKE FROM FOLDER") { _, _ ->
-                    requestStoragePermission()
-
-                    if (hasStoragePermission()) {
-                        openExplorer()
-                    } else {
-                        Toast.makeText(
-                            requireContext(),
-                            "Please give permission of storage",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                }
-            ad.create()
-            ad.show()
-        }
-    }
-
-    private fun openCamera() {
-        ImagePicker.with(this)
-            .cameraOnly()
-            .crop() //Crop image(Optional), Check Customization for more option
-            .compress(1024) //Final image size will be less than 1 MB(Optional)
-            .maxResultSize(
-                1080,
-                1080
-            ) //Final image resolution will be less than 1080 x 1080(Optional)
-            .createIntent { intent ->
-                imageCapture.launch(intent)
-            }
-    }
-
-    private fun openExplorer() {
-
-        ImagePicker.with(this)
-            .galleryOnly()
-            .crop() //Crop image(Optional), Check Customization for more option
-            .compress(1024) //Final image size will be less than 1 MB(Optional)
-            .maxResultSize(
-                1080,
-                1080
-            ) //Final image resolution will be less than 1080 x 1080(Optional)
-            .createIntent { intent ->
-                imageCapture.launch(intent)
-            }
-    }
-
-    private fun requestStoragePermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            val permission = ContextCompat.checkSelfPermission(
-                requireContext(), android.Manifest.permission.READ_MEDIA_IMAGES
-            )
-
-            if (permission != PackageManager.PERMISSION_GRANTED) {
-                permissionsResultCallback.launch(android.Manifest.permission.READ_MEDIA_IMAGES)
-            } else {
-                Toast.makeText(requireContext(), "IMG granted", Toast.LENGTH_LONG).show()
-            }
-        } else {
-            val permission = ContextCompat.checkSelfPermission(
-                requireContext(), android.Manifest.permission.READ_EXTERNAL_STORAGE
-            )
-
-            if (permission != PackageManager.PERMISSION_GRANTED) {
-                permissionsResultCallback.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-            } else {
-                Toast.makeText(requireContext(), "STORAGE granted", Toast.LENGTH_LONG).show()
-            }
-        }
-    }
-
-    private fun hasStoragePermission(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            ContextCompat.checkSelfPermission(
-                requireContext(),
-                android.Manifest.permission.READ_MEDIA_IMAGES
-            ) == PackageManager.PERMISSION_GRANTED
-        } else {
-            ContextCompat.checkSelfPermission(
-                requireContext(),
-                android.Manifest.permission.READ_EXTERNAL_STORAGE
-            ) == PackageManager.PERMISSION_GRANTED
-        }
-    }
-
-    private fun requestCameraPermission() {
-        val permission = ContextCompat.checkSelfPermission(
-            requireContext(), android.Manifest.permission.CAMERA
-        )
-
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            permissionsResultCallback.launch(android.Manifest.permission.CAMERA)
-        } else {
-            Toast.makeText(requireContext(), "CAMERA granted", Toast.LENGTH_LONG).show()
-        }
-    }
-
-    private fun hasCameraPermission(): Boolean {
-        return ContextCompat.checkSelfPermission(
-            requireContext(),
-            android.Manifest.permission.CAMERA
-        ) == PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun clicker() {
-
-        b.txtProfileUserName.setOnClickListener {
-            val d = Dialog(requireContext())
-            d.setContentView(R.layout.temp_layout)
-
-            val edtVal = d.findViewById<EditText>(R.id.edt_temp_value)
-            val btnSubmit: Button = d.findViewById(R.id.btn_temp_submit)
-
-            btnSubmit.setOnClickListener {
-                b.txtProfileUserName.text = edtVal.text.toString()
-                DatabaseAdapter.usersTable.child(key).child("USER_NAME").setValue(edtVal.text.toString())
-                DatabaseAdapter.userDetailsTable.child(key).child("USER_NAME").setValue(edtVal.text.toString())
-            }
-
-            d.show()
-        }
-
-        b.txtProfileAbout.setOnClickListener {
-            val d = Dialog(requireContext())
-            d.setContentView(R.layout.temp_layout)
-
-            val edtVal = d.findViewById<EditText>(R.id.edt_temp_value)
-            val btnSubmit: Button = d.findViewById(R.id.btn_temp_submit)
-
-            btnSubmit.setOnClickListener {
-                b.txtProfileAbout.text = edtVal.text.toString()
-                DatabaseAdapter.userDetailsTable.child(key).child("ABOUT").setValue(edtVal.text.toString())
-            }
-
-            d.show()
-
-        }
-
-    }
 
     companion object {
         /**
