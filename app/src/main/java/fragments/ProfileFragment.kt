@@ -60,7 +60,6 @@ class ProfileFragment : Fragment() {
         // Inflate the layout for this fragment
         b = FragmentProfileBinding.inflate(inflater, container, false)
 
-        //checkImage()
         retrieveData()
 
         b.imgBtnProfileEdit.setOnClickListener {
@@ -78,59 +77,37 @@ class ProfileFragment : Fragment() {
         DatabaseAdapter.userDetailsTable.child(key).addValueEventListener(object: ValueEventListener {
             override fun onDataChange(s: DataSnapshot) {
 
-                if(s.exists())
-                {
-                    val userName = s.child("USER_NAME").getValue(String::class.java)
+                if(isAdded) {
+                    if (s.exists()) {
+                        val userName = s.child("USER_NAME").getValue(String::class.java)
 
-                    val imgUrl = s.child("IMAGE").getValue(String::class.java)?:
-                    "https://53.fs1.hubspotusercontent-na1.net/hub/53/hubfs/image8-2.jpg?width=595&height=400&name=image8-2.jpg"
+                        val imgUrl = s.child("IMAGE").getValue(String::class.java)
+                            ?: "https://53.fs1.hubspotusercontent-na1.net/hub/53/hubfs/image8-2.jpg?width=595&height=400&name=image8-2.jpg"
 
-                    val about = s.child("ABOUT").getValue(String::class.java)?:"Nothing"
+                        val about = s.child("ABOUT").getValue(String::class.java) ?: "Nothing"
 
-                    Glide.with(requireContext()).load(imgUrl).into(b.imgProfileUserImage)
-                    b.txtProfileUserName.text = userName
-                    b.txtProfileAbout.text = about
-                    return
-                }
-
-                Toast.makeText(requireContext(),"Something went horribly wrong!!!",Toast.LENGTH_LONG).show()
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(requireContext(),"We unable to fetch data",Toast.LENGTH_LONG).show()
-            }
-        })
-    }
-
-    private fun checkImage()
-    {
-        val key = DatabaseAdapter.returnUser()?.uid.toString()
-
-        try {
-            DatabaseAdapter.userDetailsTable.child(key).child("IMAGE").addListenerForSingleValueEvent(object :
-                ValueEventListener {
-
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists()) {
-                        val url = snapshot.getValue(String::class.java)
-                        Glide.with(requireContext()).load(url).into(b.imgProfileUserImage)
+                        Glide.with(requireContext()).load(imgUrl).into(b.imgProfileUserImage)
+                        b.txtProfileUserName.text = userName
+                        b.txtProfileAbout.text = about
+                        return
                     }
-                }
 
-                override fun onCancelled(error: DatabaseError) {
                     Toast.makeText(
                         requireContext(),
-                        "Check your internet connection",
+                        "Something went horribly wrong!!!",
                         Toast.LENGTH_LONG
                     ).show()
                 }
-            })
-        }catch(e:Exception)
-        {
-            Log.d("DB_ERROR",e.toString())
-        }
-    }
+            }
 
+            override fun onCancelled(error: DatabaseError) {
+                if(isAdded) {
+                    Toast.makeText(requireContext(), "We unable to fetch data", Toast.LENGTH_LONG)
+                        .show()
+                }
+            }
+        })
+    }
 
 
     companion object {

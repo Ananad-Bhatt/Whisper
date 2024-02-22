@@ -64,14 +64,22 @@ class HomeFragment : Fragment() {
 
         val labels = arrayOf("Explore new", "Following")
 
-        tab.setTabTextColors(
-            ContextCompat.getColor(requireContext(), R.color.unselected_tab), // Text color for unselected tabs
-            ContextCompat.getColor(requireContext(), R.color.selected_tab)   // Text color for selected tab
-        )
+        if(isAdded) {
+            tab.setTabTextColors(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.unselected_tab
+                ), // Text color for unselected tabs
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.selected_tab
+                )   // Text color for selected tab
+            )
 
-        tab.setSelectedTabIndicatorColor(
-            ContextCompat.getColor(requireContext(), R.color.selected_tab)
-        )
+            tab.setSelectedTabIndicatorColor(
+                ContextCompat.getColor(requireContext(), R.color.selected_tab)
+            )
+        }
 
 //        Assigning title to the tabs
         TabLayoutMediator(tab, vp
@@ -90,7 +98,9 @@ class HomeFragment : Fragment() {
         when(item.itemId)
         {
             R.id.home_tool_search -> {
-                startActivity(Intent(requireContext(), SearchActivity::class.java))
+                if(isAdded) {
+                    startActivity(Intent(requireContext(), SearchActivity::class.java))
+                }
             }
             else -> {
                 Toast.makeText(activity, "Create New", Toast.LENGTH_SHORT).show()

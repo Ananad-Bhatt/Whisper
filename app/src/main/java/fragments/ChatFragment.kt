@@ -52,14 +52,22 @@ class ChatFragment : Fragment() {
 
         val labels = arrayOf("Chats", "Requests")
 
-        tab.setTabTextColors(
-            ContextCompat.getColor(requireContext(), R.color.unselected_tab), // Text color for unselected tabs
-            ContextCompat.getColor(requireContext(), R.color.selected_tab)   // Text color for selected tab
-        )
+        if(isAdded) {
+            tab.setTabTextColors(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.unselected_tab
+                ), // Text color for unselected tabs
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.selected_tab
+                )   // Text color for selected tab
+            )
 
-        tab.setSelectedTabIndicatorColor(
-            ContextCompat.getColor(requireContext(), R.color.selected_tab)
-        )
+            tab.setSelectedTabIndicatorColor(
+                ContextCompat.getColor(requireContext(), R.color.selected_tab)
+            )
+        }
 
 //        Assigning title to the tabs
         TabLayoutMediator(tab, vp

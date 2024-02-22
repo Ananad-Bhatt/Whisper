@@ -134,16 +134,21 @@ class ChatCurrentFragment : Fragment() {
                                 Log.d("IDK","ADDED")
                                 if(users.size == usersKey.size)
                                 {
-                                    val adapter = ChatRecyclerViewAdapter(requireActivity(),users)
-                                    b.chatCurrentFragRecyclerView.adapter = adapter
+                                    if(isAdded) {
+                                        val adapter =
+                                            ChatRecyclerViewAdapter(requireContext(), users)
+                                        b.chatCurrentFragRecyclerView.adapter = adapter
+                                    }
                                 }
 
                             } else {
-                                Toast.makeText(
-                                    requireContext(),
-                                    "Something went wrong",
-                                    Toast.LENGTH_LONG
-                                ).show()
+                                if(isAdded) {
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "Something went wrong",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
                             }
                         }
 
