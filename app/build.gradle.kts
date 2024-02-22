@@ -62,7 +62,7 @@ dependencies {
     implementation("com.google.firebase:firebase-storage:20.3.0")
 
     //Google sign in/up
-    implementation("com.google.android.gms:play-services-auth:20.7.0")
+    implementation("com.google.android.gms:play-services-auth:21.0.0")
 
     //Glide
     implementation("com.github.bumptech.glide:glide:4.16.0")
@@ -75,6 +75,9 @@ dependencies {
 
     //View Drag
     implementation("com.github.hyuwah:DraggableView:1.0.1")
+
+    //Floating hint design
+    implementation("com.google.android.material:material:1.11.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

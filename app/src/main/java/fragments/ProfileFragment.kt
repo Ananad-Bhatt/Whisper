@@ -80,6 +80,14 @@ class ProfileFragment : Fragment() {
 
         checkImage()
 
+        b.imgBtnProfileEdit.setOnClickListener {
+            val fm1 = requireActivity().supportFragmentManager
+            val ft1 = fm1.beginTransaction()
+            ft1.replace(R.id.main_container, ProfileEditFragment())
+            ft1.addToBackStack(null)
+            ft1.commit()
+        }
+
         imageCapture = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) {

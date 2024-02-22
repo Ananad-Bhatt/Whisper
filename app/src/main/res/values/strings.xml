@@ -57,11 +57,13 @@
     <string name="see_all">See all </string>
     <string name="edit_profile">Edit Profile</string>
 
-<!--    Chat activity-->
+    <!--    Chat activity-->
     <string name="enter_message">Enter Message</string>
 
-<!--    Accept request-->
+    <!--    Accept request-->
     <string name="accept_request">Do you wanted to accept message request?</string>
     <string name="accept">Accept</string>
     <string name="decline">Decline</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
