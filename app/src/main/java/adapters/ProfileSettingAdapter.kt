@@ -33,6 +33,7 @@ class ProfileSettingAdapter(val context: FragmentActivity, private val items: Li
                     val fm1 = context.supportFragmentManager
                     val ft1 = fm1.beginTransaction()
                     ft1.replace(R.id.main_container, ProfileSettingAccountFragment())
+                    ft1.addToBackStack(null)
                     ft1.commit()
                 }
             }

@@ -65,5 +65,15 @@
     <string name="accept_request">Do you wanted to accept message request?</string>
     <string name="accept">Accept</string>
     <string name="decline">Decline</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+<!--    Profile account setting-->
+    <string name="account_setting">Account setting</string>
+    <string name="account_type">Account type</string>
+
+    <string-array name="account_type_array">
+        <item>PUBLIC</item>
+        <item>PRIVATE</item>
+        <item>NOT VISIBLE</item>
+    </string-array>
+
 </resources>

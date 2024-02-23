@@ -81,6 +81,12 @@ class SearchActivity : AppCompatActivity() {
                             continue
                         }
 
+                        val type = i.child("ACCOUNT_TYPE").getValue(String::class.java) ?: "PUBLIC"
+                        if(type == "NOT VISIBLE")
+                        {
+                            continue
+                        }
+
                         val userName: String = if(i.child("USER_NAME").exists()) {
                             i.child("USER_NAME").getValue(String::class.java) ?: ""
                         } else {
