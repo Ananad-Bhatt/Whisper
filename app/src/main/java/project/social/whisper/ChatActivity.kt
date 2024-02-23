@@ -3,17 +3,12 @@ package project.social.whisper
 import adapters.ChatAdapter
 import adapters.DatabaseAdapter
 import android.content.Intent
-import android.graphics.Canvas
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -28,9 +23,10 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var b:ActivityChatBinding
 
     private lateinit var key:String
+    private lateinit var uid:String
 
-    private lateinit var senderId:String
-    private lateinit var recId:String
+    private lateinit var senderKey:String
+    private lateinit var receiverKey:String
 
     private lateinit var senderRoom:String
     private lateinit var receiverRoom:String
@@ -45,13 +41,16 @@ class ChatActivity : AppCompatActivity() {
         b = ActivityChatBinding.inflate(layoutInflater)
         setContentView(b.root)
 
-        key = intent.getStringExtra("key").toString()
+        key = intent.getStringExtra("key")!!
+        uid = intent.getStringExtra("uid")!!
+        val userName = intent.getStringExtra("userName")!!
+        val imgUrl = intent.getStringExtra("imgUrl")!!
 
-        senderId = DatabaseAdapter.returnUser()?.uid!!
-        recId = key
+        senderKey = DatabaseAdapter.key
+        receiverKey = key
 
-        senderRoom = senderId + recId
-        receiverRoom = recId + senderId
+        senderRoom = senderKey + receiverKey
+        receiverRoom = receiverKey + senderKey
 
         val lManager = LinearLayoutManager(this)
         lManager.stackFromEnd = true
@@ -69,9 +68,6 @@ class ChatActivity : AppCompatActivity() {
 
         receiveData()
         sendData()
-
-        val userName = intent.getStringExtra("userName")
-        val imgUrl = intent.getStringExtra("imgUrl")
 
         b.tvChatActUserName.text = userName
         Glide.with(this).load(imgUrl).into(b.imgChatActUserImage)
@@ -228,7 +224,8 @@ class ChatActivity : AppCompatActivity() {
             val msg = b.edtChatActMessage.text.toString()
 
             val chatMap = HashMap<String, Any>()
-            chatMap["USER_KEY"] = senderId
+            chatMap["SENDER_KEY"] = senderKey
+            chatMap["SENDER_UID"] = DatabaseAdapter.returnUser()?.uid!!
             chatMap["MESSAGE"] = msg
             chatMap["TIMESTAMP"] = Date().time
 
@@ -263,17 +260,23 @@ class ChatActivity : AppCompatActivity() {
 
                                 val user = s.child("USER_1").getValue(String::class.java)!!
 
-                                isSender = user == senderId
+                                isSender = user == senderKey
                             }
                         }
                     }
 
                         if (request) {
                             DatabaseAdapter.chatRooms.child(senderRoom).child("USER_1")
-                                .setValue(senderId)
+                                .setValue(senderKey)
+
+                            DatabaseAdapter.chatRooms.child(senderRoom).child("USER_1_UID")
+                                .setValue(DatabaseAdapter.returnUser()?.uid!!)
 
                             DatabaseAdapter.chatRooms.child(senderRoom).child("USER_2")
-                                .setValue(recId)
+                                .setValue(receiverKey)
+
+                            DatabaseAdapter.chatRooms.child(senderRoom).child("USER_2_UID")
+                                .setValue(uid)
 
                             DatabaseAdapter.chatRooms.child(senderRoom).child("IS_ACCEPTED")
                                 .setValue(false)

@@ -41,6 +41,7 @@ class ChatRecyclerViewAdapter(private val context: Context, private val usersLis
             i.putExtra("userName",usersList[position].title)
             i.putExtra("imgUrl",usersList[position].img)
             i.putExtra("key",usersList[position].key)
+            i.putExtra("uid",usersList[position].uid)
             context.startActivity(i)
         }
 

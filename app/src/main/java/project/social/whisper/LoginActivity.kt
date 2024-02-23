@@ -4,7 +4,6 @@ import adapters.DatabaseAdapter
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.ContactsContract.Data
 import android.util.Log
 import android.widget.Toast
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -16,8 +15,6 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import project.social.whisper.databinding.ActivityLoginBinding
 
 class LoginActivity : AppCompatActivity() {
@@ -102,8 +99,6 @@ class LoginActivity : AppCompatActivity() {
                 val task = GoogleSignIn.getSignedInAccountFromIntent(data)
                 val account = task.getResult(ApiException::class.java)
 
-                // You can get the user's email and other details using account.getEmail(), account.getDisplayName(), etc.
-                // Now you can authenticate with Firebase
                 if (account != null) {
                     val credential = GoogleAuthProvider.getCredential(account.idToken, null)
                     auth.signInWithCredential(credential)
@@ -114,12 +109,16 @@ class LoginActivity : AppCompatActivity() {
                                 val user = auth.currentUser
                                 if(user!=null)
                                 {
-                                    val key = user.uid
+                                    val uid = user.uid
 
-                                    DatabaseAdapter.usersTable.child(key).child("EMAIL")
+                                    val key = DatabaseAdapter.userDetailsTable.child(uid).push().key!!
+                                    DatabaseAdapter.key = key
+
+                                    DatabaseAdapter.usersTable.child(uid).child("EMAIL")
                                         .setValue(user.email?.lowercase())
 
-                                    DatabaseAdapter.usersTable.child(key).child("EMAIL_VERIFIED").setValue("true")
+                                    DatabaseAdapter.usersTable.child(uid)
+                                        .child("EMAIL_VERIFIED").setValue(true)
 
                                     //Move to diff Activity
                                     val i = Intent(this, MainActivity::class.java)
@@ -143,22 +142,24 @@ class LoginActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         // Check if user is signed in (non-null) and update UI accordingly.
-        val currentUser = auth.currentUser
+        val currentUser = DatabaseAdapter.returnUser()
         if(currentUser != null)
         {
             //Find user name
-            val key = DatabaseAdapter.returnUser()?.uid!!
+            val uid = DatabaseAdapter.returnUser()?.uid!!
 
-            DatabaseAdapter.userDetailsTable.child(key).addListenerForSingleValueEvent(object: ValueEventListener {
+            DatabaseAdapter.userDetailsTable.child(uid).addListenerForSingleValueEvent(object:
+                ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if(snapshot.exists())
                     {
                         for(s in snapshot.children)
                         {
+                            val key = s.key!!
                             val isOpened = s.child("IS_OPENED").getValue(Boolean::class.java) ?: true
                             if(isOpened)
                             {
-                                DatabaseAdapter.userName = s.child("USER_NAME").getValue(String::class.java)!!
+                                DatabaseAdapter.key = key
                                 return
                             }
                         }

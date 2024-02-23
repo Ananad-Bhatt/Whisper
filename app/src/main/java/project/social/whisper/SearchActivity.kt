@@ -26,6 +26,8 @@ class SearchActivity : AppCompatActivity() {
     private val searchResults = ArrayList<SearchModel>()
     private lateinit var resultAdapter:SearchRecyclerViewAdapter
 
+    private val key = DatabaseAdapter.key
+
     interface OnSearchCompleteListener {
         fun onSearchComplete(results: List<SearchModel>)
     }
@@ -74,33 +76,36 @@ class SearchActivity : AppCompatActivity() {
         try {
             DatabaseAdapter.userDetailsTable.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    for (i in snapshot.children) {
-                        val key = i.key
-                        if(key == DatabaseAdapter.returnUser()?.uid)
-                        {
-                            continue
-                        }
+                    for (j in snapshot.children) {
+                        for(i in j.children) {
 
-                        val type = i.child("ACCOUNT_TYPE").getValue(String::class.java) ?: "PUBLIC"
-                        if(type == "NOT VISIBLE")
-                        {
-                            continue
-                        }
+                            val uid = j.key!!
+                            val key = i.key!!
+                            if (uid == DatabaseAdapter.returnUser()?.uid) {
+                                break
+                            }
 
-                        val userName: String = if(i.child("USER_NAME").exists()) {
-                            i.child("USER_NAME").getValue(String::class.java) ?: ""
-                        } else {
-                            "guest_"+ key?.substring(0,3)
-                        }
+                            val type =
+                                i.child("ACCOUNT_TYPE").getValue(String::class.java) ?: "PUBLIC"
+                            if (type == "NOT VISIBLE") {
+                                continue
+                            }
 
-                        val image: String = if(i.child("IMAGE").exists()) {
-                            i.child("IMAGE").getValue(String::class.java) ?: ""
-                        } else {
-                            "https://53.fs1.hubspotusercontent-na1.net/hub/53/hubfs/image8-2.jpg?width=595&height=400&name=image8-2.jpg"
-                        }
+                            val userName: String = if (i.child("USER_NAME").exists()) {
+                                i.child("USER_NAME").getValue(String::class.java)!!
+                            } else {
+                                "guest_" + uid.substring(0, 3)
+                            }
 
-                        if((userName.lowercase()).contains(query.lowercase())) {
-                            searchResults.add(SearchModel(userName, image))
+                            val image: String = if (i.child("IMAGE").exists()) {
+                                i.child("IMAGE").getValue(String::class.java)!!
+                            } else {
+                                "https://53.fs1.hubspotusercontent-na1.net/hub/53/hubfs/image8-2.jpg?width=595&height=400&name=image8-2.jpg"
+                            }
+
+                            if ((userName.lowercase()).contains(query.lowercase())) {
+                                searchResults.add(SearchModel(userName, image, uid, key))
+                            }
                         }
                     }
                     listener.onSearchComplete(searchResults)

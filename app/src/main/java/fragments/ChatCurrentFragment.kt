@@ -15,7 +15,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import models.ChatRecyclerModel
 import models.ChatUserModel
-import project.social.whisper.R
 import project.social.whisper.databinding.FragmentChatCurrentBinding
 
 // TODO: Rename parameter arguments, choose names that match
@@ -32,7 +31,7 @@ class ChatCurrentFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
-    private var senderId = DatabaseAdapter.returnUser()?.uid
+    private var senderKey = DatabaseAdapter.key
 
     private lateinit var users:ArrayList<ChatRecyclerModel>
     private lateinit var usersKey:ArrayList<ChatUserModel>
@@ -78,23 +77,27 @@ class ChatCurrentFragment : Fragment() {
                         {
                             val key = s.key!!
 
-                            if (key.contains(senderId!!)) {
+                            if (key.contains(senderKey)) {
 
                                 val user1 = s.child("USER_1").getValue(String::class.java)!!
+                                val user1Uid = s.child("USER_1_UID").getValue(String::class.java)!!
+
                                 val user2 = s.child("USER_2").getValue(String::class.java)!!
+                                val user2Uid = s.child("USER_2_UID").getValue(String::class.java)!!
+
                                 val isAccepted = s.child("IS_ACCEPTED").getValue(Boolean::class.java)!!
                                 val lastMessage = s.child("LAST_MESSAGE").getValue(String::class.java)!!
 
-                                isSender = user1 == senderId!!
+                                isSender = user1 == senderKey
 
                                 if(isSender)
                                 {
-                                    usersKey.add(ChatUserModel(user2,lastMessage))
+                                    usersKey.add(ChatUserModel(user2Uid,user2,lastMessage))
                                 }
                                 else{
                                     if(isAccepted)
                                     {
-                                        usersKey.add(ChatUserModel(user1,lastMessage))
+                                        usersKey.add(ChatUserModel(user1Uid,user1,lastMessage))
                                     }
                                 }
                             }
@@ -121,16 +124,15 @@ class ChatCurrentFragment : Fragment() {
         Log.d("IDK","OK")
         try {
             for(k in usersKey) {
-                DatabaseAdapter.userDetailsTable.child(k.key)
+                DatabaseAdapter.userDetailsTable.child(k.uid).child(k.key)
                     .addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(snapshot: DataSnapshot) {
-                            Log.d("IDK","onDataChangedddd")
                             if (snapshot.exists()) {
                                 val userName =
                                     snapshot.child("USER_NAME").getValue(String::class.java)!!
                                 val imgUrl = snapshot.child("IMAGE").getValue(String::class.java)!!
 
-                                users.add(ChatRecyclerModel(userName, imgUrl, k.lastMessage, k.key))
+                                users.add(ChatRecyclerModel(userName, imgUrl, k.lastMessage, k.key, k.uid))
                                 Log.d("IDK","ADDED")
                                 if(users.size == usersKey.size)
                                 {
@@ -174,7 +176,6 @@ class ChatCurrentFragment : Fragment() {
          * @param param2 Parameter 2.
          * @return A new instance of fragment ChatCurrentFragment.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             ChatCurrentFragment().apply {

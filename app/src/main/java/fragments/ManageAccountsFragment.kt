@@ -1,6 +1,7 @@
 package fragments
 
 import adapters.DatabaseAdapter
+import adapters.ManageAccountAdapter
 import adapters.SearchRecyclerViewAdapter
 import android.os.Bundle
 import android.util.Log
@@ -32,11 +33,12 @@ class ManageAccountsFragment : Fragment() {
 
     private lateinit var b:FragmentManageAccountsBinding
 
-    private val key = DatabaseAdapter.returnUser()?.uid!!
+    private val uid = DatabaseAdapter.returnUser()?.uid!!
+    private val key = DatabaseAdapter.key
 
     private val accounts = ArrayList<SearchModel>()
 
-    private lateinit var ad:SearchRecyclerViewAdapter
+    private lateinit var ad:ManageAccountAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,8 +59,22 @@ class ManageAccountsFragment : Fragment() {
             b.rvManageAccFrag.layoutManager = LinearLayoutManager(requireActivity(),
                 LinearLayoutManager.VERTICAL, false)
 
-            ad = SearchRecyclerViewAdapter(requireActivity(), accounts)
+            ad = ManageAccountAdapter(requireActivity(), accounts)
             b.rvManageAccFrag.adapter = ad
+        }
+
+        b.btnManageAccFrag.setOnClickListener {
+            DatabaseAdapter.key =
+                DatabaseAdapter.userDetailsTable
+                .child(DatabaseAdapter.returnUser()?.uid!!)
+                .push().key!!
+
+            if(isAdded) {
+                val fm1 = requireActivity().supportFragmentManager
+                val ft1 = fm1.beginTransaction()
+                ft1.replace(R.id.main_container, ProfileFragment())
+                ft1.commit()
+            }
         }
 
         findAccounts()
@@ -68,20 +84,18 @@ class ManageAccountsFragment : Fragment() {
 
     private fun findAccounts() {
         try{
-            DatabaseAdapter.userDetailsTable.child(key).addListenerForSingleValueEvent(object : ValueEventListener{
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if(snapshot.exists())
+            DatabaseAdapter.userDetailsTable.child(uid).child(key).addListenerForSingleValueEvent(object : ValueEventListener{
+                override fun onDataChange(s: DataSnapshot) {
+                    if(s.exists())
                     {
-                        for(s in snapshot.children)
-                        {
-                            val userName = s.key!!
+                        val userName = s.child("USER_NAME").getValue(String::class.java)!!
 
-                            val imgUrl = s.child("IMAGE").getValue(String::class.java) ?:
-                            "https://53.fs1.hubspotusercontent-na1.net/hub/53/hubfs/image8-2.jpg?width=595&height=400&name=image8-2.jpg"
+                        val imgUrl = s.child("IMAGE").getValue(String::class.java) ?:
+                        "https://53.fs1.hubspotusercontent-na1.net/hub/53/hubfs/image8-2.jpg?width=595&height=400&name=image8-2.jpg"
 
-                            accounts.add(SearchModel(userName, imgUrl))
-                            ad.notifyItemInserted(accounts.size)
-                        }
+                        accounts.add(SearchModel(userName, imgUrl, uid, key))
+                        ad.notifyItemInserted(accounts.size)
+
                     }
                 }
 

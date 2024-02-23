@@ -38,12 +38,12 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class ProfileFragment : Fragment() {
-    // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
 
     lateinit var b: FragmentProfileBinding
-    private val key = DatabaseAdapter.returnUser()?.uid!!
+    private val uid = DatabaseAdapter.returnUser()?.uid!!
+    private val key = DatabaseAdapter.key
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,12 +82,12 @@ class ProfileFragment : Fragment() {
     }
 
     private fun retrieveData() {
-        DatabaseAdapter.userDetailsTable.child(key).addValueEventListener(object: ValueEventListener {
+        DatabaseAdapter.userDetailsTable.child(uid).child(key).addValueEventListener(object: ValueEventListener {
             override fun onDataChange(s: DataSnapshot) {
 
                 if(isAdded) {
                     if (s.exists()) {
-                        val userName = s.child("USER_NAME").getValue(String::class.java)
+                        val userName = s.child("USER_NAME").getValue(String::class.java) ?: "Temp"
 
                         val imgUrl = s.child("IMAGE").getValue(String::class.java)
                             ?: "https://53.fs1.hubspotusercontent-na1.net/hub/53/hubfs/image8-2.jpg?width=595&height=400&name=image8-2.jpg"
@@ -110,7 +110,7 @@ class ProfileFragment : Fragment() {
 
             override fun onCancelled(error: DatabaseError) {
                 if(isAdded) {
-                    Toast.makeText(requireContext(), "We unable to fetch data", Toast.LENGTH_LONG)
+                    Toast.makeText(requireContext(), "We are unable to fetch data", Toast.LENGTH_LONG)
                         .show()
                 }
             }
@@ -127,7 +127,6 @@ class ProfileFragment : Fragment() {
          * @param param2 Parameter 2.
          * @return A new instance of fragment ProfileFragment.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             ProfileFragment().apply {

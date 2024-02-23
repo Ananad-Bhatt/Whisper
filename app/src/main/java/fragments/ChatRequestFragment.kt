@@ -78,15 +78,17 @@ class ChatRequestFragment : Fragment() {
                             if (key.contains(senderId!!)) {
 
                                 val user1 = s.child("USER_1").getValue(String::class.java)!!
-                                val lastMessage = s.child("LAST_MESSAGE").getValue(String::class.java)!!
+                                val user1Uid = s.child("USER_1_UID").getValue(String::class.java)!!
+
                                 val isAccepted = s.child("IS_ACCEPTED").getValue(Boolean::class.java)!!
+                                val lastMessage = s.child("LAST_MESSAGE").getValue(String::class.java)!!
 
                                 isSender = user1 == senderId!!
 
                                 if(!isSender)
                                 {
                                     if(!isAccepted) {
-                                        usersKey.add(ChatUserModel(user1, lastMessage))
+                                        usersKey.add(ChatUserModel(user1Uid, user1, lastMessage))
                                     }
                                 }
                             }
@@ -122,7 +124,7 @@ class ChatRequestFragment : Fragment() {
                                     snapshot.child("USER_NAME").getValue(String::class.java)!!
                                 val imgUrl = snapshot.child("IMAGE").getValue(String::class.java)!!
 
-                                users.add(ChatRecyclerModel(userName, imgUrl, k.lastMessage, k.key))
+                                users.add(ChatRecyclerModel(userName, imgUrl, k.lastMessage, k.key, k.uid))
                                 Log.d("IDK","ADDED")
                                 if(users.size == usersKey.size)
                                 {
@@ -166,7 +168,6 @@ class ChatRequestFragment : Fragment() {
          * @param param2 Parameter 2.
          * @return A new instance of fragment ChatRequestFragment.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             ChatRequestFragment().apply {

@@ -24,6 +24,9 @@ class DatabaseAdapter {
         //Storage
         var userImage = FirebaseStorage.getInstance().getReference("USER_IMAGES")
 
+        //Current user key
+        var key = ""
+
         fun returnUser():FirebaseUser?
         {
             auth = FirebaseAuth.getInstance()

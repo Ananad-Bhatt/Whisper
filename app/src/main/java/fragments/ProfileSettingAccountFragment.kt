@@ -13,7 +13,6 @@ import android.widget.ArrayAdapter
 import project.social.whisper.R
 import project.social.whisper.databinding.FragmentProfileSettingAccountBinding
 
-// TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -24,13 +23,13 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class ProfileSettingAccountFragment : Fragment() {
-    // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
 
     private lateinit var b:FragmentProfileSettingAccountBinding
 
-    private val key = DatabaseAdapter.returnUser()?.uid!!
+    private val uid = DatabaseAdapter.returnUser()?.uid!!
+    private val key = DatabaseAdapter.key
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,7 +81,7 @@ class ProfileSettingAccountFragment : Fragment() {
             }
 
             try {
-                DatabaseAdapter.userDetailsTable.child(key).child("ACCOUNT_TYPE")
+                DatabaseAdapter.userDetailsTable.child(uid).child(key).child("ACCOUNT_TYPE")
                     .setValue(type)
             }catch(e:Exception)
             {

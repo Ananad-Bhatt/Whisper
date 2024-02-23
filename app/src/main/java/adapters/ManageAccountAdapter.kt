@@ -37,10 +37,10 @@ class ManageAccountAdapter(private val context: FragmentActivity, private val se
         holder.userName.text = searchResults[position].userName
 
         holder.container.setOnClickListener {
+            DatabaseAdapter.key = searchResults[position].userKey
             val fm1 = context.supportFragmentManager
             val ft1 = fm1.beginTransaction()
             ft1.replace(R.id.main_container, ProfileFragment())
-            context.finishAffinity()
             ft1.commit()
         }
 

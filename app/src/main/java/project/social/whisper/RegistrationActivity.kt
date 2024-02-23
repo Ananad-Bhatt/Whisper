@@ -13,6 +13,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import project.social.whisper.databinding.ActivityRegistrationBinding
 
 class RegistrationActivity : AppCompatActivity() {
@@ -140,7 +143,7 @@ class RegistrationActivity : AppCompatActivity() {
                                         .setValue(DatabaseAdapter.returnUser()?.email?.lowercase())
 
                                     DatabaseAdapter.usersTable.child(key).child("EMAIL_VERIFIED")
-                                        .setValue("false")
+                                        .setValue(false)
 
                                 }catch(e:Exception)
                                 {
@@ -189,15 +192,18 @@ class RegistrationActivity : AppCompatActivity() {
                             if (t.isSuccessful) {
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d("DB_ERROR", "signInWithCredential:success")
-                                val user = DatabaseAdapter.returnUser()
-                                if(user!=null)
+                                if(DatabaseAdapter.returnUser()!=null)
                                 {
-                                    val key = user.uid
+                                    val uid = DatabaseAdapter.returnUser()?.uid!!
+                                    val key = DatabaseAdapter.userDetailsTable.child(uid).push().key!!
 
-                                    DatabaseAdapter.usersTable.child(key).child("EMAIL")
-                                        .setValue(user.email?.lowercase())
+                                    DatabaseAdapter.key = key
 
-                                    DatabaseAdapter.usersTable.child(key).child("EMAIL_VERIFIED").setValue("true")
+                                    DatabaseAdapter.usersTable.child(uid).child("EMAIL")
+                                        .setValue(DatabaseAdapter.returnUser()?.email?.lowercase())
+
+                                    DatabaseAdapter.usersTable.child(uid)
+                                        .child("EMAIL_VERIFIED").setValue(true)
 
                                     //Move to diff Activity
                                     val i = Intent(this, MainActivity::class.java)
@@ -222,10 +228,36 @@ class RegistrationActivity : AppCompatActivity() {
         super.onStart()
         // Check if user is signed in (non-null) and update UI accordingly.
         val currentUser = DatabaseAdapter.returnUser()
-        if( currentUser != null)
+        if(currentUser != null)
         {
+            //Find user name
+            val uid = DatabaseAdapter.returnUser()?.uid!!
+
+            DatabaseAdapter.userDetailsTable.child(uid).addListenerForSingleValueEvent(object:
+                ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if(snapshot.exists())
+                    {
+                        for(s in snapshot.children)
+                        {
+                            val key = s.key!!
+                            val isOpened = s.child("IS_OPENED").getValue(Boolean::class.java) ?: true
+                            if(isOpened)
+                            {
+                                DatabaseAdapter.key = key
+                                return
+                            }
+                        }
+
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+
+                }
+            })
+
             //Move to diff Activity
-            Toast.makeText(this, "Welcome back ${currentUser.displayName}",Toast.LENGTH_LONG).show()
             val i = Intent(this, MainActivity::class.java)
             startActivity(i)
         }

@@ -4,6 +4,7 @@ import adapters.DatabaseAdapter
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -36,19 +37,20 @@ class StartUpActivity : AppCompatActivity() {
         if(currentUser != null)
         {
             //Find user name
-            val key = DatabaseAdapter.returnUser()?.uid!!
+            val uid = DatabaseAdapter.returnUser()?.uid!!
 
-            DatabaseAdapter.userDetailsTable.child(key).addListenerForSingleValueEvent(object:
+            DatabaseAdapter.userDetailsTable.child(uid).addListenerForSingleValueEvent(object:
                 ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if(snapshot.exists())
                     {
                         for(s in snapshot.children)
                         {
+                            val key = s.key!!
                             val isOpened = s.child("IS_OPENED").getValue(Boolean::class.java) ?: true
                             if(isOpened)
                             {
-                                DatabaseAdapter.userName = s.child("USER_NAME").getValue(String::class.java)!!
+                                DatabaseAdapter.key = key
                                 return
                             }
                         }

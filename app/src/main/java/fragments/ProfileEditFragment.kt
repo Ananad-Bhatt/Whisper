@@ -3,7 +3,6 @@ package fragments
 import adapters.DatabaseAdapter
 import android.app.Activity
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -14,8 +13,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -28,7 +25,6 @@ import com.google.firebase.database.ValueEventListener
 import project.social.whisper.R
 import project.social.whisper.databinding.FragmentProfileEditBinding
 
-// TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -39,7 +35,6 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class ProfileEditFragment : Fragment() {
-    // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
 
@@ -48,7 +43,8 @@ class ProfileEditFragment : Fragment() {
     //Activity Result Launcher
     private lateinit var imageCapture: ActivityResultLauncher<Intent>
 
-    private val key = DatabaseAdapter.returnUser()?.uid!!
+    private val uid = DatabaseAdapter.returnUser()?.uid!!
+    private val key = DatabaseAdapter.key
 
     //Permission callback
     private val permissionsResultCallback = registerForActivityResult(
@@ -102,13 +98,10 @@ class ProfileEditFragment : Fragment() {
         b.btnEditProfileDone.setOnClickListener {
             if(b.edtEditProfileUserName.text.toString() != "" && b.edtEditProfileAbout.text.toString() != "")
             {
-                DatabaseAdapter.usersTable.child(key).child("USER_NAME")
+                DatabaseAdapter.userDetailsTable.child(uid).child(key).child("USER_NAME")
                     .setValue(b.edtEditProfileUserName.text.toString())
 
-                DatabaseAdapter.userDetailsTable.child(key).child("USER_NAME")
-                    .setValue(b.edtEditProfileUserName.text.toString())
-
-                DatabaseAdapter.userDetailsTable.child(key).child("ABOUT")
+                DatabaseAdapter.userDetailsTable.child(uid).child(key).child("ABOUT")
                     .setValue(b.edtEditProfileAbout.text.toString())
 
                 val fm1 = requireActivity().supportFragmentManager
@@ -123,18 +116,15 @@ class ProfileEditFragment : Fragment() {
     }
 
     private fun uploadImage(uri: Uri?) {
-
-        val key = DatabaseAdapter.returnUser()?.uid.toString()
-
         try {
             if (uri != null) {
                 DatabaseAdapter.userImage.child(key).putFile(uri).addOnSuccessListener {
 
                     DatabaseAdapter.userImage.child(key).downloadUrl.addOnSuccessListener { img ->
 
-                        DatabaseAdapter.userDetailsTable.child(key).child("IMAGE").setValue(img.toString()).addOnSuccessListener {
+                        DatabaseAdapter.userDetailsTable.child(uid).child(key).child("IMAGE").setValue(img.toString()).addOnSuccessListener {
 
-                            DatabaseAdapter.userDetailsTable.child(key).child("IMAGE").addListenerForSingleValueEvent(object :
+                            DatabaseAdapter.userDetailsTable.child(uid).child(key).child("IMAGE").addListenerForSingleValueEvent(object :
                                 ValueEventListener {
 
                                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -299,13 +289,13 @@ class ProfileEditFragment : Fragment() {
     }
 
     private fun findDetails() {
-        DatabaseAdapter.userDetailsTable.child(key).addValueEventListener(object: ValueEventListener {
+        DatabaseAdapter.userDetailsTable.child(uid).child(key).addValueEventListener(object: ValueEventListener {
             override fun onDataChange(s: DataSnapshot) {
 
                 if (isAdded) {
 
                     if (s.exists()) {
-                        val userName = s.child("USER_NAME").getValue(String::class.java)
+                        val userName = s.child("USER_NAME").getValue(String::class.java) ?: "Temp"
 
                         val imgUrl = s.child("IMAGE").getValue(String::class.java)
                             ?: "https://53.fs1.hubspotusercontent-na1.net/hub/53/hubfs/image8-2.jpg?width=595&height=400&name=image8-2.jpg"

@@ -39,6 +39,9 @@ class SearchRecyclerViewAdapter(private val context:Context,private val searchRe
         holder.container.setOnClickListener {
             val i = Intent(context, UserProfileActivity::class.java)
             i.putExtra("userName",holder.userName.text.toString())
+            i.putExtra("userUid",searchResults[position].userUid)
+            i.putExtra("userKey",searchResults[position].userKey)
+
             context.startActivity(i)
         }
 
