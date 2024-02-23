@@ -9,6 +9,7 @@
 
 
     <RelativeLayout
+        android:id="@+id/rl_profile_setting"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/BODY">
