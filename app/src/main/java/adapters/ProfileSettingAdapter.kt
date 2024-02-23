@@ -10,6 +10,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
+import fragments.ManageChannelFragment
 import fragments.ProfileSettingAccountFragment
 import fragments.ProfileSettingFragment
 import models.ProfileSettingModel
@@ -27,12 +28,20 @@ class ProfileSettingAdapter(val context: FragmentActivity, private val items: Li
         holder.iconImageView.setImageResource(items[position].iconResId)
 
         holder.rl.setOnClickListener {
+
+            val fm1 = context.supportFragmentManager
+            val ft1 = fm1.beginTransaction()
+
             when(holder.textView.text)
             {
                 "Account" -> {
-                    val fm1 = context.supportFragmentManager
-                    val ft1 = fm1.beginTransaction()
                     ft1.replace(R.id.main_container, ProfileSettingAccountFragment())
+                    ft1.addToBackStack(null)
+                    ft1.commit()
+                }
+
+                "Manage Channels" -> {
+                    ft1.replace(R.id.main_container, ManageChannelFragment())
                     ft1.addToBackStack(null)
                     ft1.commit()
                 }
