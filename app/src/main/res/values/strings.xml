@@ -70,12 +70,14 @@
     <string name="account_setting">Account setting</string>
     <string name="account_type">Account type</string>
 
+<!--    Manage account-->
+    <string name="manage_account">Manage Accounts</string>
+    <string name="add_acc">Add account</string>
+
     <string-array name="account_type_array">
         <item>PUBLIC</item>
         <item>PRIVATE</item>
         <item>NOT VISIBLE</item>
     </string-array>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

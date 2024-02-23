@@ -13,6 +13,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import project.social.whisper.databinding.ActivityLoginBinding
@@ -22,7 +25,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var gso:GoogleSignInOptions
     private lateinit var gClient: GoogleSignInClient
-    private var RC_SIGN_IN = 123
+    private val RC_SIGN_IN = 123
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -143,6 +146,31 @@ class LoginActivity : AppCompatActivity() {
         val currentUser = auth.currentUser
         if(currentUser != null)
         {
+            //Find user name
+            val key = DatabaseAdapter.returnUser()?.uid!!
+
+            DatabaseAdapter.userDetailsTable.child(key).addListenerForSingleValueEvent(object: ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if(snapshot.exists())
+                    {
+                        for(s in snapshot.children)
+                        {
+                            val isOpened = s.child("IS_OPENED").getValue(Boolean::class.java) ?: true
+                            if(isOpened)
+                            {
+                                DatabaseAdapter.userName = s.child("USER_NAME").getValue(String::class.java)!!
+                                return
+                            }
+                        }
+
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+
+                }
+            })
+
             //Move to diff Activity
             val i = Intent(this, MainActivity::class.java)
             startActivity(i)

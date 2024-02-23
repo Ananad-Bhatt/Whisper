@@ -63,3 +63,39 @@ TODO list (Most Important to Less)
 
 Channels :
 	Following and Followers
+
+
+
+I have this type of structure in my DB
+
+CHATS -> 
+	senderPush() + reciverPush() -> 
+		push() -> 
+			MESSAGE:String, 
+			TIMESTAMP:Long, 
+			SENDER_KEY:String(senderPush()),
+			SENDER_UID:String(senderUID)
+
+CHAT_ROOMS ->
+	senderPush() + reciverPush() -> 
+		IS_ACCEPTED:Boolean, 
+		LAST_MESSAGE:String, 
+		USER_1:String(senderPush()),
+		USER_1_UID:String(senderUID), 
+		USER_2:String(reciverPush()),
+		USER_2_UID:String(receiverUID)
+
+USERS ->
+	userKey ->
+		EMAIL:String, EMAIL_VERIFIED:String, USER_NAME:String
+
+USER_DETAILS -> 
+		userKey ->
+			ABOUT:String, IMAGE:String, USER_NAME:String
+
+As you can see I have 4 tables, and 100% of my data retrival is from key of a user, Now I wanted to add feature of multiple account from same email address, I have everything including logic, But I dont know What should I do with DB, how can I add this in DB...
+
+Initially I thought of adding like
+	USER_DETAILS -> userKey -> userName -> ...
+
+But then I need to change my whole code because now to find a perticular user I need its userName not a key, And I can also do that, But the main problem is that I cannot manage both Key and Username together as a primary key, For example in CHAT_ROOM and CHAT, I managed whole thing with key
