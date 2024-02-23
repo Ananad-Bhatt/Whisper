@@ -10,6 +10,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
+import fragments.ManageAccountsFragment
 import fragments.ManageChannelFragment
 import fragments.ProfileSettingAccountFragment
 import fragments.ProfileSettingFragment
@@ -36,6 +37,12 @@ class ProfileSettingAdapter(val context: FragmentActivity, private val items: Li
             {
                 "Account" -> {
                     ft1.replace(R.id.main_container, ProfileSettingAccountFragment())
+                    ft1.addToBackStack(null)
+                    ft1.commit()
+                }
+
+                "Manage Accounts" -> {
+                    ft1.replace(R.id.main_container, ManageAccountsFragment())
                     ft1.addToBackStack(null)
                     ft1.commit()
                 }
