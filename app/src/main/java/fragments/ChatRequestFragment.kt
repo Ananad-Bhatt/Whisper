@@ -30,7 +30,7 @@ class ChatRequestFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
-    private var senderId = DatabaseAdapter.returnUser()?.uid
+    private var senderKey = DatabaseAdapter.key
 
     private lateinit var users:ArrayList<ChatRecyclerModel>
     private lateinit var usersKey:ArrayList<ChatUserModel>
@@ -75,7 +75,7 @@ class ChatRequestFragment : Fragment() {
                         {
                             val key = s.key!!
 
-                            if (key.contains(senderId!!)) {
+                            if (key.contains(senderKey)) {
 
                                 val user1 = s.child("USER_1").getValue(String::class.java)!!
                                 val user1Uid = s.child("USER_1_UID").getValue(String::class.java)!!
@@ -83,7 +83,7 @@ class ChatRequestFragment : Fragment() {
                                 val isAccepted = s.child("IS_ACCEPTED").getValue(Boolean::class.java)!!
                                 val lastMessage = s.child("LAST_MESSAGE").getValue(String::class.java)!!
 
-                                isSender = user1 == senderId!!
+                                isSender = user1 == senderKey
 
                                 if(!isSender)
                                 {
@@ -115,10 +115,10 @@ class ChatRequestFragment : Fragment() {
         Log.d("IDK","OK")
         try {
             for(k in usersKey) {
-                DatabaseAdapter.userDetailsTable.child(k.key)
+                DatabaseAdapter.userDetailsTable.child(k.uid).child(k.key)
                     .addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(snapshot: DataSnapshot) {
-                            Log.d("IDK","onDataChangedddd")
+
                             if (snapshot.exists()) {
                                 val userName =
                                     snapshot.child("USER_NAME").getValue(String::class.java)!!
