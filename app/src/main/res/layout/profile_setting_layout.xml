@@ -21,7 +21,7 @@
             android:layout_alignParentStart="true"
             android:layout_centerInParent="true"
             android:padding="10dp"
-            android:src="@drawable/camera_rounded" />
+            android:src="@drawable/logout" />
 
         <TextView
             android:id="@+id/txt_profile_setting"
