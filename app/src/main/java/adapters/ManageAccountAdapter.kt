@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
@@ -38,6 +39,7 @@ class ManageAccountAdapter(private val context: FragmentActivity, private val se
 
         holder.container.setOnClickListener {
             DatabaseAdapter.key = searchResults[position].userKey
+            Toast.makeText(context, DatabaseAdapter.key, Toast.LENGTH_LONG).show()
             val fm1 = context.supportFragmentManager
             val ft1 = fm1.beginTransaction()
             ft1.replace(R.id.main_container, ProfileFragment())

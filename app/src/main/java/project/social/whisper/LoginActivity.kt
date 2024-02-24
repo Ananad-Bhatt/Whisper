@@ -160,6 +160,10 @@ class LoginActivity : AppCompatActivity() {
                             if(isOpened)
                             {
                                 DatabaseAdapter.key = key
+
+                                //Move to diff Activity
+                                val i = Intent(applicationContext, MainActivity::class.java)
+                                startActivity(i)
                                 return
                             }
                         }
@@ -171,10 +175,6 @@ class LoginActivity : AppCompatActivity() {
 
                 }
             })
-
-            //Move to diff Activity
-            val i = Intent(this, MainActivity::class.java)
-            startActivity(i)
         }
     }
 }

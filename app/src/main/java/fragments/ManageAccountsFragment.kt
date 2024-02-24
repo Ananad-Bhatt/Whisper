@@ -84,18 +84,21 @@ class ManageAccountsFragment : Fragment() {
 
     private fun findAccounts() {
         try{
-            DatabaseAdapter.userDetailsTable.child(uid).child(key).addListenerForSingleValueEvent(object : ValueEventListener{
-                override fun onDataChange(s: DataSnapshot) {
-                    if(s.exists())
+            DatabaseAdapter.userDetailsTable.child(uid).addListenerForSingleValueEvent(object : ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if(snapshot.exists())
                     {
-                        val userName = s.child("USER_NAME").getValue(String::class.java)!!
+                        for(s in snapshot.children) {
+                            val userKey = s.key!!
 
-                        val imgUrl = s.child("IMAGE").getValue(String::class.java) ?:
-                        "https://53.fs1.hubspotusercontent-na1.net/hub/53/hubfs/image8-2.jpg?width=595&height=400&name=image8-2.jpg"
+                            val userName = s.child("USER_NAME").getValue(String::class.java)!!
 
-                        accounts.add(SearchModel(userName, imgUrl, uid, key))
-                        ad.notifyItemInserted(accounts.size)
+                            val imgUrl = s.child("IMAGE").getValue(String::class.java)
+                                ?: "https://53.fs1.hubspotusercontent-na1.net/hub/53/hubfs/image8-2.jpg?width=595&height=400&name=image8-2.jpg"
 
+                            accounts.add(SearchModel(userName, imgUrl, uid, userKey))
+                            ad.notifyItemInserted(accounts.size)
+                        }
                     }
                 }
 
