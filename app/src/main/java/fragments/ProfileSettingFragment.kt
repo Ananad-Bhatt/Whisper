@@ -47,10 +47,10 @@ class ProfileSettingFragment : Fragment() {
         if(isAdded) {
             b.rvProfileSettingFragment.layoutManager = LinearLayoutManager(requireContext())
 
-            settings.add(ProfileSettingModel("Account",R.drawable.profile))
-            settings.add(ProfileSettingModel("Manage Accounts",R.drawable.profile))
+            settings.add(ProfileSettingModel("Account",R.drawable.profile2))
+            settings.add(ProfileSettingModel("Manage Accounts",R.drawable.manage_account))
             settings.add(ProfileSettingModel("Manage Channels",R.drawable.profile))
-            settings.add(ProfileSettingModel("Log Out",R.drawable.profile))
+            settings.add(ProfileSettingModel("Log Out",R.drawable.logout))
 
             b.rvProfileSettingFragment.adapter = ProfileSettingAdapter(requireActivity(),settings)
         }
