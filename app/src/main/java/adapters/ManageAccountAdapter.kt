@@ -1,7 +1,5 @@
 package adapters
 
-import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,11 +10,9 @@ import androidx.cardview.widget.CardView
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import fragments.ManageAccountsFragment
 import fragments.ProfileFragment
 import models.SearchModel
 import project.social.whisper.R
-import project.social.whisper.UserProfileActivity
 
 class ManageAccountAdapter(private val context: FragmentActivity, private val searchResults:ArrayList<SearchModel>) :
     RecyclerView.Adapter<ManageAccountAdapter.SearchViewHolder>() {
