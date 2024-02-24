@@ -10,6 +10,9 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import project.social.whisper.R
 import project.social.whisper.databinding.FragmentProfileSettingAccountBinding
 
@@ -67,7 +70,44 @@ class ProfileSettingAccountFragment : Fragment() {
             Log.d("DB_ERROR",e.toString())
         }
 
+        retrieveAccType()
+
         return b.root
+    }
+
+    private fun retrieveAccType() {
+        try{
+
+            val uid = DatabaseAdapter.returnUser()?.uid!!
+            val key = DatabaseAdapter.key
+
+            DatabaseAdapter.userDetailsTable.child(uid).child(key)
+                .addListenerForSingleValueEvent(object:ValueEventListener
+            {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if(snapshot.exists())
+                    {
+                        val accType = snapshot.child("ACCOUNT_TYPE")
+                            .getValue(String::class.java) ?: "PUBLIC"
+
+                        when(accType)
+                        {
+                            "PUBLIC" -> b.spProfileAccountSetting.setSelection(0)
+                            "PRIVATE" -> b.spProfileAccountSetting.setSelection(1)
+                            "NOT VISIBLE" -> b.spProfileAccountSetting.setSelection(2)
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+
+
+                }
+            })
+        }catch(e:Exception)
+        {
+            Log.d("DB_ERROR",e.toString())
+        }
     }
 
     inner class SpinnerStateChangeListener : OnItemSelectedListener{
