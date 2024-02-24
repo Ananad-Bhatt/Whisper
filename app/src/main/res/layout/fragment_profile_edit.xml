@@ -71,12 +71,14 @@
         <EditText
             android:id="@+id/edt_edit_profile_about"
             style="@style/EDITTEXT"
+            android:minHeight="@dimen/_45sdp"
+            android:layout_height="wrap_content"
             android:inputType="textMultiLine"
             android:layout_marginTop="10dp"
             android:hint="@string/about"
-            android:maxLines="17"
+            android:maxLines="10"
             android:maxHeight="@dimen/_75sdp"
-            android:isScrollContainer="true" />
+            android:isScrollContainer="false" />
 
 
         <androidx.appcompat.widget.AppCompatButton
