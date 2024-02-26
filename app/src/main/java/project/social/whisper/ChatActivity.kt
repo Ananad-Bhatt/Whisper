@@ -134,6 +134,7 @@ class ChatActivity : AppCompatActivity() {
                 if(hasContactPermission())
                 {
 
+
                 }
 
                 true
