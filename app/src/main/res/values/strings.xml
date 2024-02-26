@@ -70,11 +70,11 @@
     <string name="account_setting">Account setting</string>
     <string name="account_type">Account type</string>
 
-<!--    Manage account-->
+    <!--    Manage account-->
     <string name="manage_account">Manage Accounts</string>
     <string name="add_acc">Add account</string>
 
-<!--    Chat activity menu-->
+    <!--    Chat activity menu-->
     <string name="contact">Contact</string>
 
     <string-array name="account_type_array">
@@ -82,5 +82,7 @@
         <item>PRIVATE</item>
         <item>NOT VISIBLE</item>
     </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

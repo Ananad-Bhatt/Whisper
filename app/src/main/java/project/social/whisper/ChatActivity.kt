@@ -2,13 +2,20 @@ package project.social.whisper
 
 import adapters.ChatAdapter
 import adapters.DatabaseAdapter
+import android.app.Activity
+import android.content.ContentResolver
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.firebase.database.DataSnapshot
@@ -36,11 +43,39 @@ class ChatActivity : AppCompatActivity() {
 
     private var chatAdapter:ChatAdapter = ChatAdapter(this, chats)
 
+    //Activity Result Launcher
+    private lateinit var readContacts: ActivityResultLauncher<Intent>
+
+    //Permission callback
+    private val permissionsResultCallback = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) {
+        when (it) {
+            true -> {
+                Toast.makeText(this, "Granted", Toast.LENGTH_LONG).show()
+            }
+
+            false -> {
+                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         b = ActivityChatBinding.inflate(layoutInflater)
         setContentView(b.root)
+
+        readContacts = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                Toast.makeText(this, "Contact selected",Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(this, "Contact cancel",Toast.LENGTH_LONG).show()
+            }
+        }
 
         key = intent.getStringExtra("key")!!
         uid = intent.getStringExtra("uid")!!
@@ -93,8 +128,14 @@ class ChatActivity : AppCompatActivity() {
             popupMenu.menuInflater.inflate(R.menu.chat_pop_up_menu, popupMenu.menu)
 
             popupMenu.setOnMenuItemClickListener { menuItem ->
-                // Toast message on menu item clicked
-                Toast.makeText(this, "You Clicked " + menuItem.title, Toast.LENGTH_SHORT).show()
+
+                requestContactPermission()
+
+                if(hasContactPermission())
+                {
+
+                }
+
                 true
             }
             // Showing the popup menu
@@ -111,6 +152,36 @@ class ChatActivity : AppCompatActivity() {
         b.btnDecMsgReq.setOnClickListener {
             Toast.makeText(this,"Request declined!",Toast.LENGTH_LONG).show()
             b.llChatActMsgReq.visibility = View.GONE
+        }
+    }
+
+//    private fun readContact() {
+//        ContentResolver contentResolver=getContentResolver();
+//        Cursor cursor=contentResolver.query(ContactsContract.Contacts.CONTENT_URI,null,null,null,null);
+//        if (cursor.moveToFirst()){
+//            do {     arrayList.add(cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));
+//            }while (cursor.moveToNext());
+//            arrayAdapter.notifyDataSetChanged();
+//        }
+//
+//    }
+
+    private fun hasContactPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this,
+            android.Manifest.permission.READ_CONTACTS
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestContactPermission() {
+        val permission = ContextCompat.checkSelfPermission(
+            this, android.Manifest.permission.READ_CONTACTS
+        )
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            permissionsResultCallback.launch(android.Manifest.permission.READ_CONTACTS)
+        } else {
+            Toast.makeText(this, "Contact granted", Toast.LENGTH_LONG).show()
         }
     }
 

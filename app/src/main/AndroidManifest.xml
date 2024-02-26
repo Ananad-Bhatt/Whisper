@@ -4,10 +4,11 @@
 
     <uses-feature
         android:name="android.hardware.camera"
-        android:required="false" /> <!-- Internet permission -->
-    <uses-permission android:name="android.permission.INTERNET" /> <!-- Camera permission -->
+        android:required="false" /> <!-- Camera permission -->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- Internet permission -->
     <uses-permission android:name="android.permission.CAMERA" /> <!-- Image(Storage) permission -->
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" /> <!-- Storage -->
+    <uses-permission-sdk-23 android:name="android.permission.READ_MEDIA_IMAGES" /> <!-- Storage -->
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
