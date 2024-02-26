@@ -6,10 +6,13 @@ import android.app.Activity
 import android.content.ContentResolver
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.util.Log
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,6 +24,7 @@ import com.bumptech.glide.Glide
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import fragments.ContactFragment
 import models.ChatModel
 import project.social.whisper.databinding.ActivityChatBinding
 import java.util.Date
@@ -42,6 +46,10 @@ class ChatActivity : AppCompatActivity() {
     private var chats:ArrayList<ChatModel> = ArrayList()
 
     private var chatAdapter:ChatAdapter = ChatAdapter(this, chats)
+
+    private var contacts:ArrayList<String> = ArrayList()
+
+    private lateinit var arrayAdapter:ArrayAdapter<String>
 
     //Activity Result Launcher
     private lateinit var readContacts: ActivityResultLauncher<Intent>
@@ -66,6 +74,8 @@ class ChatActivity : AppCompatActivity() {
 
         b = ActivityChatBinding.inflate(layoutInflater)
         setContentView(b.root)
+
+        arrayAdapter = ArrayAdapter(this,android.R.layout.simple_list_item_1,contacts)
 
         readContacts = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
@@ -133,8 +143,14 @@ class ChatActivity : AppCompatActivity() {
 
                 if(hasContactPermission())
                 {
-
-
+                    b.flChatAct.visibility = View.VISIBLE
+                    readContact()
+                    Log.d("CONTACT",contacts[1])
+                    val fragment = ContactFragment()
+                    val args = Bundle().apply {
+                        putSerializable(ContactFragment.CONTACTS, contacts)
+                    }
+                    fragment.arguments = args
                 }
 
                 true
@@ -156,16 +172,18 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-//    private fun readContact() {
-//        ContentResolver contentResolver=getContentResolver();
-//        Cursor cursor=contentResolver.query(ContactsContract.Contacts.CONTENT_URI,null,null,null,null);
-//        if (cursor.moveToFirst()){
-//            do {     arrayList.add(cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));
-//            }while (cursor.moveToNext());
-//            arrayAdapter.notifyDataSetChanged();
-//        }
-//
-//    }
+    private fun readContact() {
+        val contentResolver= contentResolver;
+        val cursor=contentResolver.query(ContactsContract.Contacts.CONTENT_URI,null,null,null,null)
+        if (cursor!!.moveToFirst()){
+            if (cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME) >= 0) {
+                do {
+                    contacts.add(cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)))
+                } while (cursor.moveToNext())
+                arrayAdapter.notifyDataSetChanged()
+            }
+        }
+    }
 
     private fun hasContactPermission(): Boolean {
         return ContextCompat.checkSelfPermission(
