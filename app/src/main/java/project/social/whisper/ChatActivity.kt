@@ -51,6 +51,8 @@ class ChatActivity : AppCompatActivity() {
     //Activity Result Launcher
     private lateinit var readContacts: ActivityResultLauncher<Intent>
 
+    private lateinit var callback: OnBackPressedCallback
+
     //Permission callback
     private val permissionsResultCallback = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -81,6 +83,24 @@ class ChatActivity : AppCompatActivity() {
                 Toast.makeText(this, "Contact cancel",Toast.LENGTH_LONG).show()
             }
         }
+
+        callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (b.flChatActCont.visibility == View.VISIBLE) {
+                    Log.d("ASDASD","a")
+                    b.flChatActCont.visibility = View.GONE
+                    supportFragmentManager.popBackStack() // Pop the back stack when fragment is visible
+                    // Consume the event
+                } else {
+                    Log.d("ASDASD","ab")
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()// Delegate to default navigation behavior
+                    isEnabled = true
+                }
+            }
+        }
+
+        onBackPressedDispatcher.addCallback(this, callback)
 
         key = intent.getStringExtra("key")!!
         uid = intent.getStringExtra("uid")!!
@@ -171,17 +191,13 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    override fun onBackPressed() {
-        if (b.flChatActCont.visibility == View.VISIBLE) {
-            Log.d("ASDASD","a")
-            b.flChatActCont.visibility = View.GONE
-            supportFragmentManager.popBackStack() // Pop the back stack when fragment is visible
-            // Consume the event
-        } else {
-            Log.d("ASDASD","ab")
-            super.onBackPressed()// Delegate to default navigation behavior
-        }
+    override fun onDestroy() {
+        super.onDestroy()
+
+        // Remove the callback when the activity is destroyed
+        callback.remove()
     }
+
     private fun readContact() {
         val contentResolver= contentResolver;
         val cursor=contentResolver.query(ContactsContract.Contacts.CONTENT_URI,null,null,null,null)
