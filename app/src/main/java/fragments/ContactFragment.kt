@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.FrameLayout
+import androidx.activity.addCallback
 import project.social.whisper.R
 import project.social.whisper.databinding.FragmentContactBinding
 
@@ -39,13 +41,18 @@ class ContactFragment : Fragment() {
 
         val b = FragmentContactBinding.inflate(inflater, container, false)
 
-        val array = arguments?.getStringArray(CONTACTS)!!
+        val dataBundle = arguments
+
+        val array = dataBundle?.getStringArrayList("contact")!!
 
         Log.d("CONTACT",array.size.toString())
+        Log.d("CONTACT",array[0])
 
-        val arrayAdapter = ArrayAdapter<String>(requireContext(),android.R.layout.simple_list_item_1,array)
-
-        b.lvContactFrag.adapter = arrayAdapter
+        if(isAdded) {
+            val ad =
+                ArrayAdapter<String>(requireContext(), android.R.layout.simple_list_item_1, array)
+            b.lvContactFrag.adapter = ad
+        }
 
         return b.root
     }

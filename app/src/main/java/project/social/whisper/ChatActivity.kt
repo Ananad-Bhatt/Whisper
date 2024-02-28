@@ -3,17 +3,15 @@ package project.social.whisper
 import adapters.ChatAdapter
 import adapters.DatabaseAdapter
 import android.app.Activity
-import android.content.ContentResolver
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.database.Cursor
-import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.util.Log
 import android.view.View
-import android.widget.ArrayAdapter
 import android.widget.Toast
+import android.window.OnBackInvokedDispatcher
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -47,9 +45,8 @@ class ChatActivity : AppCompatActivity() {
 
     private var chatAdapter:ChatAdapter = ChatAdapter(this, chats)
 
-    private var contacts:ArrayList<String> = ArrayList()
-
-    private lateinit var arrayAdapter:ArrayAdapter<String>
+    private var contactNames:ArrayList<String> = ArrayList()
+    private var contactNumbers:ArrayList<String> = ArrayList()
 
     //Activity Result Launcher
     private lateinit var readContacts: ActivityResultLauncher<Intent>
@@ -74,8 +71,6 @@ class ChatActivity : AppCompatActivity() {
 
         b = ActivityChatBinding.inflate(layoutInflater)
         setContentView(b.root)
-
-        arrayAdapter = ArrayAdapter(this,android.R.layout.simple_list_item_1,contacts)
 
         readContacts = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
@@ -137,22 +132,26 @@ class ChatActivity : AppCompatActivity() {
             // Inflating popup menu from popup_menu.xml file
             popupMenu.menuInflater.inflate(R.menu.chat_pop_up_menu, popupMenu.menu)
 
-            popupMenu.setOnMenuItemClickListener { menuItem ->
+            popupMenu.setOnMenuItemClickListener { _ ->
 
                 requestContactPermission()
 
                 if(hasContactPermission())
                 {
-                    b.flChatAct.visibility = View.VISIBLE
                     readContact()
-                    Log.d("CONTACT",contacts[1])
+                    Log.d("CONTACT",contactNames[1])
                     val fragment = ContactFragment()
                     val args = Bundle().apply {
-                        putSerializable(ContactFragment.CONTACTS, contacts)
+                        putStringArrayList("contact", contactNames)
                     }
                     fragment.arguments = args
-                }
 
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fl_chat_act_cont, fragment)
+                        .commit()
+
+                    b.flChatActCont.visibility = View.VISIBLE
+                }
                 true
             }
             // Showing the popup menu
@@ -172,15 +171,32 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        if (b.flChatActCont.visibility == View.VISIBLE) {
+            Log.d("ASDASD","a")
+            b.flChatActCont.visibility = View.GONE
+            supportFragmentManager.popBackStack() // Pop the back stack when fragment is visible
+            // Consume the event
+        } else {
+            Log.d("ASDASD","ab")
+            super.onBackPressed()// Delegate to default navigation behavior
+        }
+    }
     private fun readContact() {
         val contentResolver= contentResolver;
         val cursor=contentResolver.query(ContactsContract.Contacts.CONTENT_URI,null,null,null,null)
         if (cursor!!.moveToFirst()){
             if (cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME) >= 0) {
                 do {
-                    contacts.add(cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)))
+                    val name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
+                    val number = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))
+
+                    if(name != null && number != null) {
+                        contactNames.add(name)
+                        contactNumbers.add(number)
+                    }
+
                 } while (cursor.moveToNext())
-                arrayAdapter.notifyDataSetChanged()
             }
         }
     }
@@ -367,7 +383,6 @@ class ChatActivity : AppCompatActivity() {
             Log.d("DB_ERROR",e.toString())
         }
     }
-
 }
 
 
