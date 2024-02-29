@@ -24,6 +24,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import fragments.ContactFragment
 import models.ChatModel
+import models.ContactModel
 import project.social.whisper.databinding.ActivityChatBinding
 import java.util.Date
 
@@ -45,8 +46,7 @@ class ChatActivity : AppCompatActivity() {
 
     private var chatAdapter:ChatAdapter = ChatAdapter(this, chats)
 
-    private var contactNames:ArrayList<String> = ArrayList()
-    private var contactNumbers:ArrayList<String> = ArrayList()
+
 
     //Activity Result Launcher
     private lateinit var readContacts: ActivityResultLauncher<Intent>
@@ -158,13 +158,7 @@ class ChatActivity : AppCompatActivity() {
 
                 if(hasContactPermission())
                 {
-                    readContact()
-                    Log.d("CONTACT",contactNames[1])
                     val fragment = ContactFragment()
-                    val args = Bundle().apply {
-                        putStringArrayList("contact", contactNames)
-                    }
-                    fragment.arguments = args
 
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.fl_chat_act_cont, fragment)
@@ -198,24 +192,7 @@ class ChatActivity : AppCompatActivity() {
         callback.remove()
     }
 
-    private fun readContact() {
-        val contentResolver= contentResolver;
-        val cursor=contentResolver.query(ContactsContract.Contacts.CONTENT_URI,null,null,null,null)
-        if (cursor!!.moveToFirst()){
-            if (cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME) >= 0) {
-                do {
-                    val name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
-                    val number = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))
 
-                    if(name != null && number != null) {
-                        contactNames.add(name)
-                        contactNumbers.add(number)
-                    }
-
-                } while (cursor.moveToNext())
-            }
-        }
-    }
 
     private fun hasContactPermission(): Boolean {
         return ContextCompat.checkSelfPermission(

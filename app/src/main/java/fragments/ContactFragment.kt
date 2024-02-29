@@ -1,6 +1,7 @@
 package fragments
 
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.FrameLayout
 import androidx.activity.addCallback
+import models.ContactModel
 import project.social.whisper.R
 import project.social.whisper.databinding.FragmentContactBinding
 
@@ -24,6 +26,8 @@ private const val ARG_PARAM2 = "param2"
 class ContactFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
+
+    private var contact:ArrayList<ContactModel> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,20 +45,42 @@ class ContactFragment : Fragment() {
 
         val b = FragmentContactBinding.inflate(inflater, container, false)
 
-        val dataBundle = arguments
+//        val dataBundle = arguments
+//
+//        val array = dataBundle?.getStringArrayList("contact")!!
+//
+//        Log.d("CONTACT",array.size.toString())
+//        Log.d("CONTACT",array[0])
 
-        val array = dataBundle?.getStringArrayList("contact")!!
-
-        Log.d("CONTACT",array.size.toString())
-        Log.d("CONTACT",array[0])
-
+        readContact()
         if(isAdded) {
-            val ad =
-                ArrayAdapter<String>(requireContext(), android.R.layout.simple_list_item_1, array)
-            b.lvContactFrag.adapter = ad
+
         }
 
         return b.root
+    }
+
+    private fun readContact() {
+        if(isAdded) {
+            val contentResolver = requireActivity().contentResolver;
+            val cursor =
+                contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null)
+            if (cursor!!.moveToFirst()) {
+                if (cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME) >= 0) {
+                    do {
+                        val name =
+                            cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
+                        val number =
+                            cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))
+
+                        if (name != null && number != null) {
+                            contact.add(ContactModel(name, number))
+                        }
+
+                    } while (cursor.moveToNext())
+                }
+            }
+        }
     }
 
     companion object {
