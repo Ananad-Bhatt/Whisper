@@ -4,8 +4,8 @@
     android:layout_height="match_parent"
     tools:context="fragments.ContactFragment">
 
-    <ListView
-        android:id="@+id/lv_contact_frag"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_contact_frag"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
