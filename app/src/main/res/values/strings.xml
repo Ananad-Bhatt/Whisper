@@ -76,6 +76,9 @@
 
     <!--    Chat activity menu-->
     <string name="contact">Contact</string>
+    <string name="location">Location</string>
+    <string name="explorer">Explorer</string>
+    <string name="camera">Camera</string>
 
     <string-array name="account_type_array">
         <item>PUBLIC</item>

@@ -8,16 +8,16 @@
 
     <item
         android:id="@+id/menu_location"
-        android:title="@string/contact"
+        android:title="@string/location"
         android:icon="@drawable/location"/>
 
     <item
         android:id="@+id/menu_image"
-        android:title="@string/contact"
+        android:title="@string/explorer"
         android:icon="@drawable/image"/>
 
     <item
         android:id="@+id/menu_camera"
-        android:title="@string/contact"
+        android:title="@string/camera"
         android:icon="@drawable/camera_rounded"/>
 </menu>
