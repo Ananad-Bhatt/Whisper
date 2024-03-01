@@ -1,33 +1,53 @@
 package adapters
 
 import android.content.Context
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.internal.ContextUtils.getActivity
 import models.ContactModel
+import project.social.whisper.ChatActivity
+import project.social.whisper.R
 
-class ContactRecyclerViewAdapter(context: Context, private val contactList:ArrayList<ContactModel>) :
+class ContactRecyclerViewAdapter(private val context: Context, private val contactList:ArrayList<ContactModel>) :
     RecyclerView.Adapter<ContactRecyclerViewAdapter.ContactViewHolder>() {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): ContactRecyclerViewAdapter.ContactViewHolder {
-        TODO("Not yet implemented")
+    ): ContactViewHolder {
+
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.contact_recycler_view, parent, false)
+
+        return ContactViewHolder(view)
     }
 
     override fun onBindViewHolder(
-        holder: ContactRecyclerViewAdapter.ContactViewHolder,
+        holder: ContactViewHolder,
         position: Int
     ) {
-        TODO("Not yet implemented")
+
+        holder.name.text = contactList[position].name
+        holder.number.text = contactList[position].number
+
+        holder.container.setOnClickListener {
+            DatabaseAdapter.contactName = contactList[position].name
+            DatabaseAdapter.contactNumber = contactList[position].number
+        }
     }
 
     override fun getItemCount(): Int {
-        TODO("Not yet implemented")
+        return contactList.size
     }
 
     class ContactViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
+        val container: CardView = itemView.findViewById(R.id.cv_contact_rv)
+        val name: TextView = itemView.findViewById(R.id.tv_contact_rv_name)
+        val number: TextView = itemView.findViewById(R.id.tv_contact_rv_number)
     }
 }

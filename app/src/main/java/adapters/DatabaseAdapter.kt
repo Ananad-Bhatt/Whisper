@@ -27,6 +27,10 @@ class DatabaseAdapter {
         //Current user key
         var key = ""
 
+        //Global variables
+        var contactName = ""
+        var contactNumber = ""
+
         fun returnUser():FirebaseUser?
         {
             auth = FirebaseAuth.getInstance()
