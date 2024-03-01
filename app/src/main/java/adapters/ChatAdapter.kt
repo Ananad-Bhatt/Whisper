@@ -1,6 +1,7 @@
 package adapters
 
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import models.ChatModel
+import project.social.whisper.ImageViewActivity
 import project.social.whisper.R
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -73,11 +75,25 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
                 val h = holder as SenderImageChatHolder
                 Glide.with(context).load(m.MESSAGE).into(h.senderImgMessage)
                 h.senderImgTime.text = f.format(d)
+
+                h.senderImgMessage.setOnClickListener {
+                    val i = Intent(context, ImageViewActivity::class.java)
+                    i.putExtra("img",m.MESSAGE)
+                    context.startActivity(i)
+                }
+
             }
             ReceiverImageChatHolder::class.java -> {
                 val h = holder as ReceiverImageChatHolder
                 Glide.with(context).load(m.MESSAGE).into(h.receiverImgMessage)
                 h.receiverImgTime.text = f.format(d)
+
+                h.receiverImgMessage.setOnClickListener {
+                    val i = Intent(context, ImageViewActivity::class.java)
+                    i.putExtra("img",m.MESSAGE)
+                    context.startActivity(i)
+                }
+
             }
         }
     }
