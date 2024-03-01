@@ -26,8 +26,14 @@ import fragments.ContactFragment
 import models.ChatModel
 import project.social.whisper.databinding.ActivityChatBinding
 import java.math.BigInteger
+import java.security.Key
+import java.security.KeyPair
+import java.security.KeyPairGenerator
 import java.security.SecureRandom
 import java.util.Date
+import javax.crypto.Cipher
+import javax.crypto.KeyAgreement
+import javax.crypto.spec.SecretKeySpec
 
 
 class ChatActivity : AppCompatActivity() {
@@ -53,6 +59,9 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var callback: OnBackPressedCallback
 
     private lateinit var imageCapture: ActivityResultLauncher<Intent>
+
+    private lateinit var sharedSecretKeyA:ByteArray
+     private lateinit var sharedSecretKeyB:ByteArray
 
     //Permission callback
     private val permissionsResultCallback = registerForActivityResult(
@@ -494,43 +503,52 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun main() {
-        // Step 1: Choose prime numbers p and g
-        val p = BigInteger("23")
-        val g = BigInteger("5")
+        // Step 1: Perform Diffie-Hellman key exchange
+        val aliceKeyPair = generateKeyPair()
+        val bobKeyPair = generateKeyPair()
 
-        // Step 2: Generate private keys
-        val aPrivate = generatePrivateKey()
-        val bPrivate = generatePrivateKey()
+        // Alice and Bob exchange their public keys
+        sharedSecretKeyA = generateSharedSecret(aliceKeyPair.private, bobKeyPair.public)
+        sharedSecretKeyB = generateSharedSecret(bobKeyPair.private, aliceKeyPair.public)
 
-        // Step 3: Calculate public keys
-        val aPublic = calculatePublicKey(g, aPrivate, p)
-        val bPublic = calculatePublicKey(g, bPrivate, p)
-
-        // Step 4: Exchange public keys (simulate network exchange)
-        // In a real scenario, Alice would send her public key to Bob, and vice versa.
-
-        // Step 5: Calculate shared secret
-        val sA = calculateSharedSecret(bPublic, aPrivate, p)
-        val sB = calculateSharedSecret(aPublic, bPrivate, p)
-
-        // Check if both parties derive the same shared secret
-        if (sA == sB) {
-            println("Shared secret: $sA")
+        // Verify that both parties have the same shared secret key
+        if (sharedSecretKeyA.contentEquals(sharedSecretKeyB)) {
+            // Step 2: Use the shared secret key for encryption and decryption
+            val message = "Hello, Bob!"
+            val encryptedMessage = encrypt(message, sharedSecretKeyA)
+            val decryptedMessage = decrypt(encryptedMessage, sharedSecretKeyB)
+            println("Decrypted message: $decryptedMessage")
         } else {
-            println("Key exchange failed")
+            println("Error: Shared secret keys do not match!")
         }
     }
 
-    private fun generatePrivateKey(): BigInteger {
-        return BigInteger(16, SecureRandom())
+    private fun generateKeyPair(): KeyPair {
+        val keyPairGenerator = KeyPairGenerator.getInstance("DiffieHellman")
+        keyPairGenerator.initialize(1024)
+        return keyPairGenerator.generateKeyPair()
     }
 
-    private fun calculatePublicKey(g: BigInteger, privateKey: BigInteger, p: BigInteger): BigInteger {
-        return g.modPow(privateKey, p)
+    private fun generateSharedSecret(privateKey: Key, publicKey: Key): ByteArray {
+        val keyAgreement = KeyAgreement.getInstance("DiffieHellman")
+        keyAgreement.init(privateKey)
+        keyAgreement.doPhase(publicKey, true)
+        return keyAgreement.generateSecret()
     }
 
-    private fun calculateSharedSecret(publicKey: BigInteger, privateKey: BigInteger, p: BigInteger): BigInteger {
-        return publicKey.modPow(privateKey, p)
+    private fun encrypt(message: String, key: ByteArray): ByteArray {
+        val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
+        val secretKeySpec = SecretKeySpec(key, "AES")
+        cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec)
+        return cipher.doFinal(message.toByteArray())
+    }
+
+    private fun decrypt(encryptedMessage: ByteArray, key: ByteArray): String {
+        val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
+        val secretKeySpec = SecretKeySpec(key, "AES")
+        cipher.init(Cipher.DECRYPT_MODE, secretKeySpec)
+        val decryptedBytes = cipher.doFinal(encryptedMessage)
+        return String(decryptedBytes)
     }
 }
 
