@@ -25,6 +25,8 @@ import com.google.firebase.database.ValueEventListener
 import fragments.ContactFragment
 import models.ChatModel
 import project.social.whisper.databinding.ActivityChatBinding
+import java.math.BigInteger
+import java.security.SecureRandom
 import java.util.Date
 
 
@@ -489,6 +491,46 @@ class ChatActivity : AppCompatActivity() {
         {
             Log.d("DB_ERROR",e.toString())
         }
+    }
+
+    private fun main() {
+        // Step 1: Choose prime numbers p and g
+        val p = BigInteger("23")
+        val g = BigInteger("5")
+
+        // Step 2: Generate private keys
+        val aPrivate = generatePrivateKey()
+        val bPrivate = generatePrivateKey()
+
+        // Step 3: Calculate public keys
+        val aPublic = calculatePublicKey(g, aPrivate, p)
+        val bPublic = calculatePublicKey(g, bPrivate, p)
+
+        // Step 4: Exchange public keys (simulate network exchange)
+        // In a real scenario, Alice would send her public key to Bob, and vice versa.
+
+        // Step 5: Calculate shared secret
+        val sA = calculateSharedSecret(bPublic, aPrivate, p)
+        val sB = calculateSharedSecret(aPublic, bPrivate, p)
+
+        // Check if both parties derive the same shared secret
+        if (sA == sB) {
+            println("Shared secret: $sA")
+        } else {
+            println("Key exchange failed")
+        }
+    }
+
+    private fun generatePrivateKey(): BigInteger {
+        return BigInteger(16, SecureRandom())
+    }
+
+    private fun calculatePublicKey(g: BigInteger, privateKey: BigInteger, p: BigInteger): BigInteger {
+        return g.modPow(privateKey, p)
+    }
+
+    private fun calculateSharedSecret(publicKey: BigInteger, privateKey: BigInteger, p: BigInteger): BigInteger {
+        return publicKey.modPow(privateKey, p)
     }
 }
 
