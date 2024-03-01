@@ -1,6 +1,7 @@
 package adapters
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,8 +29,12 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             SENDER_VIEW_TYPE -> {
+                Log.d("HIIII","a")
                 val view = LayoutInflater.from(context)
                     .inflate(R.layout.sender_layout, parent, false)
+
+                Log.d("HIIII","ab")
+
                 SenderChatHolder(view)
             }
             RECEIVER_VIEW_TYPE -> {
@@ -85,11 +90,13 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
         return if(chats[position].SENDER_KEY.equals(DatabaseAdapter.key)) {
             if(chats[position].MESSAGE!!.contains("https://firebasestorage.googleapis.com"))
                 SENDER_VIEW_IMAGE_TYPE
-            SENDER_VIEW_TYPE
+            else
+                SENDER_VIEW_TYPE
         } else {
             if(chats[position].MESSAGE!!.contains("https://firebasestorage.googleapis.com"))
                 RECEIVER_VIEW_IMAGE_TYPE
-            RECEIVER_VIEW_TYPE
+            else
+                RECEIVER_VIEW_TYPE
         }
     }
 
@@ -100,24 +107,24 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
     class SenderChatHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val senderMessage = itemView.findViewById<TextView>(R.id.tv_sender_chat)!!
         val senderTime = itemView.findViewById<TextView>(R.id.tv_sender_chat_time)!!
-        val senderMainView = itemView.findViewById<RelativeLayout>(R.id.rl_sender_layout)!!
+        //val senderMainView = itemView.findViewById<RelativeLayout>(R.id.rl_sender_layout)!!
     }
 
     class SenderImageChatHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val senderImgMessage = itemView.findViewById<ImageView>(R.id.iv_sender_image_chat)!!
         val senderImgTime = itemView.findViewById<TextView>(R.id.tv_sender_image_chat_time)!!
-        val senderImgMainView = itemView.findViewById<RelativeLayout>(R.id.rl_sender_image_layout)!!
+        //val senderImgMainView = itemView.findViewById<RelativeLayout>(R.id.rl_sender_image_layout)!!
     }
 
     class ReceiverChatHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val receiverMessage = itemView.findViewById<TextView>(R.id.tv_receiver_chat)!!
         val receiverTime = itemView.findViewById<TextView>(R.id.tv_receiver_chat_time)!!
-        val receiverMainView = itemView.findViewById<RelativeLayout>(R.id.rl_receiver_layout)!!
+        //val receiverMainView = itemView.findViewById<RelativeLayout>(R.id.rl_receiver_layout)!!
     }
 
     class ReceiverImageChatHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val receiverImgMessage = itemView.findViewById<ImageView>(R.id.iv_receiver_image_chat)!!
         val receiverImgTime = itemView.findViewById<TextView>(R.id.tv_receiver_image_chat_time)!!
-        val receiverImgMainView = itemView.findViewById<RelativeLayout>(R.id.rl_receiver_image_layout)!!
+        //val receiverImgMainView = itemView.findViewById<RelativeLayout>(R.id.rl_receiver_image_layout)!!
     }
 }
