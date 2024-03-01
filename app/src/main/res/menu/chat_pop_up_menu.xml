@@ -19,5 +19,5 @@
     <item
         android:id="@+id/menu_camera"
         android:title="@string/contact"
-        android:icon="@drawable/profile2"/>
+        android:icon="@drawable/camera_rounded"/>
 </menu>
