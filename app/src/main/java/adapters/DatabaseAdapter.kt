@@ -23,6 +23,7 @@ class DatabaseAdapter {
 
         //Storage
         var userImage = FirebaseStorage.getInstance().getReference("USER_IMAGES")
+        var chatImage = FirebaseStorage.getInstance().getReference("CHAT_IMAGES")
 
         //Current user key
         var key = ""

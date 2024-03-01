@@ -5,12 +5,11 @@ import adapters.DatabaseAdapter
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
-import android.provider.ContactsContract
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import android.window.OnBackInvokedDispatcher
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,12 +18,12 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import fragments.ContactFragment
 import models.ChatModel
-import models.ContactModel
 import project.social.whisper.databinding.ActivityChatBinding
 import java.util.Date
 
@@ -46,12 +45,12 @@ class ChatActivity : AppCompatActivity() {
 
     private var chatAdapter:ChatAdapter = ChatAdapter(this, chats)
 
-
-
     //Activity Result Launcher
     private lateinit var readContacts: ActivityResultLauncher<Intent>
 
     private lateinit var callback: OnBackPressedCallback
+
+    private lateinit var imageCapture: ActivityResultLauncher<Intent>
 
     //Permission callback
     private val permissionsResultCallback = registerForActivityResult(
@@ -74,6 +73,7 @@ class ChatActivity : AppCompatActivity() {
         b = ActivityChatBinding.inflate(layoutInflater)
         setContentView(b.root)
 
+        //Activity Results
         readContacts = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) {
@@ -97,6 +97,19 @@ class ChatActivity : AppCompatActivity() {
                     onBackPressedDispatcher.onBackPressed()// Delegate to default navigation behavior
                     isEnabled = true
                 }
+            }
+        }
+
+        imageCapture = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                val data = it.data
+                val uri: Uri? = data?.data
+                uploadImage(uri)
+            } else {
+                Toast.makeText(this, "Image selection canceled", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
 
@@ -152,19 +165,34 @@ class ChatActivity : AppCompatActivity() {
             // Inflating popup menu from popup_menu.xml file
             popupMenu.menuInflater.inflate(R.menu.chat_pop_up_menu, popupMenu.menu)
 
-            popupMenu.setOnMenuItemClickListener { _ ->
+            popupMenu.setOnMenuItemClickListener {
+                when(it.itemId) {
 
-                requestContactPermission()
+                    R.id.menu_contact -> {
+                        requestContactPermission()
 
-                if(hasContactPermission())
-                {
-                    val fragment = ContactFragment()
+                        if (hasContactPermission()) {
+                            val fragment = ContactFragment()
 
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.fl_chat_act_cont, fragment)
-                        .commit()
+                            supportFragmentManager.beginTransaction()
+                                .replace(R.id.fl_chat_act_cont, fragment)
+                                .commit()
 
-                    b.flChatActCont.visibility = View.VISIBLE
+                            b.flChatActCont.visibility = View.VISIBLE
+                        }
+                    }
+
+                    R.id.menu_image -> {
+                        sendImage()
+                    }
+
+                    R.id.menu_location -> {
+                        //sendLocation()
+                    }
+
+                    R.id.menu_camera -> {
+                        sendWithCamera()
+                    }
                 }
                 true
             }
@@ -185,14 +213,100 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
+    private fun uploadImage(uri: Uri?) {
+        try {
+            if (uri != null) {
+                DatabaseAdapter.chatImage.child(senderRoom).child(key).putFile(uri).addOnSuccessListener {
+
+                    DatabaseAdapter.chatImage.child(senderRoom).child(key).downloadUrl.addOnSuccessListener { img ->
+
+                        val chatMap = HashMap<String, Any>()
+                        chatMap["SENDER_KEY"] = senderKey
+                        chatMap["SENDER_UID"] = DatabaseAdapter.returnUser()?.uid!!
+                        chatMap["MESSAGE"] = img.toString()
+                        chatMap["TIMESTAMP"] = Date().time
+
+                        try {
+                            DatabaseAdapter.chatTable.child(senderRoom).push().setValue(chatMap)
+                            DatabaseAdapter.chatTable.child(receiverRoom).push().setValue(chatMap)
+                            isRequesting(img.toString())
+                        }catch(e:Exception)
+                        {
+                            Log.d("DB_ERROR",e.toString())
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Toast.makeText(
+                    applicationContext,
+                    "Something went wrong, try again",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }catch(e:Exception)
+        {
+            Log.d("DB_ERROR",e.toString())
+        }
+    }
+    private fun sendWithCamera() {
+        requestCameraPermission()
+
+        if (hasCameraPermission()) {
+            openCamera()
+        } else {
+            Toast.makeText(
+                applicationContext,
+                "Please give permission of camera",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
+    private fun openCamera() {
+        ImagePicker.with(this)
+            .cameraOnly()
+            .crop() //Crop image(Optional), Check Customization for more option
+            .compress(1024) //Final image size will be less than 1 MB(Optional)
+            .maxResultSize(
+                1080,
+                1080
+            ) //Final image resolution will be less than 1080 x 1080(Optional)
+            .createIntent { intent ->
+                imageCapture.launch(intent)
+            }
+    }
+
+    private fun hasCameraPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            applicationContext,
+            android.Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestCameraPermission() {
+        val permission = ContextCompat.checkSelfPermission(
+            applicationContext, android.Manifest.permission.CAMERA
+        )
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            permissionsResultCallback.launch(android.Manifest.permission.CAMERA)
+        } else {
+            Toast.makeText(applicationContext, "CAMERA granted", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun sendImage() {
+
+    }
+
     override fun onDestroy() {
         super.onDestroy()
 
         // Remove the callback when the activity is destroyed
         callback.remove()
     }
-
-
 
     private fun hasContactPermission(): Boolean {
         return ContextCompat.checkSelfPermission(

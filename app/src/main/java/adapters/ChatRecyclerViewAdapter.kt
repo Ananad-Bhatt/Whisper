@@ -34,7 +34,11 @@ class ChatRecyclerViewAdapter(private val context: Context, private val usersLis
 
         Glide.with(context).load(usersList[position].img).into(holder.img)
         holder.title.text = usersList[position].title
-        holder.subTitle.text = usersList[position].subTitle
+
+        if(!usersList[position].subTitle.contains("https://firebasestorage.googleapis.com"))
+            holder.subTitle.text = usersList[position].subTitle
+        else
+            holder.subTitle.text = "Image"
 
         holder.ll.setOnClickListener {
             val i = Intent(context, ChatActivity::class.java)
@@ -46,7 +50,6 @@ class ChatRecyclerViewAdapter(private val context: Context, private val usersLis
         }
 
     }
-
     class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val img: ImageView = itemView.findViewById(R.id.chat_frag_img)
         val title: TextView = itemView.findViewById(R.id.chat_frag_title)
