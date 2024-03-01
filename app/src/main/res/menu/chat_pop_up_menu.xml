@@ -17,7 +17,7 @@
         android:icon="@drawable/image"/>
 
     <item
-        android:id="@+id/menu_video"
+        android:id="@+id/menu_camera"
         android:title="@string/contact"
         android:icon="@drawable/profile2"/>
 </menu>
