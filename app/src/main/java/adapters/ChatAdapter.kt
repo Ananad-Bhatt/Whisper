@@ -29,12 +29,8 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             SENDER_VIEW_TYPE -> {
-                Log.d("HIIII","a")
                 val view = LayoutInflater.from(context)
                     .inflate(R.layout.sender_layout, parent, false)
-
-                Log.d("HIIII","ab")
-
                 SenderChatHolder(view)
             }
             RECEIVER_VIEW_TYPE -> {
