@@ -9,7 +9,7 @@
     <item
         android:id="@+id/menu_location"
         android:title="@string/contact"
-        android:icon="@drawable/profile2"/>
+        android:icon="@drawable/location"/>
 
     <item
         android:id="@+id/menu_image"
