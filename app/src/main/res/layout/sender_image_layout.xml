@@ -24,12 +24,9 @@
 
         <ImageView
             android:id="@+id/iv_sender_image_chat"
-            android:layout_width="250dp"
-            android:layout_height="250dp"
-            android:text="@string/app_name"
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="@dimen/_200sdp"
             android:scaleType="fitXY"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_13ssp"
             app:layout_constraintBottom_toTopOf="@+id/tv_sender_image_chat_time"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
