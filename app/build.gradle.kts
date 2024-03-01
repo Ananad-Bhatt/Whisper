@@ -81,7 +81,7 @@ dependencies {
     implementation("androidx.activity:activity:1.8.0")
 
     //Photo View to enable zoom in image
-    implementation ("com.github.chrisbanes:PhotoView:latest.release.here")
+    implementation ("com.github.chrisbanes:PhotoView:2.3.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
