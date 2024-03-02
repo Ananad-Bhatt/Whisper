@@ -25,6 +25,7 @@ import com.google.firebase.database.ValueEventListener
 import fragments.ContactFragment
 import models.ChatModel
 import project.social.whisper.databinding.ActivityChatBinding
+import java.math.BigInteger
 import java.util.Date
 
 class ChatActivity : AppCompatActivity() {
@@ -52,7 +53,6 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var imageCapture: ActivityResultLauncher<Intent>
 
     private lateinit var sharedSecretKeyA:ByteArray
-     private lateinit var sharedSecretKeyB:ByteArray
 
     //Permission callback
     private val permissionsResultCallback = registerForActivityResult(
@@ -128,7 +128,45 @@ class ChatActivity : AppCompatActivity() {
         senderRoom = senderKey + receiverKey
         receiverRoom = receiverKey + senderKey
 
-        DatabaseAdapter.generateEncryptionKey(DatabaseAdapter.returnUser()?.email!!, "4894456",senderRoom)
+        DatabaseAdapter.keysTable.child(receiverRoom).addListenerForSingleValueEvent(object: ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                var publicKeyForShared:String = ""
+                val privateKeyForShared:String
+
+                if(!snapshot.exists()) {
+                    DatabaseAdapter.generateEncryptionKey(
+                        DatabaseAdapter.returnUser()?.email!!,
+                        DatabaseAdapter.generateRandomKey(),
+                        senderRoom
+                    )
+                    DatabaseAdapter.generateEncryptionKey(
+                        DatabaseAdapter.returnUser()?.email!!,
+                        DatabaseAdapter.generateRandomKey(),
+                        receiverRoom
+                    )
+
+                    publicKeyForShared = snapshot.child("PUBLIC_KEY").getValue(String::class.java)!!
+                    privateKeyForShared = snapshot.child("KEY").getValue(String::class.java)!!
+                }
+                else
+                {
+                    publicKeyForShared = snapshot.child("PUBLIC_KEY").getValue(String::class.java)!!
+                    privateKeyForShared = snapshot.child("KEY").getValue(String::class.java)!!
+                }
+
+                if(publicKeyForShared!="")
+                {
+
+                    sharedSecretKeyA = BigInteger(publicKeyForShared)
+                        .modPow(BigInteger(DatabaseAdapter.decryptPrivateKey(privateKeyForShared)), DatabaseAdapter.p)
+                        .toString().encodeToByteArray()
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+            }
+        })
 
         val lManager = LinearLayoutManager(this)
         lManager.stackFromEnd = true

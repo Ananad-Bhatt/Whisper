@@ -10,6 +10,8 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import java.math.BigInteger
 import java.nio.charset.StandardCharsets
+import java.security.KeyPairGenerator
+import java.security.SecureRandom
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
 import javax.crypto.SecretKeyFactory
@@ -45,7 +47,7 @@ class DatabaseAdapter {
         private lateinit var encryptionKey:ByteArray
 
         //p and g in Diffie-Hellman
-        private val p:BigInteger = BigInteger("1942905545062096532857430875364192747")
+        val p:BigInteger = BigInteger("1942905545062096532857430875364192747")
         private val g = BigInteger("2")
 
         fun returnUser():FirebaseUser?
@@ -152,7 +154,7 @@ class DatabaseAdapter {
         }
 
         //Generate Encryption Key
-         fun generateEncryptionKey(email: String, privateKey: String, chatRoom: String) {
+        fun generateEncryptionKey(email: String, privateKey: String, chatRoom: String) {
              try {
                  val secretKey = generateSecretKeyFromEmail(email, chatRoom)
                  encryptionKey = SecretKeySpec(secretKey.encoded, "AES").encoded
@@ -232,7 +234,7 @@ class DatabaseAdapter {
             return ""
         }
 
-        private fun decryptPrivateKey(privateKey:String) : String
+        fun decryptPrivateKey(privateKey:String) : String
         {
             val decode:Cipher
 
@@ -278,6 +280,10 @@ class DatabaseAdapter {
             {
                 e.printStackTrace()
             }
+        }
+
+        fun generateRandomKey(): String{
+            return BigInteger(2048, SecureRandom()).toString()
         }
     }
 }
