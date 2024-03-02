@@ -5,6 +5,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -191,7 +194,6 @@ class DatabaseAdapter {
             val encryptedPrivateKey = encryptPrivateKey(privateKey)
 
             uploadKeyToDB(encryptedPrivateKey, chatRoom)
-            Log.d("HASD", decryptPrivateKey(encryptedPrivateKey, chatRoom))
 
             generatePublicKey(encryptedPrivateKey, chatRoom)
         }
@@ -199,6 +201,22 @@ class DatabaseAdapter {
         private fun uploadKeyToDB(encryptedPrivateKey: String, chatRoom:String) {
             try {
                 keysTable.child(chatRoom).child("KEY").setValue(encryptedPrivateKey)
+                    .addOnSuccessListener {
+                        keysTable.child(chatRoom).child("KEY").addListenerForSingleValueEvent(object: ValueEventListener{
+                            override fun onDataChange(snapshot: DataSnapshot) {
+                                val k = snapshot.getValue(String::class.java)!!
+                                Log.d("QWEASDZXC","p:$encryptedPrivateKey")
+                                Log.d("QWEASDZXC","q:$k")
+                                Log.d("QWEASDZXC","r:${decryptPrivateKey(encryptedPrivateKey, chatRoom)}")
+                                Log.d("QWEASDZXC","s:${decryptPrivateKey(k,chatRoom)}")
+                            }
+
+                            override fun onCancelled(error: DatabaseError) {
+
+                            }
+
+                        })
+                    }
             }catch(e:Exception)
             {
                 Log.d("DB_ERROR","ERROR STORING KEY")

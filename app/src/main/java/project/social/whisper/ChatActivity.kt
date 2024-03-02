@@ -147,7 +147,7 @@ class ChatActivity : AppCompatActivity() {
                         receiverRoom
                     )
 
-                    while(!snapshot.child("PUBLIC_KEY").exists()) {
+                    //while(!snapshot.child("PUBLIC_KEY").exists()) {
                         if (snapshot.child("PUBLIC_KEY").exists()) {
                             publicKeyForShared =
                                 snapshot.child("PUBLIC_KEY").getValue(String::class.java)!!
@@ -157,7 +157,7 @@ class ChatActivity : AppCompatActivity() {
                             privateKeyForShared =
                                 snapshot.child("KEY").getValue(String::class.java)!!
                         }
-                    }
+                    //}
                 }
                 else
                 {
