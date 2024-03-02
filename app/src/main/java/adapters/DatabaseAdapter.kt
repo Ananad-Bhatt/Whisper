@@ -8,8 +8,10 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import java.math.BigInteger
 import java.nio.charset.StandardCharsets
 import javax.crypto.Cipher
+import javax.crypto.SecretKey
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
@@ -41,6 +43,10 @@ class DatabaseAdapter {
 
         //Encryption Key
         private lateinit var encryptionKey:ByteArray
+
+        //p and g in Diffie-Hellman
+        private val p:BigInteger = BigInteger("1942905545062096532857430875364192747")
+        private const val g = 2
 
         fun returnUser():FirebaseUser?
         {
@@ -148,6 +154,19 @@ class DatabaseAdapter {
 
         //Generate Encryption Key
          fun generateEncryptionKey(email: String, privateKey: String, chatRoom: String) {
+             try {
+                 val secretKey = generateSecretKeyFromEmail(email, chatRoom)
+                 encryptionKey = SecretKeySpec(secretKey.encoded, "AES").encoded
+
+                 encryptPrivateKeyAndUpload(privateKey, chatRoom)
+             }catch(e: Exception)
+             {
+                 e.printStackTrace()
+             }
+        }
+
+        private fun generateSecretKeyFromEmail(email: String, chatRoom: String) : SecretKey
+        {
             val staticSalt = "wqughv fed7^&@!(*vhjQW1254537/AFDMNQgewf;wf;g u gyGFYEGIDBSIAFWAG JIQW87R2378RGBF7jbf sd/54f7da7wa bjfgw iqyfgwdyhaf0912834=576 baHFGBHG%^%^q#&GGFGGUw $chatRoom".toByteArray() // Choose a static salt
             val iterations = 10000 // Number of iterations for key stretching
             val keyLength = 256 // Length of the derived key in bits
@@ -158,14 +177,11 @@ class DatabaseAdapter {
             try {
                 val skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
                 val spec = PBEKeySpec(input, staticSalt, iterations, keyLength)
-                val secretKey = skf.generateSecret(spec)
-                encryptionKey = SecretKeySpec(secretKey.encoded, "AES").encoded
-
-                encryptPrivateKeyAndUpload(privateKey, chatRoom)
-
-            } catch (e: Exception) {
-                throw RuntimeException("Error deriving encryption key", e)
+                return skf.generateSecret(spec)
+            }catch(e:Exception) {
+                e.printStackTrace()
             }
+            return "" as SecretKey
         }
 
         private fun encryptPrivateKeyAndUpload(privateKey:String, chatRoom:String)
