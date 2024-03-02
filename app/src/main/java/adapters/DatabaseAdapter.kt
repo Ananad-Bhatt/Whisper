@@ -188,11 +188,21 @@ class DatabaseAdapter {
         }
 
         //Generating Byte Array
-        fun generateAndEncryptByteArray()
+        fun generateAndEncryptEncryptionKey(privateKey:String, chatRoom:String)
         {
             val encryptionKey = generateSecureRandomBytes()
-            val encryptedEncryptionKey = encryptPrivateKey(encryptionKey)
+            val encryptedPrivateKey = encryptPrivateKey(encryptionKey, privateKey)
 
+            uploadKeyToDB(encryptedPrivateKey, chatRoom)
+        }
+
+        private fun uploadKeyToDB(encryptedPrivateKey: String, chatRoom:String) {
+            try {
+                keysTable.child(chatRoom).child("KEY").setValue(encryptedPrivateKey)
+            }catch(e:Exception)
+            {
+                Log.d("DB_ERROR","ERROR STORING KEY")
+            }
         }
 
         private fun encryptPrivateKey(encryptionKey:ByteArray, privateKey:String) : String
