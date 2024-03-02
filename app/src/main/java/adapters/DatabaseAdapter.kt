@@ -191,7 +191,7 @@ class DatabaseAdapter {
             val encryptedPrivateKey = encryptPrivateKey(privateKey)
 
             uploadKeyToDB(encryptedPrivateKey, chatRoom)
-            Log.d("HASD", decryptPrivateKey(encryptedPrivateKey))
+            Log.d("HASD", decryptPrivateKey(encryptedPrivateKey, chatRoom))
 
             generatePublicKey(encryptedPrivateKey, chatRoom)
         }
@@ -234,11 +234,14 @@ class DatabaseAdapter {
             return ""
         }
 
-        fun decryptPrivateKey(privateKey:String) : String
+        fun decryptPrivateKey(privateKey:String, chatRoom: String) : String
         {
             val decode:Cipher
 
-            val skp = SecretKeySpec(encryptionKey, "AES")
+            val secretKey = generateSecretKeyFromEmail(returnUser()?.email!!, chatRoom)
+            val eKey = SecretKeySpec(secretKey.encoded, "AES").encoded
+
+            val skp = SecretKeySpec(eKey, "AES")
 
             val encodedByte: ByteArray = privateKey.toByteArray(StandardCharsets.ISO_8859_1)
 
@@ -267,7 +270,7 @@ class DatabaseAdapter {
         //Generating Public key
         private fun generatePublicKey(privateKey: String, chatRoom: String)
         {
-            val a = BigInteger(decryptPrivateKey(privateKey))
+            val a = BigInteger(decryptPrivateKey(privateKey, chatRoom))
             val publicKeyA = g.modPow(a, p)
 
             uploadPublicKeyToDB(publicKeyA.toString(), chatRoom)
@@ -283,7 +286,7 @@ class DatabaseAdapter {
         }
 
         fun generateRandomKey(): String{
-            return BigInteger(2048, SecureRandom()).toString()
+            return BigInteger(20, SecureRandom()).toString()
         }
     }
 }

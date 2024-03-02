@@ -23,6 +23,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import fragments.ContactFragment
+import kotlinx.coroutines.delay
 import models.ChatModel
 import project.social.whisper.databinding.ActivityChatBinding
 import java.math.BigInteger
@@ -132,7 +133,7 @@ class ChatActivity : AppCompatActivity() {
             override fun onDataChange(snapshot: DataSnapshot) {
 
                 var publicKeyForShared:String = ""
-                val privateKeyForShared:String
+                var privateKeyForShared:String = ""
 
                 if(!snapshot.exists()) {
                     DatabaseAdapter.generateEncryptionKey(
@@ -146,8 +147,17 @@ class ChatActivity : AppCompatActivity() {
                         receiverRoom
                     )
 
-                    publicKeyForShared = snapshot.child("PUBLIC_KEY").getValue(String::class.java)!!
-                    privateKeyForShared = snapshot.child("KEY").getValue(String::class.java)!!
+                    while(!snapshot.child("PUBLIC_KEY").exists()) {
+                        if (snapshot.child("PUBLIC_KEY").exists()) {
+                            publicKeyForShared =
+                                snapshot.child("PUBLIC_KEY").getValue(String::class.java)!!
+                        }
+
+                        if (snapshot.child("KEY").exists()) {
+                            privateKeyForShared =
+                                snapshot.child("KEY").getValue(String::class.java)!!
+                        }
+                    }
                 }
                 else
                 {
@@ -158,9 +168,16 @@ class ChatActivity : AppCompatActivity() {
                 if(publicKeyForShared!="")
                 {
 
+                    val num = DatabaseAdapter.decryptPrivateKey(privateKeyForShared, senderRoom)
+                    Log.d("HASD",privateKeyForShared)
+                    Log.d("HASD","a:$num")
+
+
                     sharedSecretKeyA = BigInteger(publicKeyForShared)
-                        .modPow(BigInteger(DatabaseAdapter.decryptPrivateKey(privateKeyForShared)), DatabaseAdapter.p)
+                        .modPow(BigInteger(num), DatabaseAdapter.p)
                         .toString().encodeToByteArray()
+
+                    DatabaseAdapter.keysTable.child(senderRoom).child("TEMP").setValue(sharedSecretKeyA.toString())
                 }
             }
 
