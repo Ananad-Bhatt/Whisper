@@ -46,7 +46,7 @@ class DatabaseAdapter {
 
         //p and g in Diffie-Hellman
         private val p:BigInteger = BigInteger("1942905545062096532857430875364192747")
-        private const val g = 2
+        private val g = BigInteger("2")
 
         fun returnUser():FirebaseUser?
         {
@@ -151,7 +151,6 @@ class DatabaseAdapter {
             }
         }
 
-
         //Generate Encryption Key
          fun generateEncryptionKey(email: String, privateKey: String, chatRoom: String) {
              try {
@@ -186,9 +185,13 @@ class DatabaseAdapter {
 
         private fun encryptPrivateKeyAndUpload(privateKey:String, chatRoom:String)
         {
+            Log.d("HASD",privateKey)
             val encryptedPrivateKey = encryptPrivateKey(privateKey)
 
             uploadKeyToDB(encryptedPrivateKey, chatRoom)
+            Log.d("HASD", decryptPrivateKey(encryptedPrivateKey))
+
+            generatePublicKey(encryptedPrivateKey, chatRoom)
         }
 
         private fun uploadKeyToDB(encryptedPrivateKey: String, chatRoom:String) {
@@ -251,12 +254,30 @@ class DatabaseAdapter {
 
                     return decodedString
                 } catch (e: Exception) {
-                    Log.d("KEY_ERROR","Unable to decode")
+                    Log.d("KEY_ERROR",e.toString())
                 }
             }catch(e:Exception){
                 Log.d("KEY_ERROR","Something went wrong")
             }
             return ""
+        }
+
+        //Generating Public key
+        private fun generatePublicKey(privateKey: String, chatRoom: String)
+        {
+            val a = BigInteger(decryptPrivateKey(privateKey))
+            val publicKeyA = g.modPow(a, p)
+
+            uploadPublicKeyToDB(publicKeyA.toString(), chatRoom)
+        }
+
+        private fun uploadPublicKeyToDB(publicKeyA: String, chatRoom: String) {
+            try {
+                keysTable.child(chatRoom).child("PUBLIC_KEY").setValue(publicKeyA)
+            }catch(e:Exception)
+            {
+                e.printStackTrace()
+            }
         }
     }
 }
