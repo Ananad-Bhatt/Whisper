@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -13,6 +14,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
@@ -25,15 +27,20 @@ import com.google.firebase.database.ValueEventListener
 import fragments.ContactFragment
 import models.ChatModel
 import project.social.whisper.databinding.ActivityChatBinding
-import java.math.BigInteger
-import java.security.Key
+import java.security.KeyFactory
 import java.security.KeyPair
 import java.security.KeyPairGenerator
-import java.security.SecureRandom
+import java.security.PrivateKey
+import java.security.PublicKey
+import java.security.spec.X509EncodedKeySpec
 import java.util.Date
 import javax.crypto.Cipher
 import javax.crypto.KeyAgreement
 import javax.crypto.spec.SecretKeySpec
+import java.util.Base64
+import javax.crypto.KeyGenerator
+import javax.crypto.SecretKey
+import javax.crypto.spec.DHParameterSpec
 
 
 class ChatActivity : AppCompatActivity() {
@@ -502,53 +509,93 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    private fun main() {
-        // Step 1: Perform Diffie-Hellman key exchange
-        val aliceKeyPair = generateKeyPair()
-        val bobKeyPair = generateKeyPair()
 
-        // Alice and Bob exchange their public keys
-        sharedSecretKeyA = generateSharedSecret(aliceKeyPair.private, bobKeyPair.public)
-        sharedSecretKeyB = generateSharedSecret(bobKeyPair.private, aliceKeyPair.public)
-
-        // Verify that both parties have the same shared secret key
-        if (sharedSecretKeyA.contentEquals(sharedSecretKeyB)) {
-            // Step 2: Use the shared secret key for encryption and decryption
-            val message = "Hello, Bob!"
-            val encryptedMessage = encrypt(message, sharedSecretKeyA)
-            val decryptedMessage = decrypt(encryptedMessage, sharedSecretKeyB)
-            println("Decrypted message: $decryptedMessage")
-        } else {
-            println("Error: Shared secret keys do not match!")
-        }
+    private fun generateAESKey(): SecretKey {
+        val keygen = KeyGenerator.getInstance("AES")
+        keygen.init(256) // Use a larger key size
+        return keygen.generateKey()
     }
 
-    private fun generateKeyPair(): KeyPair {
-        val keyPairGenerator = KeyPairGenerator.getInstance("DiffieHellman")
-        keyPairGenerator.initialize(1024)
-        return keyPairGenerator.generateKeyPair()
+    // Function to perform AES encryption
+    private fun encryptAES(text: String, key: SecretKey): ByteArray {
+        val cipher = Cipher.getInstance("AES")
+        cipher.init(Cipher.ENCRYPT_MODE, key)
+        return cipher.doFinal(text.toByteArray())
     }
 
-    private fun generateSharedSecret(privateKey: Key, publicKey: Key): ByteArray {
-        val keyAgreement = KeyAgreement.getInstance("DiffieHellman")
-        keyAgreement.init(privateKey)
-        keyAgreement.doPhase(publicKey, true)
-        return keyAgreement.generateSecret()
-    }
-
-    private fun encrypt(message: String, key: ByteArray): ByteArray {
-        val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
-        val secretKeySpec = SecretKeySpec(key, "AES")
-        cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec)
-        return cipher.doFinal(message.toByteArray())
-    }
-
-    private fun decrypt(encryptedMessage: ByteArray, key: ByteArray): String {
-        val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
-        val secretKeySpec = SecretKeySpec(key, "AES")
-        cipher.init(Cipher.DECRYPT_MODE, secretKeySpec)
-        val decryptedBytes = cipher.doFinal(encryptedMessage)
+    // Function to perform AES decryption
+    private fun decryptAES(encryptedData: ByteArray, key: SecretKey): String {
+        val cipher = Cipher.getInstance("AES")
+        cipher.init(Cipher.DECRYPT_MODE, key)
+        val decryptedBytes = cipher.doFinal(encryptedData)
         return String(decryptedBytes)
+    }
+
+    // Function to generate Diffie-Hellman key pair
+    fun generateDHKeyPair(): KeyPair {
+        val kpg = KeyPairGenerator.getInstance("DH")
+        val dhSpec = DHParameterSpec(1024, g) // Use a larger prime number
+        kpg.initialize(dhSpec)
+        return kpg.generateKeyPair()
+    }
+
+    // Function to perform Diffie-Hellman key exchange
+    fun performDHKeyExchange(myPrivateKey: PrivateKey, otherPublicKey: PublicKey): SecretKey {
+        val keyAgreement = KeyAgreement.getInstance("DH")
+        keyAgreement.init(myPrivateKey)
+        keyAgreement.doPhase(otherPublicKey, true)
+        val sharedSecret = keyAgreement.generateSecret()
+        return SecretKeySpec(sharedSecret, 0, 32, "AES") // Use only first 256 bits for AES key
+    }
+
+    // Function to store public key in Firebase Realtime Database
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun storePublicKeyInDatabase(publicKey: PublicKey) {
+        val databaseRef = DatabaseAdapter.keys.child("PUBLIC_KEY")
+        val encodedPublicKey = Base64.getEncoder().encodeToString(publicKey.encoded)
+        databaseRef.setValue(encodedPublicKey)
+    }
+
+    // Function to retrieve public key from Firebase Realtime Database
+    fun retrievePublicKeyFromDatabase(callback: (PublicKey) -> Unit) {
+        val databaseRef = DatabaseAdapter.keys.child("PUBLIC_KEY")
+        databaseRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            @RequiresApi(Build.VERSION_CODES.O)
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val encodedPublicKey = dataSnapshot.getValue(String::class.java)!!
+                val publicKeyBytes = Base64.getDecoder().decode(encodedPublicKey)
+                val keySpec = X509EncodedKeySpec(publicKeyBytes)
+                val keyFactory = KeyFactory.getInstance("DH")
+                val publicKey = keyFactory.generatePublic(keySpec)
+                callback(publicKey)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle error
+            }
+        })
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun main() {
+        val myKeyPair = generateDHKeyPair()
+        val myPrivateKey = myKeyPair.private
+        val myPublicKey = myKeyPair.public
+
+        // Store public key in the database
+        storePublicKeyInDatabase(myPublicKey)
+
+        // Retrieve public key of other party from the database
+        retrievePublicKeyFromDatabase { otherPublicKey ->
+            // Perform key exchange
+            val sharedSecretKey = performDHKeyExchange(myPrivateKey, otherPublicKey)
+
+            // Encrypt and decrypt messages using sharedSecretKey
+            val message = "Hello, world!"
+            val encryptedMessage = encryptAES(message, sharedSecretKey)
+            val decryptedMessage = decryptAES(encryptedMessage, sharedSecretKey)
+            println("Decrypted Message: $decryptedMessage")
+        }
     }
 }
 

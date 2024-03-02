@@ -80,6 +80,17 @@ Channels :
 	Following and Followers
 
 
+Diffie - Hellman algo
+
+p and g are public key also large prime number
+a and b are private key, which is only known to yourselves
+A = (g^a) % p - Your public key
+B = (g^b) % p
+
+A and B will be shared
+
+shared secret = (B^a) % p = (A^b) % p
+
 
 I have this type of structure in my DB
 
