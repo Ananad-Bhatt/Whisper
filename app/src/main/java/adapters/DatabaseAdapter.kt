@@ -1,5 +1,6 @@
 package adapters
 
+import android.R.id.message
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Log
@@ -11,11 +12,15 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import java.nio.charset.StandardCharsets
+import java.security.InvalidKeyException
 import java.security.KeyPairGenerator
 import java.security.KeyStore
 import java.security.SecureRandom
+import javax.crypto.BadPaddingException
 import javax.crypto.Cipher
+import javax.crypto.IllegalBlockSizeException
 import javax.crypto.spec.SecretKeySpec
+
 
 class DatabaseAdapter {
 
@@ -45,6 +50,9 @@ class DatabaseAdapter {
         //Global variables
         var contactName = ""
         var contactNumber = ""
+
+        //Encryption Key
+        private lateinit var encryptionKey:ByteArray
 
         fun returnUser():FirebaseUser?
         {
@@ -167,8 +175,7 @@ class DatabaseAdapter {
         }
 
         fun retrievePrivateKey(keyAlias:String): ByteArray? {
-            val privateKeyEntry = keyStore.getEntry(keyAlias, null) as? KeyStore.PrivateKeyEntry
-            return privateKeyEntry?.privateKey?.encoded
+
         }
 
         private fun isKeyAliasExists(keyAlias:String): Boolean {
@@ -190,8 +197,8 @@ class DatabaseAdapter {
         //Generating Byte Array
         fun generateAndEncryptEncryptionKey(privateKey:String, chatRoom:String)
         {
-            val encryptionKey = generateSecureRandomBytes()
-            val encryptedPrivateKey = encryptPrivateKey(encryptionKey, privateKey)
+            encryptionKey = generateSecureRandomBytes()
+            val encryptedPrivateKey = encryptPrivateKey(privateKey)
 
             uploadKeyToDB(encryptedPrivateKey, chatRoom)
         }
@@ -205,7 +212,7 @@ class DatabaseAdapter {
             }
         }
 
-        private fun encryptPrivateKey(encryptionKey:ByteArray, privateKey:String) : String
+        private fun encryptPrivateKey(privateKey:String) : String
         {
             val encode:Cipher
 
@@ -231,6 +238,37 @@ class DatabaseAdapter {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+            return ""
+        }
+
+        private fun decryptPrivateKey(privateKey:String) : String
+        {
+            val decode:Cipher
+
+            val skp = SecretKeySpec(encryptionKey, "AES")
+
+            val encodedByte: ByteArray = privateKey.toByteArray(StandardCharsets.ISO_8859_1)
+
+            val decodedString: String
+
+            val decoding: ByteArray
+
+            try{
+                decode = Cipher.getInstance("AES")
+
+                try {
+                    decode.init(Cipher.DECRYPT_MODE, skp)
+                    decoding = decode.doFinal(encodedByte)
+                    decodedString = String(decoding)
+
+                    return decodedString
+                } catch (e: Exception) {
+                    Log.d("KEY_ERROR","Unable to decode")
+                }
+            }catch(e:Exception){
+                Log.d("KEY_ERROR","Something went wrong")
+            }
+            return ""
         }
     }
 }
