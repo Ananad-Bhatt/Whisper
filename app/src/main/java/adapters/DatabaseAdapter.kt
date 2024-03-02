@@ -1,8 +1,5 @@
 package adapters
 
-import android.R.id.message
-import android.security.keystore.KeyGenParameterSpec
-import android.security.keystore.KeyProperties
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
@@ -12,13 +9,9 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import java.nio.charset.StandardCharsets
-import java.security.InvalidKeyException
-import java.security.KeyPairGenerator
-import java.security.KeyStore
-import java.security.SecureRandom
-import javax.crypto.BadPaddingException
 import javax.crypto.Cipher
-import javax.crypto.IllegalBlockSizeException
+import javax.crypto.SecretKeyFactory
+import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 
 
@@ -38,11 +31,6 @@ class DatabaseAdapter {
         //Storage
         var userImage = FirebaseStorage.getInstance().getReference("USER_IMAGES")
         var chatImage = FirebaseStorage.getInstance().getReference("CHAT_IMAGES")
-
-        //Storing Key
-        private val keyStore: KeyStore = KeyStore.getInstance("AndroidKeyStore").apply {
-            load(null)
-        }
 
         //Current user key
         var key = ""
@@ -157,47 +145,31 @@ class DatabaseAdapter {
             }
         }
 
-        fun generateAndStorePrivateKey(keyAlias:String) {
-            if(!isKeyAliasExists(keyAlias)) {
-                val keyPairGenerator =
-                    KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_EC, "AndroidKeyStore")
-                val builder = KeyGenParameterSpec.Builder(
-                    keyAlias,
-                    KeyProperties.PURPOSE_SIGN or KeyProperties.PURPOSE_VERIFY
-                )
-                    .setKeySize(2048)
-                    .setDigests(KeyProperties.DIGEST_SHA256)
-                    .setAlgorithmParameterSpec(null)
-
-                keyPairGenerator.initialize(builder.build())
-                keyPairGenerator.generateKeyPair()
-            }
-        }
-
-        fun retrievePrivateKey(keyAlias:String): ByteArray? {
-
-        }
-
-        private fun isKeyAliasExists(keyAlias:String): Boolean {
-            return try {
-                keyStore.containsAlias(keyAlias)
-            } catch (e: Exception) {
-                false
-            }
-        }
 
         //Generate Encryption Key
-        private fun generateSecureRandomBytes(): ByteArray {
-            val secureRandom = SecureRandom()
-            val randomBytes = ByteArray(32)
-            secureRandom.nextBytes(randomBytes)
-            return randomBytes
+         fun generateEncryptionKey(email: String, privateKey: String, chatRoom: String) {
+            val staticSalt = "wqughv fed7^&@!(*vhjQW1254537/AFDMNQgewf;wf;g u gyGFYEGIDBSIAFWAG JIQW87R2378RGBF7jbf sd/54f7da7wa bjfgw iqyfgwdyhaf0912834=576 baHFGBHG%^%^q#&GGFGGUw $chatRoom".toByteArray() // Choose a static salt
+            val iterations = 10000 // Number of iterations for key stretching
+            val keyLength = 256 // Length of the derived key in bits
+
+            // Use email address as input to the KDF
+            val input = email.toCharArray()
+
+            try {
+                val skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
+                val spec = PBEKeySpec(input, staticSalt, iterations, keyLength)
+                val secretKey = skf.generateSecret(spec)
+                encryptionKey = SecretKeySpec(secretKey.encoded, "AES").encoded
+
+                encryptPrivateKeyAndUpload(privateKey, chatRoom)
+
+            } catch (e: Exception) {
+                throw RuntimeException("Error deriving encryption key", e)
+            }
         }
 
-        //Generating Byte Array
-        fun generateAndEncryptEncryptionKey(privateKey:String, chatRoom:String)
+        private fun encryptPrivateKeyAndUpload(privateKey:String, chatRoom:String)
         {
-            encryptionKey = generateSecureRandomBytes()
             val encryptedPrivateKey = encryptPrivateKey(privateKey)
 
             uploadKeyToDB(encryptedPrivateKey, chatRoom)

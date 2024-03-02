@@ -82,7 +82,7 @@ Channels :
 
 Diffie - Hellman algo
 
-p and g are public key also large prime number
+p and g are public key also large prime number - static
 a and b are private key, which is only known to yourselves
 A = (g^a) % p - Your public key
 B = (g^b) % p
@@ -133,3 +133,8 @@ Initially I thought of adding like
 	USER_DETAILS -> userKey -> userName -> ...
 
 But then I need to change my whole code because now to find a perticular user I need its userName not a key, And I can also do that, But the main problem is that I cannot manage both Key and Username together as a primary key, For example in CHAT_ROOM and CHAT, I managed whole thing with key
+
+
+
+key encrypt message
+key decrypt message
