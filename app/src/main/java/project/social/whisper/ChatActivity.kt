@@ -445,6 +445,7 @@ class ChatActivity : AppCompatActivity() {
                     if(snapshot.exists()) {
                         for (s in snapshot.children) {
                             val data: ChatModel = s.getValue(ChatModel::class.java)!!
+                            data.MESSAGE = DatabaseAdapter.decryptMessage(data.MESSAGE!!, sharedSecret)
                             chats.add(data)
                         }
                     }
@@ -476,13 +477,13 @@ class ChatActivity : AppCompatActivity() {
             val chatMap = HashMap<String, Any>()
             chatMap["SENDER_KEY"] = senderKey
             chatMap["SENDER_UID"] = DatabaseAdapter.returnUser()?.uid!!
-            chatMap["MESSAGE"] = msg
+            chatMap["MESSAGE"] = encMsg
             chatMap["TIMESTAMP"] = Date().time
 
             try {
                 DatabaseAdapter.chatTable.child(senderRoom).push().setValue(chatMap)
                 DatabaseAdapter.chatTable.child(receiverRoom).push().setValue(chatMap)
-                isRequesting(msg)
+                isRequesting(encMsg)
             }catch(e:Exception)
             {
                 Log.d("DB_ERROR",e.toString())
