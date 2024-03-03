@@ -129,40 +129,48 @@ class ChatActivity : AppCompatActivity() {
         senderRoom = senderKey + receiverKey
         receiverRoom = receiverKey + senderKey
 
-        DatabaseAdapter.keysTable.child(senderRoom).addListenerForSingleValueEvent(object: ValueEventListener {
+        DatabaseAdapter.keysTable.addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
 
                 var publicKeyForShared:String = ""
                 var privateKeyForShared:String = ""
 
-                if(!snapshot.exists()) {
+                if(!snapshot.child(senderRoom).exists()) {
                     DatabaseAdapter.generateEncryptionKey(
                         DatabaseAdapter.returnUser()?.email!!,
                         DatabaseAdapter.generateRandomKey(),
                         senderRoom
                     )
-                    DatabaseAdapter.generateEncryptionKey(
-                        DatabaseAdapter.returnUser()?.email!!,
-                        DatabaseAdapter.generateRandomKey(),
-                        receiverRoom
-                    )
 
-                    //while(!snapshot.child("PUBLIC_KEY").exists()) {
-                        if (snapshot.child("PUBLIC_KEY").exists()) {
-                            publicKeyForShared =
-                                snapshot.child("PUBLIC_KEY").getValue(String::class.java)!!
-                        }
+                    DatabaseAdapter.usersTable.child(uid).child("EMAIL").addListenerForSingleValueEvent(object:ValueEventListener{
+                        override fun onDataChange(s: DataSnapshot) {
+                            DatabaseAdapter.generateEncryptionKey(
+                                s.getValue(String::class.java)!!,
+                                DatabaseAdapter.generateRandomKey(),
+                                receiverRoom
+                            )
 
-                        if (snapshot.child("KEY").exists()) {
-                            privateKeyForShared =
-                                snapshot.child("KEY").getValue(String::class.java)!!
+                            //while(!snapshot.child("PUBLIC_KEY").exists()) {
+                            if (snapshot.child(receiverRoom).child("PUBLIC_KEY").exists()) {
+                                publicKeyForShared =
+                                    snapshot.child("PUBLIC_KEY").getValue(String::class.java)!!
+                            }
+
+                            if (snapshot.child(senderRoom).child("KEY").exists()) {
+                                privateKeyForShared =
+                                    snapshot.child("KEY").getValue(String::class.java)!!
+                            }
+                            //}
                         }
-                    //}
+                        override fun onCancelled(error: DatabaseError) {
+                        }
+                    })
+
                 }
                 else
                 {
-                    publicKeyForShared = snapshot.child("PUBLIC_KEY").getValue(String::class.java)!!
-                    privateKeyForShared = snapshot.child("KEY").getValue(String::class.java)!!
+                    publicKeyForShared = snapshot.child(receiverRoom).child("PUBLIC_KEY").getValue(String::class.java)!!
+                    privateKeyForShared = snapshot.child(senderRoom).child("KEY").getValue(String::class.java)!!
                     Log.d("QWEASDZXC","fetch:$privateKeyForShared")
                 }
 
@@ -170,7 +178,7 @@ class ChatActivity : AppCompatActivity() {
                 {
 
                     Log.d("QWEASDZXC","fetch2:$privateKeyForShared")
-                    val num = DatabaseAdapter.decryptPrivateKey(privateKeyForShared, senderRoom)
+                    val num = DatabaseAdapter.decryptPrivateKey(privateKeyForShared, senderRoom, DatabaseAdapter.returnUser()?.email!!)
                     Log.d("HASD",privateKeyForShared)
                     Log.d("HASD","a:$num")
 
