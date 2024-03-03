@@ -50,8 +50,8 @@ class DatabaseAdapter {
         private lateinit var encryptionKey:ByteArray
 
         //p and g in Diffie-Hellman
-        val p:BigInteger = BigInteger("1942905545062096532857430875364192747")
-        private val g = BigInteger("2")
+        val p:BigInteger = BigInteger("5147")
+        private val g = BigInteger("3")
 
         fun returnUser():FirebaseUser?
         {
@@ -292,7 +292,7 @@ class DatabaseAdapter {
         private fun generatePublicKey(privateKey: String, chatRoom: String, email: String)
         {
             val a = BigInteger(decryptPrivateKey(privateKey, chatRoom, email))
-            val publicKeyA = g.modPow(a, p)
+            val publicKeyA = g.pow(a.toInt()) % p
 
             uploadPublicKeyToDB(publicKeyA.toString(), chatRoom)
         }
@@ -307,7 +307,7 @@ class DatabaseAdapter {
         }
 
         fun generateRandomKey(): String{
-            return BigInteger(20, SecureRandom()).toString()
+            return BigInteger(8, SecureRandom()).toString()
         }
     }
 }

@@ -177,17 +177,13 @@ class ChatActivity : AppCompatActivity() {
                 if(publicKeyForShared!="")
                 {
 
-                    Log.d("QWEASDZXC","fetch2:$privateKeyForShared")
                     val num = DatabaseAdapter.decryptPrivateKey(privateKeyForShared, senderRoom, DatabaseAdapter.returnUser()?.email!!)
-                    Log.d("HASD",privateKeyForShared)
-                    Log.d("HASD","a:$num")
 
-
-                    sharedSecretKeyA = BigInteger(publicKeyForShared)
+                    val sharedSecretK = BigInteger(publicKeyForShared)
                         .modPow(BigInteger(num), DatabaseAdapter.p)
-                        .toString().encodeToByteArray()
+                        .toString()
 
-                    DatabaseAdapter.keysTable.child(senderRoom).child("TEMP").setValue(sharedSecretKeyA.toString())
+
                 }
             }
 
