@@ -129,7 +129,7 @@ class ChatActivity : AppCompatActivity() {
         senderRoom = senderKey + receiverKey
         receiverRoom = receiverKey + senderKey
 
-        DatabaseAdapter.keysTable.child(receiverRoom).addListenerForSingleValueEvent(object: ValueEventListener {
+        DatabaseAdapter.keysTable.child(senderRoom).addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
 
                 var publicKeyForShared:String = ""
@@ -163,11 +163,13 @@ class ChatActivity : AppCompatActivity() {
                 {
                     publicKeyForShared = snapshot.child("PUBLIC_KEY").getValue(String::class.java)!!
                     privateKeyForShared = snapshot.child("KEY").getValue(String::class.java)!!
+                    Log.d("QWEASDZXC","fetch:$privateKeyForShared")
                 }
 
                 if(publicKeyForShared!="")
                 {
 
+                    Log.d("QWEASDZXC","fetch2:$privateKeyForShared")
                     val num = DatabaseAdapter.decryptPrivateKey(privateKeyForShared, senderRoom)
                     Log.d("HASD",privateKeyForShared)
                     Log.d("HASD","a:$num")

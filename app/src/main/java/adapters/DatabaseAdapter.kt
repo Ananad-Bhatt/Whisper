@@ -194,8 +194,6 @@ class DatabaseAdapter {
             val encryptedPrivateKey = encryptPrivateKey(privateKey)
 
             uploadKeyToDB(encryptedPrivateKey, chatRoom)
-
-            generatePublicKey(encryptedPrivateKey, chatRoom)
         }
 
         private fun uploadKeyToDB(encryptedPrivateKey: String, chatRoom:String) {
@@ -209,6 +207,7 @@ class DatabaseAdapter {
                                 Log.d("QWEASDZXC","q:$k")
                                 Log.d("QWEASDZXC","r:${decryptPrivateKey(encryptedPrivateKey, chatRoom)}")
                                 Log.d("QWEASDZXC","s:${decryptPrivateKey(k,chatRoom)}")
+                                generatePublicKey(encryptedPrivateKey, chatRoom)
                             }
 
                             override fun onCancelled(error: DatabaseError) {
@@ -256,6 +255,8 @@ class DatabaseAdapter {
         {
             val decode:Cipher
 
+            Log.d("QWEASDZXC","fetch3:$privateKey")
+
             val secretKey = generateSecretKeyFromEmail(returnUser()?.email!!, chatRoom)
             val eKey = SecretKeySpec(secretKey.encoded, "AES").encoded
 
@@ -266,6 +267,8 @@ class DatabaseAdapter {
             val decodedString: String
 
             val decoding: ByteArray
+
+            Log.d("QWEASDZXC","fetch4:$encodedByte")
 
             try{
                 decode = Cipher.getInstance("AES")
@@ -282,7 +285,7 @@ class DatabaseAdapter {
             }catch(e:Exception){
                 Log.d("KEY_ERROR","Something went wrong")
             }
-            return ""
+            return "qwe"
         }
 
         //Generating Public key
