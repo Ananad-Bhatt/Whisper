@@ -1,6 +1,8 @@
 package adapters
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
@@ -13,8 +15,8 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import java.math.BigInteger
 import java.nio.charset.StandardCharsets
-import java.security.KeyPairGenerator
 import java.security.SecureRandom
+import java.util.Base64
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
 import javax.crypto.SecretKeyFactory
@@ -307,7 +309,90 @@ class DatabaseAdapter {
         }
 
         fun generateRandomKey(): String{
-            return BigInteger(8, SecureRandom()).toString()
+            return BigInteger(12, SecureRandom()).toString()
+        }
+
+        @RequiresApi(Build.VERSION_CODES.O)
+        fun encryptMessage(message:String, sharedEncryptionKey:ByteArray):String
+        {
+            val newKey = makeSureKeySize(sharedEncryptionKey)
+
+            val encode:Cipher
+
+            val skp = SecretKeySpec(newKey, "AES")
+
+            val messageByte = message.toByteArray()
+
+            val encodedByte: ByteArray
+
+            try {
+                encode = Cipher.getInstance("AES")
+
+                encodedByte = try {
+                    encode.init(Cipher.ENCRYPT_MODE, skp)
+                    encode.doFinal(messageByte)
+                } catch (e: Exception) {
+                    Log.d("SPEXC",e.toString())
+                    throw RuntimeException(e)
+                }
+
+                return Base64.getEncoder().encodeToString(encodedByte)
+
+            } catch (e: Exception) {
+                Log.d("SPEXC",e.toString())
+            }
+            return ""
+        }
+
+        @RequiresApi(Build.VERSION_CODES.O)
+        fun decryptMessage(message:String, sharedEncryptionKey:ByteArray):String
+        {
+            val newKey = makeSureKeySize(sharedEncryptionKey)
+
+            val decode:Cipher
+
+            val skp = SecretKeySpec(newKey, "AES")
+
+            val messageByte = Base64.getDecoder().decode(message)
+
+            val decodedString:String
+
+            val decodedByte:ByteArray
+
+            try {
+                decode = Cipher.getInstance("AES")
+
+                decodedByte = try {
+                    decode.init(Cipher.DECRYPT_MODE, skp)
+                    decode.doFinal(messageByte)
+                } catch (e: Exception) {
+                    Log.d("SPEXC",e.toString())
+                    throw RuntimeException(e)
+                }
+                decodedString = String(decodedByte)
+                return decodedString
+
+            } catch (e: Exception) {
+                Log.d("SPEXC",e.toString())
+            }
+            return ""
+        }
+
+        private fun makeSureKeySize(sharedEncryptionKey: ByteArray): ByteArray {
+
+            Log.d("SPEXC",sharedEncryptionKey.toHashSet().toString())
+
+            // Create a new byte array of the desired length (16 bytes for 128 bits)
+            val paddedBytes = ByteArray(32)
+            // Copy the bytes of the original private key into the padded array
+            System.arraycopy(sharedEncryptionKey, 0, paddedBytes, 0, sharedEncryptionKey.size)
+            // Optionally, fill the remaining bytes with a specific value (e.g., 0, 1, or 5)
+            val fillValue = 99.toByte() // Change this value as needed
+            for (i in sharedEncryptionKey.size until paddedBytes.size) {
+                paddedBytes[i] = fillValue
+            }
+            Log.d("SPEXC",paddedBytes.size.toString())
+            return paddedBytes
         }
     }
 }

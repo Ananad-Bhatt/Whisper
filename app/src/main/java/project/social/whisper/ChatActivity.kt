@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -13,6 +14,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
@@ -27,6 +29,7 @@ import kotlinx.coroutines.delay
 import models.ChatModel
 import project.social.whisper.databinding.ActivityChatBinding
 import java.math.BigInteger
+import java.nio.charset.StandardCharsets
 import java.util.Date
 
 class ChatActivity : AppCompatActivity() {
@@ -53,7 +56,7 @@ class ChatActivity : AppCompatActivity() {
 
     private lateinit var imageCapture: ActivityResultLauncher<Intent>
 
-    private lateinit var sharedSecretKeyA:ByteArray
+    private lateinit var sharedSecret:ByteArray
 
     //Permission callback
     private val permissionsResultCallback = registerForActivityResult(
@@ -130,6 +133,7 @@ class ChatActivity : AppCompatActivity() {
         receiverRoom = receiverKey + senderKey
 
         DatabaseAdapter.keysTable.addListenerForSingleValueEvent(object: ValueEventListener {
+            @RequiresApi(Build.VERSION_CODES.O)
             override fun onDataChange(snapshot: DataSnapshot) {
 
                 var publicKeyForShared:String = ""
@@ -171,7 +175,6 @@ class ChatActivity : AppCompatActivity() {
                 {
                     publicKeyForShared = snapshot.child(receiverRoom).child("PUBLIC_KEY").getValue(String::class.java)!!
                     privateKeyForShared = snapshot.child(senderRoom).child("KEY").getValue(String::class.java)!!
-                    Log.d("QWEASDZXC","fetch:$privateKeyForShared")
                 }
 
                 if(publicKeyForShared!="")
@@ -179,10 +182,9 @@ class ChatActivity : AppCompatActivity() {
 
                     val num = DatabaseAdapter.decryptPrivateKey(privateKeyForShared, senderRoom, DatabaseAdapter.returnUser()?.email!!)
 
-                    val sharedSecretK = BigInteger(publicKeyForShared)
+                    sharedSecret = BigInteger(publicKeyForShared)
                         .modPow(BigInteger(num), DatabaseAdapter.p)
-                        .toString()
-
+                        .toString().toByteArray(StandardCharsets.ISO_8859_1).toHashSet().toByteArray()
 
                 }
             }
@@ -470,7 +472,7 @@ class ChatActivity : AppCompatActivity() {
         if(b.edtChatActMessage.text.toString().isNotEmpty())
         {
             val msg = b.edtChatActMessage.text.toString()
-
+            val encMsg = DatabaseAdapter.encryptMessage(msg, sharedSecret)
             val chatMap = HashMap<String, Any>()
             chatMap["SENDER_KEY"] = senderKey
             chatMap["SENDER_UID"] = DatabaseAdapter.returnUser()?.uid!!
