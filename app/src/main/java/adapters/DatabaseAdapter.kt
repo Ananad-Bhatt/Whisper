@@ -1,8 +1,11 @@
 package adapters
 
+import android.content.Context
+import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.core.content.FileProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
@@ -13,10 +16,20 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import project.social.whisper.ChatActivity
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 import java.math.BigInteger
+import java.net.URL
 import java.nio.charset.StandardCharsets
 import java.security.SecureRandom
 import java.util.Base64
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
 import javax.crypto.SecretKeyFactory
@@ -312,7 +325,6 @@ class DatabaseAdapter {
             return BigInteger(12, SecureRandom()).toString()
         }
 
-        @RequiresApi(Build.VERSION_CODES.O)
         fun encryptMessage(message:String, sharedEncryptionKey:ByteArray):String
         {
             val newKey = makeSureKeySize(sharedEncryptionKey)
@@ -377,50 +389,131 @@ class DatabaseAdapter {
             return ""
         }
 
-        fun encryptImage(inputImage: ByteArray, sharedEncryptionKey: ByteArray): ByteArray {
+        fun encryptImage(imgUri: Uri, sharedEncryptionKey: ByteArray, context: Context): Uri? {
 
             val newKey = makeSureKeySize(sharedEncryptionKey)
+            val inputImage = convertUriToByte(imgUri, context)
+
+            Log.d("IMG_ERROR","1 : $imgUri")
+            Log.d("IMG_ERROR","2 : $inputImage")
+            Log.d("IMG_ERROR","3 : ${convertByteToUri(context, inputImage)}")
 
             try {
-                val cipher = Cipher.getInstance("AES")
+                val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
                 val secretKey = SecretKeySpec(newKey, "AES")
+
+                Log.d("IMG_ERROR","4 : $secretKey")
 
                 try {
                     cipher.init(Cipher.ENCRYPT_MODE, secretKey)
-                    return cipher.doFinal(inputImage)
+
+                    Log.d("IMG_ERROR","5 : ${convertByteToUri(context, cipher.doFinal(inputImage))}")
+
+                    return convertByteToUri(context, cipher.doFinal(inputImage))
                 }catch(e:Exception)
                 {
-                    Log.d("KEY_ERROR",e.toString())
+                    Log.d("KEY_ERROR","asdasd$e")
                 }
             }catch(e:Exception)
             {
                 Log.d("KEY_ERROR",e.toString())
             }
-            return "" as ByteArray
+            return null
         }
 
         // Decrypt image
-        fun decryptImage(encryptedImage: ByteArray, sharedEncryptionKey: ByteArray): ByteArray {
+        fun decryptImage(imgUri: Uri, sharedEncryptionKey: ByteArray, context: Context): Uri? {
 
             val newKey = makeSureKeySize(sharedEncryptionKey)
+            val inputImage = convertUriToByte(imgUri, context)
+
+            Log.d("IMG_ERROR","6 : $imgUri")
+            Log.d("IMG_ERROR","7 : $inputImage")
+            Log.d("IMG_ERROR","8 : ${convertByteToUri(context, inputImage)}")
 
             try {
-                val cipher = Cipher.getInstance("AES")
+                val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
                 val secretKey = SecretKeySpec(newKey, "AES")
+
+                Log.d("IMG_ERROR","9 : $secretKey")
 
                 try {
                     cipher.init(Cipher.DECRYPT_MODE, secretKey)
-                    return cipher.doFinal(encryptedImage)
+                    Log.d("IMG_ERROR","10 : ${convertByteToUri(context, cipher.doFinal(inputImage))}")
+                    return convertByteToUri(context, cipher.doFinal(inputImage))
                 }catch(e:Exception)
                 {
-                    Log.d("KEY_ERROR",e.toString())
+                    Log.d("KEY_ERR",e.toString())
                 }
 
             }catch(e:Exception)
             {
-                Log.d("KEY_ERROR",e.toString())
+                Log.d("KEY_ERR",e.toString())
             }
-            return "" as ByteArray
+            return null
+        }
+
+        private fun convertUriToByte(uri:Uri, context:Context):ByteArray
+        {
+            val inputStream = context.contentResolver.openInputStream(uri)
+            val byteBuffer = ByteArrayOutputStream()
+            inputStream?.use { input ->
+                val buffer = ByteArray(1024)
+                var bytesRead: Int
+                while (input.read(buffer).also { bytesRead = it } != -1) {
+                    byteBuffer.write(buffer, 0, bytesRead)
+                }
+            }
+            return byteBuffer.toByteArray()
+        }
+
+        private fun convertByteToUri(context: Context, byteArray: ByteArray): Uri? {
+            // Create a temporary file to save the byte array data
+            val tempFile = File(context.cacheDir, "temp_image.jpg")
+            try {
+                FileOutputStream(tempFile).use { outputStream ->
+                    outputStream.write(byteArray)
+                }
+                // Return the URI for the temporary file
+                return FileProvider.getUriForFile(context, context.packageName + ".provider", tempFile)
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+            return null
+        }
+
+        fun downloadImageAndConvertToUri(context: Context, imageUrl: String): Uri? {
+            try {
+                // Create a temporary file to save the image data
+                val tempFile = File.createTempFile("temp_image", null, context.cacheDir)
+
+                // Download the image from the URL
+                val url = URL(imageUrl)
+
+                val executor: ExecutorService = Executors.newSingleThreadExecutor()
+
+                executor.execute {
+                    try {
+                        url.openStream().use { input ->
+                            FileOutputStream(tempFile).use { output ->
+                                input.copyTo(output)
+                            }
+                        }
+                    } catch (e: IOException) {
+                        // Handle exception
+                    }
+                }
+
+                // Return the URI for the temporary file
+                return FileProvider.getUriForFile(
+                    context,
+                    context.packageName + ".provider",
+                    tempFile
+                )
+            } catch (e: IOException) {
+                Log.e("Error", "Error downloading image: ${e.message}")
+            }
+            return null
         }
 
         private fun makeSureKeySize(sharedEncryptionKey: ByteArray): ByteArray {

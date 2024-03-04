@@ -112,7 +112,10 @@ class ChatActivity : AppCompatActivity() {
             if (it.resultCode == Activity.RESULT_OK) {
                 val data = it.data
                 val uri: Uri? = data?.data
-                uploadImage(uri)
+
+                val encryptedUri = DatabaseAdapter.encryptImage(uri!!, sharedSecret, applicationContext)
+
+                uploadImage(encryptedUri)
             } else {
                 Toast.makeText(this, "Image selection canceled", Toast.LENGTH_SHORT)
                     .show()
@@ -444,8 +447,19 @@ class ChatActivity : AppCompatActivity() {
                     if(snapshot.exists()) {
                         for (s in snapshot.children) {
                             val data: ChatModel = s.getValue(ChatModel::class.java)!!
-                            data.MESSAGE = DatabaseAdapter.decryptMessage(data.MESSAGE!!, sharedSecret)
-                            chats.add(data)
+
+                            if(data.MESSAGE?.contains("https://firebasestorage.googleapis.com")!!)
+                            {
+                                data.MESSAGE = DatabaseAdapter.decryptImage(
+                                    DatabaseAdapter.downloadImageAndConvertToUri(applicationContext, data.MESSAGE!!)!!,
+                                    sharedSecret, applicationContext)
+                                    .toString()
+                            }
+                            else {
+                                data.MESSAGE =
+                                    DatabaseAdapter.decryptMessage(data.MESSAGE!!, sharedSecret)
+                                chats.add(data)
+                            }
                         }
                     }
                     chatAdapter.notifyItemInserted(chats.size)

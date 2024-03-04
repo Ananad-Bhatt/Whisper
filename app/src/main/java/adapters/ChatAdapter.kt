@@ -2,6 +2,7 @@ package adapters
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -73,7 +74,7 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
             }
             SenderImageChatHolder::class.java -> {
                 val h = holder as SenderImageChatHolder
-                Glide.with(context).load(m.MESSAGE).into(h.senderImgMessage)
+                Glide.with(context).load(Uri.parse(m.MESSAGE)).into(h.senderImgMessage)
                 h.senderImgTime.text = f.format(d)
 
                 h.senderImgMessage.setOnClickListener {
