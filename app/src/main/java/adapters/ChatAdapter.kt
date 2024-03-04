@@ -73,6 +73,9 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
                 h.receiverTime.text = f.format(d)
             }
             SenderImageChatHolder::class.java -> {
+                Log.d("IMG_ERROR",m.MESSAGE.toString())
+                Log.d("IMG_ERROR",Uri.parse(m.MESSAGE).toString())
+
                 val h = holder as SenderImageChatHolder
                 Glide.with(context).load(Uri.parse(m.MESSAGE)).into(h.senderImgMessage)
                 h.senderImgTime.text = f.format(d)
@@ -85,6 +88,8 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
 
             }
             ReceiverImageChatHolder::class.java -> {
+                Log.d("IMG_ERROR",m.MESSAGE.toString())
+                Log.d("IMG_ERROR",Uri.parse(m.MESSAGE).toString())
                 val h = holder as ReceiverImageChatHolder
                 Glide.with(context).load(m.MESSAGE).into(h.receiverImgMessage)
                 h.receiverImgTime.text = f.format(d)
@@ -101,12 +106,12 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
 
     override fun getItemViewType(position: Int): Int {
         return if(chats[position].SENDER_KEY.equals(DatabaseAdapter.key)) {
-            if(chats[position].MESSAGE!!.contains("https://firebasestorage.googleapis.com"))
+            if(chats[position].MESSAGE!!.contains("project.social.whisper"))
                 SENDER_VIEW_IMAGE_TYPE
             else
                 SENDER_VIEW_TYPE
         } else {
-            if(chats[position].MESSAGE!!.contains("https://firebasestorage.googleapis.com"))
+            if(chats[position].MESSAGE!!.contains("project.social.whisper"))
                 RECEIVER_VIEW_IMAGE_TYPE
             else
                 RECEIVER_VIEW_TYPE

@@ -33,6 +33,7 @@ import java.util.concurrent.Executors
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
 import javax.crypto.SecretKeyFactory
+import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 
@@ -67,6 +68,10 @@ class DatabaseAdapter {
         //p and g in Diffie-Hellman
         val p:BigInteger = BigInteger("5147")
         private val g = BigInteger("3")
+
+        val staticIv = "0123456789abcdef".toByteArray()
+
+        var i = 0
 
         fun returnUser():FirebaseUser?
         {
@@ -396,20 +401,23 @@ class DatabaseAdapter {
 
             Log.d("IMG_ERROR","1 : $imgUri")
             Log.d("IMG_ERROR","2 : $inputImage")
-            Log.d("IMG_ERROR","3 : ${convertByteToUri(context, inputImage)}")
+            //Log.d("IMG_ERROR","3 : ${convertByteToUri(context, inputImage)}")
 
             try {
                 val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
                 val secretKey = SecretKeySpec(newKey, "AES")
+                val ivSpec = IvParameterSpec(staticIv)
 
                 Log.d("IMG_ERROR","4 : $secretKey")
 
                 try {
-                    cipher.init(Cipher.ENCRYPT_MODE, secretKey)
+                    cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivSpec)
 
-                    Log.d("IMG_ERROR","5 : ${convertByteToUri(context, cipher.doFinal(inputImage))}")
+                    //Log.d("IMG_ERROR","5 : ${convertByteToUri(context, cipher.doFinal(inputImage))}")
 
-                    return convertByteToUri(context, cipher.doFinal(inputImage))
+                    val encryptedData = cipher.doFinal(inputImage)
+                    val base64EncryptedData = Base64.getEncoder().encodeToString(encryptedData)
+                    return convertByteToUri(context, base64EncryptedData.toByteArray())
                 }catch(e:Exception)
                 {
                     Log.d("KEY_ERROR","asdasd$e")
@@ -429,18 +437,20 @@ class DatabaseAdapter {
 
             Log.d("IMG_ERROR","6 : $imgUri")
             Log.d("IMG_ERROR","7 : $inputImage")
-            Log.d("IMG_ERROR","8 : ${convertByteToUri(context, inputImage)}")
+            //Log.d("IMG_ERROR","8 : ${convertByteToUri(context, inputImage)}")
 
             try {
                 val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
                 val secretKey = SecretKeySpec(newKey, "AES")
+                val ivSpec = IvParameterSpec(staticIv)
 
                 Log.d("IMG_ERROR","9 : $secretKey")
 
                 try {
-                    cipher.init(Cipher.DECRYPT_MODE, secretKey)
-                    Log.d("IMG_ERROR","10 : ${convertByteToUri(context, cipher.doFinal(inputImage))}")
-                    return convertByteToUri(context, cipher.doFinal(inputImage))
+                    cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec)
+                    //Log.d("IMG_ERROR","10 : ${convertByteToUri(context, cipher.doFinal(inputImage))}")
+                    val decryptedData = cipher.doFinal(Base64.getDecoder().decode(inputImage))
+                    return convertByteToUri(context, decryptedData)
                 }catch(e:Exception)
                 {
                     Log.d("KEY_ERR",e.toString())
@@ -469,7 +479,8 @@ class DatabaseAdapter {
 
         private fun convertByteToUri(context: Context, byteArray: ByteArray): Uri? {
             // Create a temporary file to save the byte array data
-            val tempFile = File(context.cacheDir, "temp_image.jpg")
+            val tempFile = File(context.cacheDir, "temp_image$i.jpg")
+            i++
             try {
                 FileOutputStream(tempFile).use { outputStream ->
                     outputStream.write(byteArray)
@@ -505,6 +516,11 @@ class DatabaseAdapter {
                 }
 
                 // Return the URI for the temporary file
+                Log.d("IMG_ERROR","${FileProvider.getUriForFile(
+                    context,
+                    context.packageName + ".provider",
+                    tempFile
+                )}")
                 return FileProvider.getUriForFile(
                     context,
                     context.packageName + ".provider",

@@ -454,12 +454,13 @@ class ChatActivity : AppCompatActivity() {
                                     DatabaseAdapter.downloadImageAndConvertToUri(applicationContext, data.MESSAGE!!)!!,
                                     sharedSecret, applicationContext)
                                     .toString()
+                                Log.d("IMG_ERROR",data.MESSAGE.toString())
                             }
                             else {
                                 data.MESSAGE =
                                     DatabaseAdapter.decryptMessage(data.MESSAGE!!, sharedSecret)
-                                chats.add(data)
                             }
+                            chats.add(data)
                         }
                     }
                     chatAdapter.notifyItemInserted(chats.size)
