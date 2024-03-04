@@ -133,7 +133,6 @@ class ChatActivity : AppCompatActivity() {
         receiverRoom = receiverKey + senderKey
 
         DatabaseAdapter.keysTable.addListenerForSingleValueEvent(object: ValueEventListener {
-            @RequiresApi(Build.VERSION_CODES.O)
             override fun onDataChange(snapshot: DataSnapshot) {
 
                 var publicKeyForShared:String = ""
@@ -187,6 +186,8 @@ class ChatActivity : AppCompatActivity() {
                         .toString().toByteArray(StandardCharsets.ISO_8859_1).toHashSet().toByteArray()
 
                 }
+
+                receiveData()
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -206,8 +207,6 @@ class ChatActivity : AppCompatActivity() {
 //                b.rvChatAct.scrollBy(0, oldBottom - bottom);
 //            }
 //        }
-
-        receiveData()
         sendData()
 
         b.tvChatActUserName.text = userName

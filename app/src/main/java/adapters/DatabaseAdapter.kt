@@ -344,7 +344,6 @@ class DatabaseAdapter {
             return ""
         }
 
-        @RequiresApi(Build.VERSION_CODES.O)
         fun decryptMessage(message:String, sharedEncryptionKey:ByteArray):String
         {
             val newKey = makeSureKeySize(sharedEncryptionKey)
@@ -376,6 +375,52 @@ class DatabaseAdapter {
                 Log.d("SPEXC",e.toString())
             }
             return ""
+        }
+
+        fun encryptImage(inputImage: ByteArray, sharedEncryptionKey: ByteArray): ByteArray {
+
+            val newKey = makeSureKeySize(sharedEncryptionKey)
+
+            try {
+                val cipher = Cipher.getInstance("AES")
+                val secretKey = SecretKeySpec(newKey, "AES")
+
+                try {
+                    cipher.init(Cipher.ENCRYPT_MODE, secretKey)
+                    return cipher.doFinal(inputImage)
+                }catch(e:Exception)
+                {
+                    Log.d("KEY_ERROR",e.toString())
+                }
+            }catch(e:Exception)
+            {
+                Log.d("KEY_ERROR",e.toString())
+            }
+            return "" as ByteArray
+        }
+
+        // Decrypt image
+        fun decryptImage(encryptedImage: ByteArray, sharedEncryptionKey: ByteArray): ByteArray {
+
+            val newKey = makeSureKeySize(sharedEncryptionKey)
+
+            try {
+                val cipher = Cipher.getInstance("AES")
+                val secretKey = SecretKeySpec(newKey, "AES")
+
+                try {
+                    cipher.init(Cipher.DECRYPT_MODE, secretKey)
+                    return cipher.doFinal(encryptedImage)
+                }catch(e:Exception)
+                {
+                    Log.d("KEY_ERROR",e.toString())
+                }
+
+            }catch(e:Exception)
+            {
+                Log.d("KEY_ERROR",e.toString())
+            }
+            return "" as ByteArray
         }
 
         private fun makeSureKeySize(sharedEncryptionKey: ByteArray): ByteArray {
