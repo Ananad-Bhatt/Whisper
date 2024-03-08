@@ -285,9 +285,10 @@ class ChatActivity : AppCompatActivity() {
     private fun uploadImage(uri: Uri?) {
         try {
             if (uri != null) {
-                DatabaseAdapter.chatImage.child(senderRoom).child(key).putFile(uri).addOnSuccessListener {
+                val curTime = Date().time.toString()
+                DatabaseAdapter.chatImage.child(senderRoom).child(curTime).putFile(uri).addOnSuccessListener {
 
-                    DatabaseAdapter.chatImage.child(senderRoom).child(key).downloadUrl.addOnSuccessListener { img ->
+                    DatabaseAdapter.chatImage.child(senderRoom).child(curTime).downloadUrl.addOnSuccessListener { img ->
 
                         val chatMap = HashMap<String, Any>()
                         chatMap["SENDER_KEY"] = senderKey
@@ -450,21 +451,36 @@ class ChatActivity : AppCompatActivity() {
 
                             if(data.MESSAGE?.contains("https://firebasestorage.googleapis.com")!!)
                             {
-                                data.MESSAGE = DatabaseAdapter.decryptImage(
-                                    DatabaseAdapter.downloadImageAndConvertToUri(applicationContext, data.MESSAGE!!)!!,
-                                    sharedSecret, applicationContext)
-                                    .toString()
-                                Log.d("IMG_ERROR",data.MESSAGE.toString())
+                                DatabaseAdapter.downloadImageAndConvertToUri(applicationContext,
+                                    data.MESSAGE!!
+                                )
+                                    .thenAccept { uri ->
+                                        // Use the URI for further processing, such as decryption
+                                        val decryptedUri = DatabaseAdapter.decryptImage(uri, sharedSecret, applicationContext)
+                                        data.MESSAGE = decryptedUri.toString()
+                                        Log.d("IMG_ERROR","AAA${data.MESSAGE}")
+                                        // Perform further operations with the decrypted URI
+                                        chats.add(data)
+                                        chatAdapter.notifyItemInserted(chats.size)
+                                        Log.d("IMG_ERROR","Runs before data")
+                                        b.rvChatAct.scrollToPosition(chatAdapter.itemCount-1)
+                                    }
+                                    .exceptionally { throwable ->
+                                        // Handle exceptions that occurred during the download and conversion process
+                                        Log.e("Error", "Error downloading and converting image: ${throwable.message}")
+                                        null
+                                    }
                             }
                             else {
                                 data.MESSAGE =
                                     DatabaseAdapter.decryptMessage(data.MESSAGE!!, sharedSecret)
+                                Log.d("IMG_ERROR","ABA${data.MESSAGE}")
+                                chats.add(data)
+                                chatAdapter.notifyItemInserted(chats.size)
+                                b.rvChatAct.scrollToPosition(chatAdapter.itemCount-1)
                             }
-                            chats.add(data)
                         }
                     }
-                    chatAdapter.notifyItemInserted(chats.size)
-                    b.rvChatAct.scrollToPosition(chatAdapter.itemCount-1)
                 }
 
                 override fun onCancelled(error: DatabaseError) {

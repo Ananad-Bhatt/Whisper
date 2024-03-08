@@ -64,6 +64,7 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
         when (holder.javaClass) {
             SenderChatHolder::class.java -> {
                 val h = holder as SenderChatHolder
+                Log.d("IMG_ERROR","WTH${m.MESSAGE}")
                 h.senderMessage.text = m.MESSAGE
                 h.senderTime.text = f.format(d)
             }
@@ -73,8 +74,7 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
                 h.receiverTime.text = f.format(d)
             }
             SenderImageChatHolder::class.java -> {
-                Log.d("IMG_ERROR",m.MESSAGE.toString())
-                Log.d("IMG_ERROR",Uri.parse(m.MESSAGE).toString())
+                Log.d("IMG_ERROR","ABCD${m.MESSAGE.toString()}")
 
                 val h = holder as SenderImageChatHolder
                 Glide.with(context).load(Uri.parse(m.MESSAGE)).into(h.senderImgMessage)
@@ -105,6 +105,7 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
     }
 
     override fun getItemViewType(position: Int): Int {
+        Log.d("IMG_ERROR","aa${chats[position].MESSAGE!!}")
         return if(chats[position].SENDER_KEY.equals(DatabaseAdapter.key)) {
             if(chats[position].MESSAGE!!.contains("project.social.whisper"))
                 SENDER_VIEW_IMAGE_TYPE
