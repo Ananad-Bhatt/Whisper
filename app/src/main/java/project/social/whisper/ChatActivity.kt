@@ -54,6 +54,8 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var receiverRoom:String
 
     private var chats:ArrayList<ChatModel> = ArrayList()
+    private var chatsTemp:ArrayList<ChatModel> = ArrayList()
+
 
     private var chatAdapter:ChatAdapter = ChatAdapter(this, chats)
 
@@ -414,8 +416,14 @@ class ChatActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 receivingData()
+                Log.d("IMG_ERROR","0.2")
                 isVisible()
+                Log.d("IMG_ERROR","0.3")
                 populateRecyclerView()
+
+
+
+                Log.d("IMG_ERROR","0.4")
                 // The next task will only be executed after receivingData() is completed
             } catch (e: Exception) {
                 Log.d("DB_ERROR", e.toString())
@@ -425,8 +433,11 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun populateRecyclerView() {
-        for(data in chats) {
+        chats.clear()
+        for(data in chatsTemp) {
+            Log.d("IMG_ERROR","0")
             if (data.MESSAGE?.contains("https://firebasestorage.googleapis.com")!!) {
+                val position = chats.size
                 DatabaseAdapter.downloadImageAndConvertToUri(
                     applicationContext,
                     data.MESSAGE!!, (Date().time).toString()
@@ -436,12 +447,15 @@ class ChatActivity : AppCompatActivity() {
                         val decryptedUri =
                             DatabaseAdapter.decryptImage(uri, sharedSecret, applicationContext)
                         data.MESSAGE = decryptedUri.toString()
-                        Log.d("IMG_ERROR", "AAA${data.MESSAGE}")
+                        Log.d("IMG_ERROR", "1")
                         // Perform further operations with the decrypted URI
-                        chats.add(data)
+                        chats.add(position, data)
+                        Log.d("IMG_ERROR","Chat size : ${chats.size}")
+                        //chatAdapter.notifyItemInserted(chats.size)
+                        Log.d("IMG_ERROR", "2")
                         chatAdapter.notifyItemInserted(chats.size)
-                        Log.d("IMG_ERROR", "Runs before data")
                         b.rvChatAct.scrollToPosition(chatAdapter.itemCount - 1)
+                        //b.rvChatAct.scrollToPosition(chatAdapter.itemCount - 1)
                     }
                     .exceptionally { throwable ->
                         // Handle exceptions that occurred during the download and conversion process
@@ -454,8 +468,9 @@ class ChatActivity : AppCompatActivity() {
             } else {
                 data.MESSAGE =
                     DatabaseAdapter.decryptMessage(data.MESSAGE!!, sharedSecret)
-                Log.d("IMG_ERROR", "ABA${data.MESSAGE}")
+                Log.d("IMG_ERROR", "3")
                 chats.add(data)
+                Log.d("IMG_ERROR","Chat size : ${chats.size}")
             }
         }
     }
@@ -510,13 +525,15 @@ class ChatActivity : AppCompatActivity() {
             })
         }
 
-        chats.clear()
+        chatsTemp.clear()
 
         if (snapshot.exists()) {
+            Log.d("IMG_ERROR","0.0")
             for (s in snapshot.children) {
                 val data: ChatModel = s.getValue(ChatModel::class.java)!!
-                chats.add(data)
+                chatsTemp.add(data)
             }
+            Log.d("IMG_ERROR","0.1")
         }
     }
 
@@ -569,7 +586,7 @@ class ChatActivity : AppCompatActivity() {
         if (snapshot.exists()) {
             for (s in snapshot.children) {
                 val data: ChatModel = s.getValue(ChatModel::class.java)!!
-                chats.add(data)
+                chatsTemp.add(data)
             }
         }
     }
