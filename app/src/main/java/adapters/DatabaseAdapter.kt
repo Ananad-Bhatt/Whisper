@@ -395,7 +395,7 @@ class DatabaseAdapter {
             return ""
         }
 
-        fun encryptImage(imgUri: Uri, sharedEncryptionKey: ByteArray, context: Context, fileName: String): Uri? {
+        fun encryptImage(imgUri: Uri, sharedEncryptionKey: ByteArray, context: Context): Uri? {
             val newKey = makeSureKeySize(sharedEncryptionKey)
             val inputImage = convertUriToByte(imgUri, context)
             Log.d("IMG_ERROR", "Input Image Size: ${inputImage.size}")
@@ -408,14 +408,14 @@ class DatabaseAdapter {
                 val encryptedData = cipher.doFinal(inputImage)
                 Log.d("IMG_ERROR", "Encrypted Data Size: ${encryptedData.size}")
                 val base64EncryptedData = Base64.getEncoder().encodeToString(encryptedData)
-                return convertByteToUri(context, base64EncryptedData.toByteArray(), fileName)
+                return convertByteToUri(context, base64EncryptedData.toByteArray())
             } catch (e: Exception) {
                 Log.e("KEY_ERROR", "Encryption Error: ${e.message}")
             }
             return null
         }
 
-        fun decryptImage(imgUri: Uri, sharedEncryptionKey: ByteArray, context: Context, fileName: String): Uri? {
+        fun decryptImage(imgUri: Uri, sharedEncryptionKey: ByteArray, context: Context): Uri? {
             val newKey = makeSureKeySize(sharedEncryptionKey)
             val inputImage = convertUriToByte(imgUri, context)
             Log.d("IMG_ERROR", "Input Encrypted Image Size: ${inputImage.size}")
@@ -426,7 +426,7 @@ class DatabaseAdapter {
                 cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec)
                 val decryptedData = cipher.doFinal(Base64.getDecoder().decode(inputImage))
                 Log.d("IMG_ERROR", "Decrypted Data Size: ${decryptedData.size}")
-                return convertByteToUri(context, decryptedData, fileName)
+                return convertByteToUri(context, decryptedData)
             } catch (e: Exception) {
                 Log.e("KEY_ERROR", "Decryption Error: ${e.message}")
             }
@@ -447,9 +447,9 @@ class DatabaseAdapter {
             return byteBuffer.toByteArray()
         }
 
-        private fun convertByteToUri(context: Context, byteArray: ByteArray, fileName:String): Uri? {
+        private fun convertByteToUri(context: Context, byteArray: ByteArray): Uri? {
             // Create a temporary file to save the byte array data
-            val tempFile = File(context.cacheDir, "fileName.jpg")
+            val tempFile = File(context.cacheDir, "temp$i.jpg")
             i++
             try {
                 FileOutputStream(tempFile).use { outputStream ->
@@ -463,14 +463,14 @@ class DatabaseAdapter {
             return null
         }
 
-        fun downloadImageAndConvertToUri(context: Context, imageUrl: String): CompletableFuture<Uri> {
+        fun downloadImageAndConvertToUri(context: Context, imageUrl: String, fileName:String): CompletableFuture<Uri> {
             val completableFuture = CompletableFuture<Uri>()
 
             val executor = Executors.newSingleThreadExecutor()
 
             executor.execute {
                 try {
-                    val tempFile = File.createTempFile("temp_image", null, context.cacheDir)
+                    val tempFile = File.createTempFile(fileName, null, context.cacheDir)
                     val url = URL(imageUrl)
 
                     url.openStream().use { input ->

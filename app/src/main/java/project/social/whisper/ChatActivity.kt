@@ -452,7 +452,7 @@ class ChatActivity : AppCompatActivity() {
                             if(data.MESSAGE?.contains("https://firebasestorage.googleapis.com")!!)
                             {
                                 DatabaseAdapter.downloadImageAndConvertToUri(applicationContext,
-                                    data.MESSAGE!!
+                                    data.MESSAGE!!, (Date().time).toString()
                                 )
                                     .thenAccept { uri ->
                                         // Use the URI for further processing, such as decryption
