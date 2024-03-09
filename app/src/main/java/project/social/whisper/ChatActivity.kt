@@ -376,12 +376,11 @@ class ChatActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
-
         //Remove cache files
         DatabaseAdapter.deleteTempFiles(cacheDir)
         // Remove the callback when the activity is destroyed
         callback.remove()
+        super.onDestroy()
     }
 
     private fun hasContactPermission(): Boolean {
