@@ -2,9 +2,7 @@ package adapters
 
 import android.content.Context
 import android.net.Uri
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
@@ -16,9 +14,6 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import project.social.whisper.ChatActivity
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -29,7 +24,6 @@ import java.nio.charset.StandardCharsets
 import java.security.SecureRandom
 import java.util.Base64
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
@@ -511,5 +505,21 @@ class DatabaseAdapter {
             Log.d("SPEXC",paddedBytes.size.toString())
             return paddedBytes
         }
+    }
+
+    fun deleteTempFiles(file: File): Boolean {
+        if (file.isDirectory) {
+            val files = file.listFiles()
+            if (files != null) {
+                for (f in files) {
+                    if (f.isDirectory) {
+                        deleteTempFiles(f)
+                    } else {
+                        f.delete()
+                    }
+                }
+            }
+        }
+        return file.delete()
     }
 }
