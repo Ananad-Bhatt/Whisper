@@ -313,7 +313,12 @@ class ChatActivity : AppCompatActivity() {
                         try {
                             DatabaseAdapter.chatTable.child(senderRoom).push().setValue(chatMap)
                             DatabaseAdapter.chatTable.child(receiverRoom).push().setValue(chatMap)
-                            isRequesting(img.toString())
+
+                            lifecycleScope.launch {
+                                receiveLastMessage()
+                                populateRecyclerView()
+                                isRequesting(img.toString())
+                            }
                         }catch(e:Exception)
                         {
                             Log.d("DB_ERROR",e.toString())
