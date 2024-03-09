@@ -18,6 +18,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.github.dhaval2404.imagepicker.ImagePicker
@@ -25,12 +26,19 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import fragments.ContactFragment
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import models.ChatModel
 import project.social.whisper.databinding.ActivityChatBinding
 import java.math.BigInteger
 import java.nio.charset.StandardCharsets
 import java.util.Date
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 class ChatActivity : AppCompatActivity() {
 
@@ -403,8 +411,53 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun receiveData() {
-        receivingData()
-        isVisible()
+        lifecycleScope.launch {
+            try {
+                receivingData()
+                isVisible()
+                populateRecyclerView()
+                // The next task will only be executed after receivingData() is completed
+            } catch (e: Exception) {
+                Log.d("DB_ERROR", e.toString())
+            }
+        }
+
+    }
+
+    private fun populateRecyclerView() {
+        for(data in chats) {
+            if (data.MESSAGE?.contains("https://firebasestorage.googleapis.com")!!) {
+                DatabaseAdapter.downloadImageAndConvertToUri(
+                    applicationContext,
+                    data.MESSAGE!!, (Date().time).toString()
+                )
+                    .thenAccept { uri ->
+                        // Use the URI for further processing, such as decryption
+                        val decryptedUri =
+                            DatabaseAdapter.decryptImage(uri, sharedSecret, applicationContext)
+                        data.MESSAGE = decryptedUri.toString()
+                        Log.d("IMG_ERROR", "AAA${data.MESSAGE}")
+                        // Perform further operations with the decrypted URI
+                        chats.add(data)
+                        chatAdapter.notifyItemInserted(chats.size)
+                        Log.d("IMG_ERROR", "Runs before data")
+                        b.rvChatAct.scrollToPosition(chatAdapter.itemCount - 1)
+                    }
+                    .exceptionally { throwable ->
+                        // Handle exceptions that occurred during the download and conversion process
+                        Log.e(
+                            "Error",
+                            "Error downloading and converting image: ${throwable.message}"
+                        )
+                        null
+                    }
+            } else {
+                data.MESSAGE =
+                    DatabaseAdapter.decryptMessage(data.MESSAGE!!, sharedSecret)
+                Log.d("IMG_ERROR", "ABA${data.MESSAGE}")
+                chats.add(data)
+            }
+        }
     }
 
     private fun isVisible(){
@@ -444,57 +497,26 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    private fun receivingData() {
-        try {
-            DatabaseAdapter.chatTable.child(receiverRoom).addValueEventListener(object : ValueEventListener {
+    private suspend fun receivingData() = withContext(Dispatchers.IO) {
+        val snapshot = suspendCoroutine<DataSnapshot> { continuation ->
+            DatabaseAdapter.chatTable.child(receiverRoom).addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    chats.clear()
-
-                    if(snapshot.exists()) {
-                        for (s in snapshot.children) {
-                            val data: ChatModel = s.getValue(ChatModel::class.java)!!
-
-                            if(data.MESSAGE?.contains("https://firebasestorage.googleapis.com")!!)
-                            {
-                                DatabaseAdapter.downloadImageAndConvertToUri(applicationContext,
-                                    data.MESSAGE!!, (Date().time).toString()
-                                )
-                                    .thenAccept { uri ->
-                                        // Use the URI for further processing, such as decryption
-                                        val decryptedUri = DatabaseAdapter.decryptImage(uri, sharedSecret, applicationContext)
-                                        data.MESSAGE = decryptedUri.toString()
-                                        Log.d("IMG_ERROR","AAA${data.MESSAGE}")
-                                        // Perform further operations with the decrypted URI
-                                        chats.add(data)
-                                        chatAdapter.notifyItemInserted(chats.size)
-                                        Log.d("IMG_ERROR","Runs before data")
-                                        b.rvChatAct.scrollToPosition(chatAdapter.itemCount-1)
-                                    }
-                                    .exceptionally { throwable ->
-                                        // Handle exceptions that occurred during the download and conversion process
-                                        Log.e("Error", "Error downloading and converting image: ${throwable.message}")
-                                        null
-                                    }
-                            }
-                            else {
-                                data.MESSAGE =
-                                    DatabaseAdapter.decryptMessage(data.MESSAGE!!, sharedSecret)
-                                Log.d("IMG_ERROR","ABA${data.MESSAGE}")
-                                chats.add(data)
-                                chatAdapter.notifyItemInserted(chats.size)
-                                b.rvChatAct.scrollToPosition(chatAdapter.itemCount-1)
-                            }
-                        }
-                    }
+                    continuation.resume(snapshot)
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Toast.makeText(applicationContext, error.toString(), Toast.LENGTH_LONG).show()
+                    continuation.resumeWithException(Exception(error.toException()))
                 }
             })
-        }catch(e:Exception)
-        {
-            Log.d("DB_ERROR",e.toString())
+        }
+
+        chats.clear()
+
+        if (snapshot.exists()) {
+            for (s in snapshot.children) {
+                val data: ChatModel = s.getValue(ChatModel::class.java)!!
+                chats.add(data)
+            }
         }
     }
 
@@ -516,13 +538,39 @@ class ChatActivity : AppCompatActivity() {
             try {
                 DatabaseAdapter.chatTable.child(senderRoom).push().setValue(chatMap)
                 DatabaseAdapter.chatTable.child(receiverRoom).push().setValue(chatMap)
-                isRequesting(encMsg)
+
+                lifecycleScope.launch {
+                    receiveLastMessage()
+                    populateRecyclerView()
+                    isRequesting(encMsg)
+                }
             }catch(e:Exception)
             {
                 Log.d("DB_ERROR",e.toString())
             }
 
             b.edtChatActMessage.text.clear()
+        }
+    }
+
+    private suspend fun receiveLastMessage() = withContext(Dispatchers.IO) {
+        val snapshot = suspendCoroutine<DataSnapshot> { continuation ->
+            DatabaseAdapter.chatTable.child(receiverRoom).orderByKey().limitToLast(1).addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    continuation.resume(snapshot)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    continuation.resumeWithException(Exception(error.toException()))
+                }
+            })
+        }
+
+        if (snapshot.exists()) {
+            for (s in snapshot.children) {
+                val data: ChatModel = s.getValue(ChatModel::class.java)!!
+                chats.add(data)
+            }
         }
     }
 
