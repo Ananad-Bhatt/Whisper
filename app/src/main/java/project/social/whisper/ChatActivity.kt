@@ -420,9 +420,8 @@ class ChatActivity : AppCompatActivity() {
                 isVisible()
                 Log.d("IMG_ERROR","0.3")
                 populateRecyclerView()
-
-
-
+                chatAdapter.notifyItemInserted(chats.size)
+                b.rvChatAct.scrollToPosition(chatAdapter.itemCount - 1)
                 Log.d("IMG_ERROR","0.4")
                 // The next task will only be executed after receivingData() is completed
             } catch (e: Exception) {
@@ -432,39 +431,19 @@ class ChatActivity : AppCompatActivity() {
 
     }
 
-    private fun populateRecyclerView() {
+    private suspend fun populateRecyclerView() {
         chats.clear()
         for(data in chatsTemp) {
             Log.d("IMG_ERROR","0")
             if (data.MESSAGE?.contains("https://firebasestorage.googleapis.com")!!) {
-                val position = chats.size
-                DatabaseAdapter.downloadImageAndConvertToUri(
-                    applicationContext,
-                    data.MESSAGE!!, (Date().time).toString()
-                )
-                    .thenAccept { uri ->
-                        // Use the URI for further processing, such as decryption
-                        val decryptedUri =
-                            DatabaseAdapter.decryptImage(uri, sharedSecret, applicationContext)
-                        data.MESSAGE = decryptedUri.toString()
-                        Log.d("IMG_ERROR", "1")
-                        // Perform further operations with the decrypted URI
-                        chats.add(position, data)
-                        Log.d("IMG_ERROR","Chat size : ${chats.size}")
-                        //chatAdapter.notifyItemInserted(chats.size)
-                        Log.d("IMG_ERROR", "2")
-                        chatAdapter.notifyItemInserted(chats.size)
-                        b.rvChatAct.scrollToPosition(chatAdapter.itemCount - 1)
-                        //b.rvChatAct.scrollToPosition(chatAdapter.itemCount - 1)
-                    }
-                    .exceptionally { throwable ->
-                        // Handle exceptions that occurred during the download and conversion process
-                        Log.e(
-                            "Error",
-                            "Error downloading and converting image: ${throwable.message}"
-                        )
-                        null
-                    }
+                Log.d("IMG_ERROR","INSIDE IF : ${chats.size}")
+                val uri = DatabaseAdapter.downloadImageAndConvertToUri(applicationContext, data.MESSAGE!!, (Date().time).toString())
+                val decryptedUri = DatabaseAdapter.decryptImage(uri, sharedSecret, applicationContext)
+                data.MESSAGE = decryptedUri.toString()
+                Log.d("IMG_ERROR", "1")
+                chats.add(data)
+                Log.d("IMG_ERROR","Chat size : ${chats.size}")
+                Log.d("IMG_ERROR", "2")
             } else {
                 data.MESSAGE =
                     DatabaseAdapter.decryptMessage(data.MESSAGE!!, sharedSecret)

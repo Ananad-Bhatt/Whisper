@@ -14,6 +14,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -31,6 +32,8 @@ import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 
 class DatabaseAdapter {
@@ -457,9 +460,7 @@ class DatabaseAdapter {
             return null
         }
 
-        fun downloadImageAndConvertToUri(context: Context, imageUrl: String, fileName:String): CompletableFuture<Uri> {
-            val completableFuture = CompletableFuture<Uri>()
-
+        suspend fun downloadImageAndConvertToUri(context: Context, imageUrl: String, fileName:String): Uri = suspendCancellableCoroutine { continuation ->
             val executor = Executors.newSingleThreadExecutor()
 
             executor.execute {
@@ -478,15 +479,13 @@ class DatabaseAdapter {
                         "${context.packageName}.provider",
                         tempFile
                     )
-                    completableFuture.complete(uri)
+                    continuation.resume(uri)
                 } catch (e: IOException) {
-                    completableFuture.completeExceptionally(e)
+                    continuation.resumeWithException(e)
                 }
             }
 
             executor.shutdown()
-
-            return completableFuture
         }
 
         private fun makeSureKeySize(sharedEncryptionKey: ByteArray): ByteArray {
