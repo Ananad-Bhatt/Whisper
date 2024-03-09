@@ -505,21 +505,21 @@ class DatabaseAdapter {
             Log.d("SPEXC",paddedBytes.size.toString())
             return paddedBytes
         }
-    }
 
-    fun deleteTempFiles(file: File): Boolean {
-        if (file.isDirectory) {
-            val files = file.listFiles()
-            if (files != null) {
-                for (f in files) {
-                    if (f.isDirectory) {
-                        deleteTempFiles(f)
-                    } else {
-                        f.delete()
+        fun deleteTempFiles(file: File): Boolean {
+            if (file.isDirectory) {
+                val files = file.listFiles()
+                if (files != null) {
+                    for (f in files) {
+                        if (f.isDirectory) {
+                            deleteTempFiles(f)
+                        } else {
+                            f.delete()
+                        }
                     }
                 }
             }
+            return file.delete()
         }
-        return file.delete()
     }
 }

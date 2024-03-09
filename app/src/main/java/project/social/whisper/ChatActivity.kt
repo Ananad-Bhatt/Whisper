@@ -210,7 +210,9 @@ class ChatActivity : AppCompatActivity() {
 //                b.rvChatAct.scrollBy(0, oldBottom - bottom);
 //            }
 //        }
-        sendData()
+        b.imgChatActSend.setOnClickListener {
+            sendData()
+        }
 
         b.tvChatActUserName.text = userName
         Glide.with(this).load(imgUrl).into(b.imgChatActUserImage)
@@ -287,6 +289,8 @@ class ChatActivity : AppCompatActivity() {
             if (uri != null) {
                 val curTime = Date().time.toString()
                 DatabaseAdapter.chatImage.child(senderRoom).child(curTime).putFile(uri).addOnSuccessListener {
+
+                    DatabaseAdapter.deleteTempFiles(cacheDir)
 
                     DatabaseAdapter.chatImage.child(senderRoom).child(curTime).downloadUrl.addOnSuccessListener { img ->
 
@@ -374,6 +378,8 @@ class ChatActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
 
+        //Remove cache files
+        DatabaseAdapter.deleteTempFiles(cacheDir)
         // Remove the callback when the activity is destroyed
         callback.remove()
     }
@@ -494,9 +500,7 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun sendData() {
-        b.imgChatActSend.setOnClickListener {
-                sendingMessage()
-        }
+        sendingMessage()
     }
 
     private fun sendingMessage() {
