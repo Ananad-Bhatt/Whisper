@@ -26,7 +26,6 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             DatabaseAdapter.token = NotificationService.generateToken()
-            Log.d("TOKEN",NotificationService.generateToken())
         }
 
 //        To display fragment
