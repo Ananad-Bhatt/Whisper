@@ -30,6 +30,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import models.ChatModel
 import project.social.whisper.databinding.ActivityChatBinding
@@ -68,6 +69,9 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var imageCapture: ActivityResultLauncher<Intent>
 
     private lateinit var sharedSecret:ByteArray
+
+    private lateinit var userName:String
+    private lateinit var fcmToken:String
 
     //Permission callback
     private val permissionsResultCallback = registerForActivityResult(
@@ -137,8 +141,9 @@ class ChatActivity : AppCompatActivity() {
 
         key = intent.getStringExtra("key")!!
         uid = intent.getStringExtra("uid")!!
-        val userName = intent.getStringExtra("userName")!!
+        userName = intent.getStringExtra("userName")!!
         val imgUrl = intent.getStringExtra("imgUrl")!!
+        fcmToken = intent.getStringExtra("fcmToken")!!
 
         senderKey = DatabaseAdapter.key
         receiverKey = key
@@ -314,6 +319,16 @@ class ChatActivity : AppCompatActivity() {
                         try {
                             DatabaseAdapter.chatTable.child(senderRoom).push().setValue(chatMap)
                             DatabaseAdapter.chatTable.child(receiverRoom).push().setValue(chatMap)
+
+                            runBlocking {
+                                launch(Dispatchers.IO) {
+                                    NotificationService.sendNotification(
+                                        "Image",
+                                        fcmToken,
+                                        userName
+                                    )
+                                }
+                            }
 
                             lifecycleScope.launch {
                                 receiveLastMessage()
@@ -542,6 +557,12 @@ class ChatActivity : AppCompatActivity() {
             try {
                 DatabaseAdapter.chatTable.child(senderRoom).push().setValue(chatMap)
                 DatabaseAdapter.chatTable.child(receiverRoom).push().setValue(chatMap)
+
+                runBlocking {
+                    launch(Dispatchers.IO) {
+                        NotificationService.sendNotification(msg, fcmToken, userName)
+                    }
+                }
 
                 lifecycleScope.launch {
                     receiveLastMessage()

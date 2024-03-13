@@ -103,8 +103,10 @@ class SearchActivity : AppCompatActivity() {
                                 "https://53.fs1.hubspotusercontent-na1.net/hub/53/hubfs/image8-2.jpg?width=595&height=400&name=image8-2.jpg"
                             }
 
+                            val fcm = i.child("FCM_TOKEN").getValue(String::class.java)?:""
+
                             if ((userName.lowercase()).contains(query.lowercase())) {
-                                searchResults.add(SearchModel(userName, image, uid, key))
+                                searchResults.add(SearchModel(userName, image, uid, key, fcm))
                             }
                         }
                     }

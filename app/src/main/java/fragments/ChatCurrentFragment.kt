@@ -130,9 +130,11 @@ class ChatCurrentFragment : Fragment() {
                             if (snapshot.exists()) {
                                 val userName =
                                     snapshot.child("USER_NAME").getValue(String::class.java)!!
-                                val imgUrl = snapshot.child("IMAGE").getValue(String::class.java)!!
+                                val imgUrl = snapshot.child("IMAGE").getValue(String::class.java)
+                                    ?: "https://53.fs1.hubspotusercontent-na1.net/hub/53/hubfs/image8-2.jpg?width=595&height=400&name=image8-2.jpg"
+                                val fcm = snapshot.child("FCM_TOKEN").getValue(String::class.java)?:""
 
-                                users.add(ChatRecyclerModel(userName, imgUrl, k.lastMessage, k.key, k.uid))
+                                users.add(ChatRecyclerModel(userName, imgUrl, k.lastMessage, k.key, k.uid, fcm))
                                 Log.d("IDK","ADDED")
                                 if(users.size == usersKey.size)
                                 {

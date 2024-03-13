@@ -5,5 +5,6 @@ data class ChatRecyclerModel(
     val img: String, // Resource ID for the image
     val subTitle: String,
     val key:String,
-    val uid:String
+    val uid:String,
+    val fcm:String
 )

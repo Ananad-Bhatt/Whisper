@@ -68,7 +68,7 @@ class DatabaseAdapter {
         val p:BigInteger = BigInteger("5147")
         private val g = BigInteger("3")
 
-        val staticIv = "0123456789abcdef".toByteArray()
+        private val staticIv = "0123456789abcdef".toByteArray()
 
         var i = 0
 

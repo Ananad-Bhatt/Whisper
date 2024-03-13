@@ -123,8 +123,8 @@ class ChatRequestFragment : Fragment() {
                                 val userName =
                                     snapshot.child("USER_NAME").getValue(String::class.java)!!
                                 val imgUrl = snapshot.child("IMAGE").getValue(String::class.java)!!
-
-                                users.add(ChatRecyclerModel(userName, imgUrl, k.lastMessage, k.key, k.uid))
+                                val fcm = snapshot.child("FCM_TOKEN").getValue(String::class.java)?:""
+                                users.add(ChatRecyclerModel(userName, imgUrl, k.lastMessage, k.key, k.uid, fcm))
                                 Log.d("IDK","ADDED")
                                 if(users.size == usersKey.size)
                                 {

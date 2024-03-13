@@ -47,11 +47,11 @@ class ChatFragment : Fragment() {
         // View binding
         val b = FragmentChatBinding.inflate(inflater, container, false)
 
-        runBlocking {
-            launch(Dispatchers.IO) {
-                NotificationService.callApi("Hello")
-            }
-        }
+//        runBlocking {
+//            launch(Dispatchers.IO) {
+//                //NotificationService.callApi("Hello")
+//            }
+//        }
 
         val tab = b.chatFragTabLayout
         val vp = b.chatFragViewPager

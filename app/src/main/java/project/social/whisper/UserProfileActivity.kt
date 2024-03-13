@@ -28,6 +28,7 @@ class UserProfileActivity : AppCompatActivity() {
         val userName = intent.getStringExtra("userName")!!
         userUid = intent.getStringExtra("userUid")!!
         userKey = intent.getStringExtra("userKey")!!
+        val fcm = intent.getStringExtra("fcmToken")!!
 
         b.txtProfileActUserName.text = userName
 
@@ -39,6 +40,7 @@ class UserProfileActivity : AppCompatActivity() {
             i.putExtra("imgUrl",imgUrl)
             i.putExtra("uid",userUid)
             i.putExtra("key",userKey)
+            i.putExtra("fcmToken", fcm)
             startActivity(i)
         }
 

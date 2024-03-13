@@ -41,6 +41,7 @@ class SearchRecyclerViewAdapter(private val context:Context,private val searchRe
             i.putExtra("userName",holder.userName.text.toString())
             i.putExtra("userUid",searchResults[position].userUid)
             i.putExtra("userKey",searchResults[position].userKey)
+            i.putExtra("fcmToken",searchResults[position].fcm)
 
             context.startActivity(i)
         }

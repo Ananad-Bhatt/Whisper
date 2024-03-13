@@ -46,6 +46,7 @@ class ChatRecyclerViewAdapter(private val context: Context, private val usersLis
             i.putExtra("imgUrl",usersList[position].img)
             i.putExtra("key",usersList[position].key)
             i.putExtra("uid",usersList[position].uid)
+            i.putExtra("fcmToken",usersList[position].fcm)
             context.startActivity(i)
         }
 
