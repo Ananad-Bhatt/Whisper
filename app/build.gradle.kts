@@ -1,8 +1,15 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
 }
+
+val fcmKey: File = rootProject.file("local.properties")
+val fcmProperty = Properties()
+fcmProperty.load(FileInputStream(fcmKey))
 
 android {
     namespace = "project.social.whisper"
@@ -14,7 +21,7 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
+        buildConfigField ("String", "FCM_KEY", fcmProperty.getProperty("SERVER_KEY"))
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -36,6 +43,7 @@ android {
     }
 
     buildFeatures{
+        buildConfig = true
         viewBinding = true
     }
 }

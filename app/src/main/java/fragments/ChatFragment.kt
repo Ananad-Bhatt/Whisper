@@ -4,6 +4,7 @@ import adapters.ChatViewPagerAdapter
 import adapters.DatabaseAdapter
 import adapters.HomeViewPagerAdapter
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,8 +12,12 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.google.android.material.tabs.TabLayoutMediator
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import project.social.whisper.R
 import project.social.whisper.databinding.FragmentChatBinding
+import services.NotificationService
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
@@ -41,6 +46,12 @@ class ChatFragment : Fragment() {
     ): View {
         // View binding
         val b = FragmentChatBinding.inflate(inflater, container, false)
+
+        runBlocking {
+            launch(Dispatchers.IO) {
+                NotificationService.callApi("Hello")
+            }
+        }
 
         val tab = b.chatFragTabLayout
         val vp = b.chatFragViewPager

@@ -24,9 +24,11 @@ class MainActivity : AppCompatActivity() {
         val view = b.root
         setContentView(view)
 
-        lifecycleScope.launch {
-            DatabaseAdapter.token = NotificationService.generateToken()
-        }
+        //lifecycleScope.launch {
+            NotificationService.generateToken()
+        //}
+
+
 
 //        To display fragment
         val fm1 = supportFragmentManager
