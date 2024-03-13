@@ -425,8 +425,7 @@ class ChatActivity : AppCompatActivity() {
                 isVisible()
                 Log.d("IMG_ERROR","0.3")
                 populateRecyclerView()
-                chatAdapter.notifyItemInserted(chats.size)
-                b.rvChatAct.scrollToPosition(chatAdapter.itemCount - 1)
+
                 Log.d("IMG_ERROR","0.4")
                 // The next task will only be executed after receivingData() is completed
             } catch (e: Exception) {
@@ -437,7 +436,7 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private suspend fun populateRecyclerView() {
-        chats.clear()
+
         for(data in chatsTemp) {
             Log.d("IMG_ERROR","0")
             if (data.MESSAGE?.contains("https://firebasestorage.googleapis.com")!!) {
@@ -456,6 +455,9 @@ class ChatActivity : AppCompatActivity() {
                 chats.add(data)
                 Log.d("IMG_ERROR","Chat size : ${chats.size}")
             }
+
+            chatAdapter.notifyItemInserted(chats.size)
+            b.rvChatAct.scrollToPosition(chatAdapter.itemCount - 1)
         }
     }
 
@@ -568,8 +570,11 @@ class ChatActivity : AppCompatActivity() {
         }
 
         if (snapshot.exists()) {
+            chatsTemp.clear()
             for (s in snapshot.children) {
                 val data: ChatModel = s.getValue(ChatModel::class.java)!!
+                Log.d("FETCHING_DATA",chatsTemp.size.toString())
+                Log.d("FETCHING_DATA",data.MESSAGE.toString())
                 chatsTemp.add(data)
             }
         }
