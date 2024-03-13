@@ -1,14 +1,19 @@
 package project.social.whisper
 
+import adapters.DatabaseAdapter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.lifecycleScope
 import fragments.ChatFragment
 import fragments.HomeFragment
 import fragments.ProfileFragment
 import fragments.ReelFragment
+import kotlinx.coroutines.launch
 import project.social.whisper.databinding.ActivityMainBinding
+import services.NotificationService
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,6 +23,11 @@ class MainActivity : AppCompatActivity() {
         val b = ActivityMainBinding.inflate(layoutInflater)
         val view = b.root
         setContentView(view)
+
+        lifecycleScope.launch {
+            DatabaseAdapter.token = NotificationService.generateToken()
+            Log.d("TOKEN",NotificationService.generateToken())
+        }
 
 //        To display fragment
         val fm1 = supportFragmentManager

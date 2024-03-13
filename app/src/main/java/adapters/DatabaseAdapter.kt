@@ -59,6 +59,7 @@ class DatabaseAdapter {
         //Global variables
         var contactName = ""
         var contactNumber = ""
+        var token = ""
 
         //Encryption Key
         private lateinit var encryptionKey:ByteArray
