@@ -82,6 +82,7 @@ dependencies {
 
     //Photo View to enable zoom in image
     implementation ("com.github.chrisbanes:PhotoView:2.3.0")
+    implementation("com.google.firebase:firebase-messaging:23.4.1")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
