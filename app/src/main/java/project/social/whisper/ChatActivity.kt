@@ -73,6 +73,9 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var userName:String
     private lateinit var fcmToken:String
 
+    private lateinit var selfUserName:String
+    private lateinit var selfImgUrl:String
+
     //Permission callback
     private val permissionsResultCallback = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -213,6 +216,24 @@ class ChatActivity : AppCompatActivity() {
             }
         })
 
+        DatabaseAdapter.userDetailsTable.child(DatabaseAdapter.returnUser()?.uid!!)
+            .child(DatabaseAdapter.key).addListenerForSingleValueEvent(object: ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+
+                    if(snapshot.exists()) {
+                        selfUserName =
+                            snapshot.child("USER_NAME").getValue(String::class.java) ?: "Guest"
+                        selfImgUrl = snapshot.child("IMAGE").getValue(String::class.java)
+                            ?: "https://53.fs1.hubspotusercontent-na1.net/hub/53/hubfs/image8-2.jpg?width=595&height=400&name=image8-2.jpg"
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+
+                }
+
+            })
+
         val lManager = LinearLayoutManager(this)
         lManager.stackFromEnd = true
         b.rvChatAct.layoutManager = lManager
@@ -325,7 +346,7 @@ class ChatActivity : AppCompatActivity() {
                                     NotificationService.sendNotification(
                                         "Image",
                                         fcmToken,
-                                        userName
+                                        selfUserName
                                     )
                                 }
                             }
@@ -560,7 +581,7 @@ class ChatActivity : AppCompatActivity() {
 
                 runBlocking {
                     launch(Dispatchers.IO) {
-                        NotificationService.sendNotification(msg, fcmToken, userName)
+                        NotificationService.sendNotification(msg, fcmToken, selfUserName)
                     }
                 }
 
