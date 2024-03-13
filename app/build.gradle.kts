@@ -51,6 +51,9 @@ dependencies {
     //Lottie animation
     implementation("com.airbnb.android:lottie:6.3.0")
 
+    //Notification
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
     //For responsiveness
     implementation("com.intuit.ssp:ssp-android:1.1.0")
     implementation("com.intuit.sdp:sdp-android:1.1.0")
