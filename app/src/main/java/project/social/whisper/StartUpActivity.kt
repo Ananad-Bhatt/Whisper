@@ -29,44 +29,4 @@ class StartUpActivity : AppCompatActivity() {
             startActivity(signup)
         }
     }
-
-    override fun onStart() {
-        super.onStart()
-        // Check if user is signed in (non-null) and update UI accordingly.
-        val currentUser = DatabaseAdapter.returnUser()
-        if(currentUser != null)
-        {
-            //Find user name
-            val uid = DatabaseAdapter.returnUser()?.uid!!
-
-            DatabaseAdapter.userDetailsTable.child(uid).addListenerForSingleValueEvent(object:
-                ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if(snapshot.exists())
-                    {
-                        for(s in snapshot.children)
-                        {
-                            val key = s.key!!
-                            val isOpened = s.child("IS_OPENED").getValue(Boolean::class.java) ?: true
-                            if(isOpened)
-                            {
-                                DatabaseAdapter.key = key
-
-                                //Move to diff Activity
-                                val i = Intent(applicationContext, MainActivity::class.java)
-                                startActivity(i)
-
-                                return
-                            }
-                        }
-
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-
-                }
-            })
-        }
-    }
 }
