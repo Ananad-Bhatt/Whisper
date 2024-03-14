@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -106,7 +105,7 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
 
     override fun getItemViewType(position: Int): Int {
         Log.d("IMG_ERROR","aa${chats[position].MESSAGE!!}")
-        return if(chats[position].SENDER_KEY.equals(DatabaseAdapter.key)) {
+        return if(chats[position].SENDER_KEY.equals(GlobalStaticAdapter.key)) {
             if(chats[position].MESSAGE!!.contains("project.social.whisper"))
                 SENDER_VIEW_IMAGE_TYPE
             else

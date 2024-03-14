@@ -1,6 +1,7 @@
 package project.social.whisper
 
 import adapters.DatabaseAdapter
+import adapters.GlobalStaticAdapter
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -13,9 +14,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 import project.social.whisper.databinding.ActivityRegistrationBinding
 
 class RegistrationActivity : AppCompatActivity() {
@@ -197,7 +195,7 @@ class RegistrationActivity : AppCompatActivity() {
                                     val uid = DatabaseAdapter.returnUser()?.uid!!
                                     val key = DatabaseAdapter.userDetailsTable.child(uid).push().key!!
 
-                                    DatabaseAdapter.key = key
+                                    GlobalStaticAdapter.key = key
 
                                     DatabaseAdapter.usersTable.child(uid).child("EMAIL")
                                         .setValue(DatabaseAdapter.returnUser()?.email?.lowercase())
@@ -223,45 +221,4 @@ class RegistrationActivity : AppCompatActivity() {
             }
         }
     }
-
-    override fun onStart() {
-        super.onStart()
-        // Check if user is signed in (non-null) and update UI accordingly.
-        val currentUser = DatabaseAdapter.returnUser()
-        if(currentUser != null)
-        {
-            //Find user name
-            val uid = DatabaseAdapter.returnUser()?.uid!!
-
-            DatabaseAdapter.userDetailsTable.child(uid).addListenerForSingleValueEvent(object:
-                ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if(snapshot.exists())
-                    {
-                        for(s in snapshot.children)
-                        {
-                            val key = s.key!!
-                            val isOpened = s.child("IS_OPENED").getValue(Boolean::class.java) ?: true
-                            if(isOpened)
-                            {
-                                DatabaseAdapter.key = key
-                                return
-                            }
-                        }
-
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-
-                }
-            })
-
-            //Move to diff Activity
-            val i = Intent(this, MainActivity::class.java)
-            startActivity(i)
-        }
-    }
-
-
 }

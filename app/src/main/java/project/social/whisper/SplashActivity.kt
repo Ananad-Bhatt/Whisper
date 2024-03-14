@@ -56,7 +56,6 @@ class SplashActivity : AppCompatActivity() {
                                 val isOpened = s.child("IS_OPENED").getValue(Boolean::class.java) ?: true
                                 if(isOpened)
                                 {
-                                    DatabaseAdapter.key = key
                                     GlobalStaticAdapter.key = key
 
                                     GlobalStaticAdapter.about = s.child("ABOUT").getValue(String::class.java) ?: ""

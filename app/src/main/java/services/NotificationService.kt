@@ -19,16 +19,13 @@ class NotificationService : FirebaseMessagingService() {
          fun generateToken() {
             FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    DatabaseAdapter.token = task.result
                     GlobalStaticAdapter.fcmToken = task.result
 
                     DatabaseAdapter.userDetailsTable
-                        .child(DatabaseAdapter.returnUser()?.uid!!)
-                        .child(DatabaseAdapter.key)
+                        .child(GlobalStaticAdapter.uid)
+                        .child(GlobalStaticAdapter.key)
                         .child("FCM_TOKEN")
                         .setValue(task.result)
-
-                } else {
 
                 }
             }
@@ -76,10 +73,6 @@ class NotificationService : FirebaseMessagingService() {
             }
 
         }
-    }
-
-    override fun onNewToken(token: String) {
-        super.onNewToken(token)
     }
 
 }

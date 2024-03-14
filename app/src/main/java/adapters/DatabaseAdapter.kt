@@ -24,7 +24,6 @@ import java.net.URL
 import java.nio.charset.StandardCharsets
 import java.security.SecureRandom
 import java.util.Base64
-import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executors
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
@@ -53,13 +52,9 @@ class DatabaseAdapter {
         var userImage = FirebaseStorage.getInstance().getReference("USER_IMAGES")
         var chatImage = FirebaseStorage.getInstance().getReference("CHAT_IMAGES")
 
-        //Current user key
-        var key = ""
-
         //Global variables
         var contactName = ""
         var contactNumber = ""
-        var token = ""
 
         //Encryption Key
         private lateinit var encryptionKey:ByteArray

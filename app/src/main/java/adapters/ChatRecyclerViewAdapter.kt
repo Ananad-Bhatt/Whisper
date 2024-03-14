@@ -5,14 +5,12 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import models.ChatRecyclerModel
-import models.ChatUserModel
 import project.social.whisper.ChatActivity
 import project.social.whisper.R
 
@@ -42,14 +40,13 @@ class ChatRecyclerViewAdapter(private val context: Context, private val usersLis
 
         holder.ll.setOnClickListener {
             val i = Intent(context, ChatActivity::class.java)
-            i.putExtra("userName",usersList[position].title)
-            i.putExtra("imgUrl",usersList[position].img)
-            i.putExtra("key",usersList[position].key)
-            i.putExtra("uid",usersList[position].uid)
-            i.putExtra("fcmToken",usersList[position].fcm)
+            GlobalStaticAdapter.userName2 = usersList[position].title
+            GlobalStaticAdapter.imageUrl2 = usersList[position].img
+            GlobalStaticAdapter.key2 = usersList[position].key
+            GlobalStaticAdapter.uid2 = usersList[position].uid
+            GlobalStaticAdapter.fcmToken2 = usersList[position].fcm
             context.startActivity(i)
         }
-
     }
     class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val img: ImageView = itemView.findViewById(R.id.chat_frag_img)

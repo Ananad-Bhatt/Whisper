@@ -2,11 +2,11 @@ package project.social.whisper
 
 import adapters.ChatAdapter
 import adapters.DatabaseAdapter
+import adapters.GlobalStaticAdapter
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -14,7 +14,6 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
@@ -27,8 +26,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import fragments.ContactFragment
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -142,13 +139,13 @@ class ChatActivity : AppCompatActivity() {
 
         onBackPressedDispatcher.addCallback(this, callback)
 
-        key = intent.getStringExtra("key")!!
-        uid = intent.getStringExtra("uid")!!
-        userName = intent.getStringExtra("userName")!!
-        val imgUrl = intent.getStringExtra("imgUrl")!!
-        fcmToken = intent.getStringExtra("fcmToken")!!
+        key = GlobalStaticAdapter.key2
+        uid = GlobalStaticAdapter.uid2
+        userName = GlobalStaticAdapter.userName2
+        val imgUrl = GlobalStaticAdapter.imageUrl2
+        fcmToken = GlobalStaticAdapter.fcmToken2
 
-        senderKey = DatabaseAdapter.key
+        senderKey = GlobalStaticAdapter.key
         receiverKey = key
 
         senderRoom = senderKey + receiverKey
@@ -157,8 +154,8 @@ class ChatActivity : AppCompatActivity() {
         DatabaseAdapter.keysTable.addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
 
-                var publicKeyForShared:String = ""
-                var privateKeyForShared:String = ""
+                var publicKeyForShared = ""
+                var privateKeyForShared = ""
 
                 if(!snapshot.child(senderRoom).exists()) {
                     DatabaseAdapter.generateEncryptionKey(
@@ -216,23 +213,8 @@ class ChatActivity : AppCompatActivity() {
             }
         })
 
-        DatabaseAdapter.userDetailsTable.child(DatabaseAdapter.returnUser()?.uid!!)
-            .child(DatabaseAdapter.key).addListenerForSingleValueEvent(object: ValueEventListener{
-                override fun onDataChange(snapshot: DataSnapshot) {
-
-                    if(snapshot.exists()) {
-                        selfUserName =
-                            snapshot.child("USER_NAME").getValue(String::class.java) ?: "Guest"
-                        selfImgUrl = snapshot.child("IMAGE").getValue(String::class.java)
-                            ?: "https://53.fs1.hubspotusercontent-na1.net/hub/53/hubfs/image8-2.jpg?width=595&height=400&name=image8-2.jpg"
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-
-                }
-
-            })
+        selfUserName = GlobalStaticAdapter.userName
+        selfImgUrl = GlobalStaticAdapter.imageUrl
 
         val lManager = LinearLayoutManager(this)
         lManager.stackFromEnd = true
@@ -310,7 +292,6 @@ class ChatActivity : AppCompatActivity() {
 
         b.tvChatActUserName.setOnClickListener {
             val i = Intent(this, UserProfileActivity::class.java)
-            i.putExtra("userName",b.tvChatActUserName.text.toString())
             startActivity(i)
         }
 
@@ -536,7 +517,7 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private suspend fun receivingData() = withContext(Dispatchers.IO) {
-        val snapshot = suspendCoroutine<DataSnapshot> { continuation ->
+        val snapshot = suspendCoroutine { continuation ->
             DatabaseAdapter.chatTable.child(receiverRoom).addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     continuation.resume(snapshot)
@@ -600,7 +581,7 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private suspend fun receiveLastMessage() = withContext(Dispatchers.IO) {
-        val snapshot = suspendCoroutine<DataSnapshot> { continuation ->
+        val snapshot = suspendCoroutine { continuation ->
             DatabaseAdapter.chatTable.child(receiverRoom).orderByKey().limitToLast(1).addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     continuation.resume(snapshot)
