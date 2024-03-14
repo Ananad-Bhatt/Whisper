@@ -48,6 +48,9 @@ class ManageAccountsFragment : Fragment() {
         // Inflate the layout for this fragment
         b = FragmentManageAccountsBinding.inflate(inflater, container, false)
 
+        Log.d("AASDQASD",GlobalStaticAdapter.uid)
+        Log.d("AASDQASD",GlobalStaticAdapter.key)
+
         if(isAdded) {
             b.rvManageAccFrag.layoutManager = LinearLayoutManager(requireActivity(),
                 LinearLayoutManager.VERTICAL, false)
@@ -78,6 +81,7 @@ class ManageAccountsFragment : Fragment() {
 
     private fun findAccounts() {
         try{
+            Log.d("AASDQASD", uid)
             DatabaseAdapter.userDetailsTable.child(uid).addListenerForSingleValueEvent(object : ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if(snapshot.exists())
@@ -85,7 +89,7 @@ class ManageAccountsFragment : Fragment() {
                         for(s in snapshot.children) {
                             val userKey = s.key!!
 
-                            val userName = s.child("USER_NAME").getValue(String::class.java)!!
+                            val userName = s.child("USER_NAME").getValue(String::class.java)?:""
 
                             val imgUrl = s.child("IMAGE").getValue(String::class.java)
                                 ?: "https://53.fs1.hubspotusercontent-na1.net/hub/53/hubfs/image8-2.jpg?width=595&height=400&name=image8-2.jpg"

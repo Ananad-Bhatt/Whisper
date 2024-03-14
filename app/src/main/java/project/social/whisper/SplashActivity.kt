@@ -42,7 +42,7 @@ class SplashActivity : AppCompatActivity() {
             {
                 //Find user name
                 val uid = DatabaseAdapter.returnUser()?.uid!!
-
+                GlobalStaticAdapter.uid = uid
                 DatabaseAdapter.userDetailsTable.child(uid).addListenerForSingleValueEvent(object:
                     ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
