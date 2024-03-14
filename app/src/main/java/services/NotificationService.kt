@@ -1,6 +1,7 @@
 package services
 
 import adapters.DatabaseAdapter
+import adapters.GlobalStaticAdapter
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -19,6 +20,7 @@ class NotificationService : FirebaseMessagingService() {
             FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     DatabaseAdapter.token = task.result
+                    GlobalStaticAdapter.fcmToken = task.result
 
                     DatabaseAdapter.userDetailsTable
                         .child(DatabaseAdapter.returnUser()?.uid!!)

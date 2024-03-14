@@ -1,6 +1,8 @@
 package project.social.whisper
 
 import adapters.DatabaseAdapter
+import adapters.GlobalStaticAdapter
+import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -12,7 +14,9 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import project.social.whisper.databinding.ActivitySplashBinding
+import services.NotificationService
 
+@SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +57,17 @@ class SplashActivity : AppCompatActivity() {
                                 if(isOpened)
                                 {
                                     DatabaseAdapter.key = key
+                                    GlobalStaticAdapter.key = key
+
+                                    GlobalStaticAdapter.about = s.child("ABOUT").getValue(String::class.java) ?: ""
+
+                                    GlobalStaticAdapter.accountType = s.child("ACCOUNT_TYPE").getValue(String::class.java) ?: "PUBLIC"
+
+                                    GlobalStaticAdapter.imageUrl = s.child("IMAGE").getValue(String::class.java) ?: getString(R.string.image_not_found)
+
+                                    GlobalStaticAdapter.userName = s.child("USER_NAME").getValue(String::class.java)!!
+
+                                    NotificationService.generateToken()
 
                                     //Move to diff Activity
                                     val i = Intent(applicationContext, MainActivity::class.java)

@@ -6,10 +6,9 @@
     android:gravity="center"
     tools:context="fragments.HomeNewFeedFragment">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Explore New"
-        android:textSize="@dimen/_45ssp"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_home_new_feed_frag"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </LinearLayout>

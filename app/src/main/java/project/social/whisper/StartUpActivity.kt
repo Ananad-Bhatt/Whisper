@@ -1,13 +1,8 @@
 package project.social.whisper
 
-import adapters.DatabaseAdapter
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 import project.social.whisper.databinding.ActivityStartUpBinding
 
 class StartUpActivity : AppCompatActivity() {

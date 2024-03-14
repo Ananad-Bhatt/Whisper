@@ -1,7 +1,5 @@
 package adapters
 
-import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +13,6 @@ import com.google.firebase.auth.FirebaseAuth
 import fragments.ManageAccountsFragment
 import fragments.ManageChannelFragment
 import fragments.ProfileSettingAccountFragment
-import fragments.ProfileSettingFragment
 import models.ProfileSettingModel
 import project.social.whisper.R
 import project.social.whisper.StartUpActivity
@@ -57,6 +54,7 @@ class ProfileSettingAdapter(val context: FragmentActivity, private val items: Li
                 }
 
                 "Log Out" -> {
+                    //Log out
                     FirebaseAuth.getInstance().signOut()
                     val i = Intent(context, StartUpActivity::class.java)
                     context.startActivity(i)

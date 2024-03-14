@@ -36,14 +36,17 @@ class HomeRecyclerViewAdapter (private val postList:ArrayList<HomeModel>) :
         holder.post.setImageResource((postList[position].post))
 
         holder.upVote.setOnClickListener {
+            //When user clicks upvote
             if(isUpClickable) {
-                holder.score.text = (holder.score.text.toString().toInt() + 1).toString()
+                val score = holder.score.text.toString().toInt() + 1
+                holder.score.text = (score).toString()
                 isUpClickable = false
                 isDownClickable = true
             }
         }
 
         holder.downVote.setOnClickListener {
+            //When user clicks down vote
             if(isDownClickable) {
                 holder.score.text = (holder.score.text.toString().toInt() - 1).toString()
                 isDownClickable = false
@@ -60,6 +63,6 @@ class HomeRecyclerViewAdapter (private val postList:ArrayList<HomeModel>) :
         val upVote: ImageButton = itemView.findViewById(R.id.home_frag_post_up)
         val downVote: ImageButton = itemView.findViewById(R.id.home_frag_post_down)
         val score: TextView = itemView.findViewById(R.id.home_frag_post_score)
-        val comment: ImageButton = itemView.findViewById(R.id.home_frag_post_comment)
+        //val comment: ImageButton = itemView.findViewById(R.id.home_frag_post_comment)
     }
 }

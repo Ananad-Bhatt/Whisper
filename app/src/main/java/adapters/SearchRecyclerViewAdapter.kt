@@ -2,19 +2,16 @@ package adapters
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import models.SearchModel
 import project.social.whisper.R
-import project.social.whisper.SearchActivity
 import project.social.whisper.UserProfileActivity
 
 class SearchRecyclerViewAdapter(private val context:Context,private val searchResults:ArrayList<SearchModel>) :
@@ -38,10 +35,11 @@ class SearchRecyclerViewAdapter(private val context:Context,private val searchRe
 
         holder.container.setOnClickListener {
             val i = Intent(context, UserProfileActivity::class.java)
-            i.putExtra("userName",holder.userName.text.toString())
-            i.putExtra("userUid",searchResults[position].userUid)
-            i.putExtra("userKey",searchResults[position].userKey)
-            i.putExtra("fcmToken",searchResults[position].fcm)
+            GlobalStaticAdapter.userName2 = holder.userName.text.toString()
+            GlobalStaticAdapter.uid2 = searchResults[position].userUid
+            GlobalStaticAdapter.key2 = searchResults[position].userKey
+            GlobalStaticAdapter.fcmToken2 = searchResults[position].fcm
+            GlobalStaticAdapter.imageUrl2 = searchResults[position].userImg
 
             context.startActivity(i)
         }

@@ -20,16 +20,9 @@ import project.social.whisper.R
 import project.social.whisper.SearchActivity
 import project.social.whisper.databinding.FragmentHomeBinding
 
-
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [HomeFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class HomeFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
@@ -57,11 +50,14 @@ class HomeFragment : Fragment() {
         val activity = activity as AppCompatActivity?
         activity!!.setSupportActionBar(b.homeFragToolbar)
 
+        //Adapter for tab layout
         val fa = HomeViewPagerAdapter(this)
         vp.adapter = fa
 
+        //Tab Layout titles
         val labels = arrayOf("Explore new", "Following")
 
+        //Checking if fragment is attached or not
         if(isAdded) {
             tab.setTabTextColors(
                 ContextCompat.getColor(
@@ -74,12 +70,13 @@ class HomeFragment : Fragment() {
                 )   // Text color for selected tab
             )
 
+            //Selected tab color
             tab.setSelectedTabIndicatorColor(
                 ContextCompat.getColor(requireContext(), R.color.selected_tab)
             )
         }
 
-//        Assigning title to the tabs
+//      Assigning title to the tabs
         TabLayoutMediator(tab, vp
         ) { tab1, position ->
             tab1.text = labels[position]
@@ -96,6 +93,7 @@ class HomeFragment : Fragment() {
         when(item.itemId)
         {
             R.id.home_tool_search -> {
+                //Checking if fragment is attached or not
                 if(isAdded) {
                     startActivity(Intent(requireContext(), SearchActivity::class.java))
                 }

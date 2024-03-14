@@ -1,6 +1,7 @@
 package fragments
 
 import adapters.DatabaseAdapter
+import adapters.GlobalStaticAdapter
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -10,29 +11,20 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 import project.social.whisper.R
 import project.social.whisper.databinding.FragmentProfileSettingAccountBinding
 
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [ProfileSettingAccountFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ProfileSettingAccountFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
     private lateinit var b:FragmentProfileSettingAccountBinding
 
-    private val uid = DatabaseAdapter.returnUser()?.uid!!
-    private val key = DatabaseAdapter.key
+    private val uid = GlobalStaticAdapter.uid
+    private val key = GlobalStaticAdapter.key
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +40,13 @@ class ProfileSettingAccountFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         b = FragmentProfileSettingAccountBinding.inflate(inflater, container, false)
+
+        when(GlobalStaticAdapter.accountType)
+        {
+            "PUBLIC" -> b.spProfileAccountSetting.setSelection(0)
+            "PRIVATE" -> b.spProfileAccountSetting.setSelection(1)
+            "NOT VISIBLE" -> b.spProfileAccountSetting.setSelection(2)
+        }
 
         try {
             if(isAdded) {
@@ -70,44 +69,7 @@ class ProfileSettingAccountFragment : Fragment() {
             Log.d("DB_ERROR",e.toString())
         }
 
-        retrieveAccType()
-
         return b.root
-    }
-
-    private fun retrieveAccType() {
-        try{
-
-            val uid = DatabaseAdapter.returnUser()?.uid!!
-            val key = DatabaseAdapter.key
-
-            DatabaseAdapter.userDetailsTable.child(uid).child(key)
-                .addListenerForSingleValueEvent(object:ValueEventListener
-            {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if(snapshot.exists())
-                    {
-                        val accType = snapshot.child("ACCOUNT_TYPE")
-                            .getValue(String::class.java) ?: "PUBLIC"
-
-                        when(accType)
-                        {
-                            "PUBLIC" -> b.spProfileAccountSetting.setSelection(0)
-                            "PRIVATE" -> b.spProfileAccountSetting.setSelection(1)
-                            "NOT VISIBLE" -> b.spProfileAccountSetting.setSelection(2)
-                        }
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-
-
-                }
-            })
-        }catch(e:Exception)
-        {
-            Log.d("DB_ERROR",e.toString())
-        }
     }
 
     inner class SpinnerStateChangeListener : OnItemSelectedListener{
@@ -135,14 +97,6 @@ class ProfileSettingAccountFragment : Fragment() {
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ProfileSettingAccountFragment.
-         */
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             ProfileSettingAccountFragment().apply {

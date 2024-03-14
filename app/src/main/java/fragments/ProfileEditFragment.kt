@@ -1,6 +1,7 @@
 package fragments
 
 import adapters.DatabaseAdapter
+import adapters.GlobalStaticAdapter
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
@@ -19,21 +20,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.github.dhaval2404.imagepicker.ImagePicker
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 import project.social.whisper.R
 import project.social.whisper.databinding.FragmentProfileEditBinding
 
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [ProfileEditFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ProfileEditFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
@@ -43,8 +35,8 @@ class ProfileEditFragment : Fragment() {
     //Activity Result Launcher
     private lateinit var imageCapture: ActivityResultLauncher<Intent>
 
-    private val uid = DatabaseAdapter.returnUser()?.uid!!
-    private val key = DatabaseAdapter.key
+    private val uid = GlobalStaticAdapter.uid
+    private val key = GlobalStaticAdapter.key
 
     //Permission callback
     private val permissionsResultCallback = registerForActivityResult(
@@ -56,7 +48,7 @@ class ProfileEditFragment : Fragment() {
             }
 
             false -> {
-                Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "We are unable to access camera and images", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -76,7 +68,9 @@ class ProfileEditFragment : Fragment() {
         // Inflate the layout for this fragment
         b = FragmentProfileEditBinding.inflate(inflater, container, false)
 
-        findDetails()
+        Glide.with(requireContext()).load(GlobalStaticAdapter.imageUrl).into(b.imgEditProfileUserImage)
+        b.edtEditProfileAbout.setText(GlobalStaticAdapter.about)
+        b.edtEditProfileUserName.setText(GlobalStaticAdapter.userName)
 
         imageCapture = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
@@ -93,7 +87,9 @@ class ProfileEditFragment : Fragment() {
             }
         }
 
-        imgClick()
+        b.imgBtnEditProfileCamera.setOnClickListener {
+            imgClick()
+        }
 
         b.btnEditProfileDone.setOnClickListener {
             if(b.edtEditProfileUserName.text.toString() != "" && b.edtEditProfileAbout.text.toString() != "")
@@ -122,28 +118,16 @@ class ProfileEditFragment : Fragment() {
 
                     DatabaseAdapter.userImage.child(key).downloadUrl.addOnSuccessListener { img ->
 
+                        GlobalStaticAdapter.imageUrl = img.toString()
+
+                        //Update image in profile
+                        Glide.with(requireContext()).load(GlobalStaticAdapter.imageUrl)
+                            .into(b.imgEditProfileUserImage)
+
                         DatabaseAdapter.userDetailsTable.child(uid).child(key).child("IMAGE").setValue(img.toString()).addOnSuccessListener {
-
-                            DatabaseAdapter.userDetailsTable.child(uid).child(key).child("IMAGE").addListenerForSingleValueEvent(object :
-                                ValueEventListener {
-
-                                override fun onDataChange(snapshot: DataSnapshot) {
-                                    val url = snapshot.getValue(String::class.java)
-                                    if(isAdded) {
-                                        Glide.with(requireContext()).load(url)
-                                            .into(b.imgEditProfileUserImage)
-                                    }
-                                }
-
-                                override fun onCancelled(error: DatabaseError) {
-                                    if(isAdded) {
-                                        Toast.makeText(
-                                            requireContext(), "Check your internet connection",
-                                            Toast.LENGTH_LONG
-                                        ).show()
-                                    }
-                                }
-                            })
+                            if(isAdded) {
+                                Toast.makeText(requireContext(), "Profile image updated successfully", Toast.LENGTH_LONG).show()
+                            }
                         }
                     }
                 }
@@ -165,41 +149,40 @@ class ProfileEditFragment : Fragment() {
     }
 
     private fun imgClick() {
-        b.imgBtnEditProfileCamera.setOnClickListener {
-            if(isAdded) {
-                val ad = AlertDialog.Builder(requireContext())
+        if(isAdded) {
+            val ad = AlertDialog.Builder(requireContext())
 
-                ad.setMessage("Take picture from")
-                    .setPositiveButton("CAMERA") { _, _ ->
-                        requestCameraPermission()
+            ad.setMessage("Take picture from")
+                .setPositiveButton("CAMERA") { _, _ ->
+                    requestCameraPermission()
 
-                        if (hasCameraPermission()) {
-                            openCamera()
-                        } else {
-                            Toast.makeText(
-                                requireContext(),
-                                "Please give permission of camera",
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
+                    if (hasCameraPermission()) {
+                        openCamera()
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            "Please give permission of camera",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
-                    .setNegativeButton("TAKE FROM FOLDER") { _, _ ->
-                        requestStoragePermission()
+                }
+                .setNegativeButton("TAKE FROM FOLDER") { _, _ ->
+                    requestStoragePermission()
 
-                        if (hasStoragePermission()) {
-                            openExplorer()
-                        } else {
-                            Toast.makeText(
-                                requireContext(),
-                                "Please give permission of storage",
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
+                    if (hasStoragePermission()) {
+                        openExplorer()
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            "Please give permission of storage",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
-                ad.create()
-                ad.show()
-            }
+                }
+            ad.create()
+            ad.show()
         }
+
     }
 
     private fun openCamera() {
@@ -286,43 +269,6 @@ class ProfileEditFragment : Fragment() {
             requireContext(),
             android.Manifest.permission.CAMERA
         ) == PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun findDetails() {
-        DatabaseAdapter.userDetailsTable.child(uid).child(key).addValueEventListener(object: ValueEventListener {
-            override fun onDataChange(s: DataSnapshot) {
-
-                if (isAdded) {
-
-                    if (s.exists()) {
-                        val userName = s.child("USER_NAME").getValue(String::class.java) ?: "Temp"
-
-                        val imgUrl = s.child("IMAGE").getValue(String::class.java)
-                            ?: "https://53.fs1.hubspotusercontent-na1.net/hub/53/hubfs/image8-2.jpg?width=595&height=400&name=image8-2.jpg"
-
-                        val about = s.child("ABOUT").getValue(String::class.java) ?: "Nothing"
-
-                        Glide.with(requireContext()).load(imgUrl).into(b.imgEditProfileUserImage)
-                        b.edtEditProfileAbout.setText(about)
-                        b.edtEditProfileUserName.setText(userName)
-                        return
-                    }
-
-                    Toast.makeText(
-                        requireContext(),
-                        "Something went horribly wrong!!!",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                if(isAdded) {
-                    Toast.makeText(requireContext(), "We unable to fetch data", Toast.LENGTH_LONG)
-                        .show()
-                }
-            }
-        })
     }
 
     companion object {

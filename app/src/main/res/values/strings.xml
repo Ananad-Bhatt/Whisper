@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Whisper</string>
 
     <string name="default_web_client_id">823234133694-ee5h5spupj47lb8qhv2rh2b28ndnkbr9.apps.googleusercontent.com</string>
@@ -80,9 +80,8 @@
     <string name="explorer">Explorer</string>
     <string name="camera">Camera</string>
 
-<!--    Notification OAUth key-->
-    <string name="notification_key">113563059949120034346</string>
-
+<!--    Backup Image-->
+    <string name="image_not_found" tools:ignore="TypographyDashes">https://53.fs1.hubspotusercontent-na1.net/hub/53/hubfs/image8-2.jpg?width=595&amp;height=400&amp;name=image8-2.jpg</string>
 
     <string-array name="account_type_array">
         <item>PUBLIC</item>

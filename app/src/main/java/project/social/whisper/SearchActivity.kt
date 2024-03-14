@@ -1,6 +1,7 @@
 package project.social.whisper
 
 import adapters.DatabaseAdapter
+import adapters.GlobalStaticAdapter
 import adapters.SearchRecyclerViewAdapter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -26,8 +27,6 @@ class SearchActivity : AppCompatActivity() {
     private val searchResults = ArrayList<SearchModel>()
     private lateinit var resultAdapter:SearchRecyclerViewAdapter
 
-    private val key = DatabaseAdapter.key
-
     interface OnSearchCompleteListener {
         fun onSearchComplete(results: List<SearchModel>)
     }
@@ -37,6 +36,7 @@ class SearchActivity : AppCompatActivity() {
         b = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(b.root)
 
+        //Action bar
         setSupportActionBar(b.searchActToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -61,7 +61,6 @@ class SearchActivity : AppCompatActivity() {
                             resultAdapter =
                                 SearchRecyclerViewAdapter(this@SearchActivity, searchResults)
                             b.searchActRv.adapter = resultAdapter
-
                         }
 
                     })
@@ -79,31 +78,36 @@ class SearchActivity : AppCompatActivity() {
                     for (j in snapshot.children) {
                         for(i in j.children) {
 
+                            //User Authentication UID
                             val uid = j.key!!
+
+                            //User Key
                             val key = i.key!!
-                            if (uid == DatabaseAdapter.returnUser()?.uid) {
+
+                            //If it is current user
+                            if (uid == GlobalStaticAdapter.uid) {
                                 break
                             }
 
+                            //If account is PUBLIC
                             val type =
                                 i.child("ACCOUNT_TYPE").getValue(String::class.java) ?: "PUBLIC"
+
+                            //If account is not visible
                             if (type == "NOT VISIBLE") {
                                 continue
                             }
 
-                            val userName: String = if (i.child("USER_NAME").exists()) {
+                            val userName: String =
                                 i.child("USER_NAME").getValue(String::class.java)!!
-                            } else {
-                                "guest_" + uid.substring(0, 3)
-                            }
 
-                            val image: String = if (i.child("IMAGE").exists()) {
-                                i.child("IMAGE").getValue(String::class.java)!!
-                            } else {
-                                "https://53.fs1.hubspotusercontent-na1.net/hub/53/hubfs/image8-2.jpg?width=595&height=400&name=image8-2.jpg"
-                            }
+                            val image: String =
+                                i.child("IMAGE").getValue(String::class.java)
+                                    ?: getString(R.string.image_not_found)
 
-                            val fcm = i.child("FCM_TOKEN").getValue(String::class.java)?:""
+                            //FCM token
+                            val fcm = i.child("FCM_TOKEN").getValue(String::class.java)
+                                ?:""
 
                             if ((userName.lowercase()).contains(query.lowercase())) {
                                 searchResults.add(SearchModel(userName, image, uid, key, fcm))
