@@ -34,7 +34,7 @@
 
     <!--    Home fragment toolbar-->
     <string name="search">Search</string>
-    <string name="create_post">New</string>
+    <string name="create_post">Create post</string>
 
     <!--    Reel Fragment-->
     <string name="follow">Follow</string>
@@ -79,6 +79,11 @@
     <string name="location">Location</string>
     <string name="explorer">Explorer</string>
     <string name="camera">Camera</string>
+
+<!--    Create post-->
+
+    <string name="cancel">Cancel</string>
+    <string name="post">Post</string>
 
     <!--    Backup Image-->
     <string name="image_not_found" tools:ignore="TypographyDashes">https://53.fs1.hubspotusercontent-na1.net/hub/53/hubfs/image8-2.jpg?width=595&amp;height=400&amp;name=image8-2.jpg</string>
