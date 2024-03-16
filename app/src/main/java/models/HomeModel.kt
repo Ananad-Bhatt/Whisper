@@ -2,8 +2,8 @@ package models
 
 data class HomeModel (
     val title: String,
-    val img: Int, // Resource ID for the image
+    val img: String,
     val subTitle: String,
-    val post: Int,
-    val score: Int,
+    val post: String,
+    val score: Double,
 )

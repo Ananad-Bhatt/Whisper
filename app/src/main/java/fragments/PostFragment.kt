@@ -123,10 +123,25 @@ class PostFragment : Fragment() {
                         .child(GlobalStaticAdapter.key)
                         .child(currTime)
                         .child("SCORE")
-                        .setValue(0)
+                        .setValue((0).toDouble())
+
+                    //Storing username
+                    DatabaseAdapter.postTable
+                        .child(GlobalStaticAdapter.uid)
+                        .child(GlobalStaticAdapter.key)
+                        .child(currTime)
+                        .child("USERNAME")
+                        .setValue(GlobalStaticAdapter.userName)
+
+                    //Storing image of user
+                    DatabaseAdapter.postTable
+                        .child(GlobalStaticAdapter.uid)
+                        .child(GlobalStaticAdapter.key)
+                        .child(currTime)
+                        .child("USER_IMAGE")
+                        .setValue(GlobalStaticAdapter.imageUrl)
 
                     //Move back to home page
-
                     val fm = requireActivity().supportFragmentManager
                     val ft = fm.beginTransaction()
                     ft.replace(R.id.main_container, HomeFragment())
