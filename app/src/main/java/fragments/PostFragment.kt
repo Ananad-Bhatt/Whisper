@@ -124,6 +124,13 @@ class PostFragment : Fragment() {
                         .child(currTime)
                         .child("SCORE")
                         .setValue(0)
+
+                    //Move back to home page
+
+                    val fm = requireActivity().supportFragmentManager
+                    val ft = fm.beginTransaction()
+                    ft.replace(R.id.main_container, HomeFragment())
+                    ft.commit()
                 }
             }
         }catch(e:Exception)
