@@ -3,6 +3,7 @@ package fragments
 import adapters.ChatRecyclerViewAdapter
 import adapters.DatabaseAdapter
 import adapters.GlobalStaticAdapter
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -16,6 +17,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import models.ChatRecyclerModel
 import models.ChatUserModel
+import project.social.whisper.ChatGptActivity
 import project.social.whisper.R
 import project.social.whisper.databinding.FragmentChatCurrentBinding
 
@@ -54,7 +56,10 @@ class ChatCurrentFragment : Fragment() {
         usersKey = ArrayList()
 
         b.tvChatGptCurrFrag.setOnClickListener {
-
+            if(isAdded) {
+                val i = Intent(requireContext(), ChatGptActivity::class.java)
+                startActivity(i)
+            }
         }
 
         b.chatCurrentFragRecyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL ,false)
