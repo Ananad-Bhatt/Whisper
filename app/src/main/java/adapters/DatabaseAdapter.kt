@@ -47,10 +47,12 @@ class DatabaseAdapter {
         var chatTable = Firebase.database.getReference("CHATS")
         var chatRooms = Firebase.database.getReference("CHAT_ROOMS")
         var keysTable = Firebase.database.getReference("KEYS")
+        var postTable = Firebase.database.getReference("POSTS")
 
         //Storage
         var userImage = FirebaseStorage.getInstance().getReference("USER_IMAGES")
         var chatImage = FirebaseStorage.getInstance().getReference("CHAT_IMAGES")
+        var postImage = FirebaseStorage.getInstance().getReference("POST_IMAGES")
 
         //Global variables
         var contactName = ""

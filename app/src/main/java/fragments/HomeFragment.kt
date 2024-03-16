@@ -15,6 +15,7 @@ import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.google.android.material.tabs.TabLayoutMediator
 import project.social.whisper.R
 import project.social.whisper.SearchActivity
@@ -99,7 +100,12 @@ class HomeFragment : Fragment() {
                 }
             }
             else -> {
-                Toast.makeText(activity, "Create New", Toast.LENGTH_SHORT).show()
+                if(isAdded) {
+                    val fm = requireActivity().supportFragmentManager
+                    val ft = fm.beginTransaction()
+                    ft.replace(R.id.main_container, PostFragment())
+                    ft.commit()
+                }
             }
         }
         return super.onOptionsItemSelected(item)

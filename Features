@@ -99,6 +99,12 @@ Channels :
 	Following and Followers
 
 
+POST
+Payment gateway
+Map
+
+
+
 Diffie - Hellman algo
 
 p and g are public key also large prime number - static
@@ -162,3 +168,21 @@ key decrypt message
 TODOs :
 	Add is opened in account
 	add notification permission
+
+
+
+Features :
+	E2EE chat
+		E2EE Post
+	Multi account
+		Channels
+		Location sharing
+		Contact sharing
+		payment gateway
+		Community
+	Chat BOT
+	Notification
+		Mobile number OTP verification
+
+	if possible :
+		Customization
