@@ -95,7 +95,7 @@ Key points :
 	End to End encryption
 	Mobile number and OTP
 
-
+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
 
 Channels :
 	Following and Followers
@@ -161,4 +161,6 @@ key encrypt message
 key decrypt message
 
 
-Add is opened in account
+TODOs :
+	Add is opened in account
+	add notification permission

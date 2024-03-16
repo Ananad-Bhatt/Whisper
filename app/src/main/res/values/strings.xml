@@ -80,7 +80,7 @@
     <string name="explorer">Explorer</string>
     <string name="camera">Camera</string>
 
-<!--    Backup Image-->
+    <!--    Backup Image-->
     <string name="image_not_found" tools:ignore="TypographyDashes">https://53.fs1.hubspotusercontent-na1.net/hub/53/hubfs/image8-2.jpg?width=595&amp;height=400&amp;name=image8-2.jpg</string>
 
     <string-array name="account_type_array">

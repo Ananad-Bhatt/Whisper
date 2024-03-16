@@ -53,6 +53,10 @@ class ChatCurrentFragment : Fragment() {
         users = ArrayList()
         usersKey = ArrayList()
 
+        b.tvChatGptCurrFrag.setOnClickListener {
+
+        }
+
         b.chatCurrentFragRecyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL ,false)
 
         fetchingData()
