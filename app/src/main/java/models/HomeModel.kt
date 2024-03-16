@@ -5,5 +5,5 @@ data class HomeModel (
     val img: String,
     val subTitle: String,
     val post: String,
-    val score: Double,
+    val score: Int,
 )

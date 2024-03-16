@@ -1,5 +1,6 @@
 package adapters
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,10 +8,11 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import models.HomeModel
 import project.social.whisper.R
 
-class HomeRecyclerViewAdapter (private val postList:ArrayList<HomeModel>) :
+class HomeRecyclerViewAdapter (private val postList:ArrayList<HomeModel>, private val context:Context) :
     RecyclerView.Adapter<HomeRecyclerViewAdapter.HomeViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeViewHolder {
@@ -29,11 +31,11 @@ class HomeRecyclerViewAdapter (private val postList:ArrayList<HomeModel>) :
         var isUpClickable = true
         var isDownClickable = true
 
-        holder.img.setImageResource(postList[position].img)
+        Glide.with(context).load(postList[position].img).into(holder.img)
         holder.title.text = postList[position].title
         holder.subTitle.text = postList[position].subTitle
         holder.score.text = postList[position].score.toString()
-        holder.post.setImageResource((postList[position].post))
+        Glide.with(context).load(postList[position].post).into(holder.post)
 
         holder.upVote.setOnClickListener {
             //When user clicks upvote

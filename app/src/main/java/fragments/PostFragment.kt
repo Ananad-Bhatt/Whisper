@@ -75,6 +75,7 @@ class PostFragment : Fragment() {
             if (it.resultCode == Activity.RESULT_OK) {
                 val data = it.data
                 uri = data?.data!!
+                Glide.with(requireActivity()).load(uri).into(b.ivPostFrag)
             } else {
                 if(isAdded) {
                     Toast.makeText(requireContext(), "Image selection canceled", Toast.LENGTH_SHORT)
@@ -123,7 +124,7 @@ class PostFragment : Fragment() {
                         .child(GlobalStaticAdapter.key)
                         .child(currTime)
                         .child("SCORE")
-                        .setValue((0).toDouble())
+                        .setValue(0)
 
                     //Storing username
                     DatabaseAdapter.postTable

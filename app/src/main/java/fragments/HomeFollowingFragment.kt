@@ -22,6 +22,8 @@ class HomeFollowingFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    private lateinit var adapter:HomeRecyclerViewAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -39,7 +41,10 @@ class HomeFollowingFragment : Fragment() {
         val posts = ArrayList<HomeModel>()
 
         b.homeFollowingFragRecyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL ,false)
-        val adapter = HomeRecyclerViewAdapter(posts)
+
+        if(isAdded) {
+            adapter = HomeRecyclerViewAdapter(posts, requireActivity())
+        }
         b.homeFollowingFragRecyclerView.adapter = adapter
 
         DatabaseAdapter.postTable.addListenerForSingleValueEvent(object: ValueEventListener {
@@ -47,19 +52,22 @@ class HomeFollowingFragment : Fragment() {
                 if(snapshot.exists())
                 {
                     for(s in snapshot.children) {
-                        for(sn in s.children) {
-                            val title = sn.child("USERNAME").getValue(String::class.java)!!
+                        for(sw in s.children) {
+                            for(sn in sw.children) {
+                                val title = sn.child("USERNAME").getValue(String::class.java)!!
 
-                            val image = sn.child("IMAGE").getValue(String::class.java)
-                                ?: getString(R.string.image_not_found)
+                                val image = sn.child("IMAGE").getValue(String::class.java)
+                                    ?: getString(R.string.image_not_found)
 
-                            val score = sn.child("SCORE").getValue(Double::class.java)?:(0).toDouble()
+                                val score =
+                                    sn.child("SCORE").getValue(Int::class.java) ?: 0
 
-                            val userImage = sn.child("USER_IMAGE").getValue(String::class.java)
-                                ?: getString(R.string.image_not_found)
+                                val userImage = sn.child("USER_IMAGE").getValue(String::class.java)
+                                    ?: getString(R.string.image_not_found)
 
-                            posts.add(HomeModel(title, userImage, "Caption", image, score))
-                            adapter.notifyItemInserted(posts.size)
+                                posts.add(HomeModel(title, userImage, "Caption", image, score))
+                                adapter.notifyItemInserted(posts.size)
+                            }
                         }
                     }
                 }
