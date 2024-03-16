@@ -22,6 +22,7 @@ android {
         versionCode = 1
         versionName = "1.0"
         buildConfigField ("String", "FCM_KEY", fcmProperty.getProperty("SERVER_KEY"))
+        buildConfigField ("String", "GEMINI", fcmProperty.getProperty("GEMINI_API"))
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -59,7 +60,8 @@ dependencies {
     //Lottie animation
     implementation("com.airbnb.android:lottie:6.3.0")
 
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    //For Gemini API
+    implementation("com.google.ai.client.generativeai:generativeai:0.2.2")
 
     //Notification
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
