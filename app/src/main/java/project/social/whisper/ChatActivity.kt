@@ -21,6 +21,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.github.dhaval2404.imagepicker.ImagePicker
+import com.google.android.gms.location.LocationServices
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -277,7 +278,7 @@ class ChatActivity : AppCompatActivity() {
                     }
 
                     R.id.menu_location -> {
-                        //sendLocation()
+                        sendLocation()
                     }
 
                     R.id.menu_camera -> {
@@ -299,6 +300,64 @@ class ChatActivity : AppCompatActivity() {
         b.btnDecMsgReq.setOnClickListener {
             Toast.makeText(this,"Request declined!",Toast.LENGTH_LONG).show()
             b.llChatActMsgReq.visibility = View.GONE
+        }
+    }
+
+    private fun hasLocationPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            applicationContext,
+            android.Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun sendLocation() {
+        requestLocationPermission()
+
+        if(hasLocationPermission())
+        {
+            getLocation()
+        }
+        else
+        {
+            Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun getLocation() {
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        // Create a location request
+        val locationRequest = LocationRequest.create().apply {
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            interval = 10000 // Update interval in milliseconds
+        }
+
+        // Check location settings
+        val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
+        val client = LocationServices.getSettingsClient(this)
+        val task = client.checkLocationSettings(builder.build())
+
+        // Request location updates
+        fusedLocationClient.requestLocationUpdates(locationRequest, object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                val lastLocation = locationResult.lastLocation
+                // Handle the updated location
+                val latitude = lastLocation.latitude
+                val longitude = lastLocation.longitude
+                Log.d(TAG, "Latitude: $latitude, Longitude: $longitude")
+            }
+        }, Looper.getMainLooper())
+    }
+
+    private fun requestLocationPermission() {
+        val permission = ContextCompat.checkSelfPermission(
+            applicationContext, android.Manifest.permission.ACCESS_FINE_LOCATION
+        )
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            permissionsResultCallback.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
+        } else {
+            Toast.makeText(applicationContext, "Location granted", Toast.LENGTH_LONG).show()
         }
     }
 
