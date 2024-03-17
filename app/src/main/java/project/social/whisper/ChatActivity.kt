@@ -848,6 +848,11 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        flag = false
+    }
+
 }
 
 

@@ -51,8 +51,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         //Log.d("MAPS_ERROR","HEllo")
         // Add a marker in location and move the camera
         val sydney = LatLng(lat, long)
+        mMap.mapType = GoogleMap.MAP_TYPE_SATELLITE;
         mMap.addMarker(MarkerOptions().position(sydney).title("User location"))
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 18f))
         //Log.d("MAPS_ERROR","HEllo3")
     }
 }
