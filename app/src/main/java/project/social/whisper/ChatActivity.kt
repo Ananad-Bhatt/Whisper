@@ -67,6 +67,8 @@ class ChatActivity : AppCompatActivity() {
     private var chats:ArrayList<ChatModel> = ArrayList()
     private var chatsTemp:ArrayList<ChatModel> = ArrayList()
 
+    private var flag = false
+
 
     private var chatAdapter:ChatAdapter = ChatAdapter(this, chats)
 
@@ -331,6 +333,7 @@ class ChatActivity : AppCompatActivity() {
 
         if(isGpsEnabled()) {
             if (hasLocationPermission() && hasLocationCorsePermission()) {
+                Log.d("LOOP_ERROR", "HI")
                 getLocation()
             } else {
                 Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show()
@@ -385,7 +388,7 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun getLocation() {
-        Log.d("Location", "Here1")
+        //For some reason this function called multiple time, so Add flag to call only once
 
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -429,8 +432,21 @@ class ChatActivity : AppCompatActivity() {
                 val latitude = lastLocation?.latitude
                 val longitude = lastLocation?.longitude
                 Log.d("Location", "Latitude: $latitude, Longitude: $longitude")
+
+                /*For some reason , this function is called multiple times, causing MapsActivity
+                    Called multiple times, so to prevent this, I am using flag
+                */
+
+                if(!flag) {
+                    flag = true
+                    val i = Intent(applicationContext, MapsActivity::class.java)
+                    i.putExtra("lat", latitude)
+                    i.putExtra("long", longitude)
+                    startActivity(i)
+                }
             }
         }, Looper.getMainLooper())
+
     }
 
     private fun requestLocationPermission() {

@@ -2,6 +2,7 @@ package project.social.whisper
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -16,16 +17,24 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
 
+    private var lat:Double = 0.0
+    private var long:Double = 0.0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        lat = intent.getDoubleExtra("lat",0.0)
+        long = intent.getDoubleExtra("long",0.0)
+        //Log.d("MAPS_ERROR","HEllo1")
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+        //Log.d("MAPS_ERROR","HEllo2")
     }
 
     /**
@@ -39,10 +48,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
      */
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-
-        // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
+        //Log.d("MAPS_ERROR","HEllo")
+        // Add a marker in location and move the camera
+        val sydney = LatLng(lat, long)
+        mMap.addMarker(MarkerOptions().position(sydney).title("User location"))
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        //Log.d("MAPS_ERROR","HEllo3")
     }
 }
