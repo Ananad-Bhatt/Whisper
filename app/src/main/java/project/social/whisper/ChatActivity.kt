@@ -7,15 +7,18 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Looper
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.app.ActivityCompat
@@ -324,18 +327,66 @@ class ChatActivity : AppCompatActivity() {
 
     private fun sendLocation() {
         requestLocationPermission()
+        requestLocationCorsePermission()
 
-        if(hasLocationPermission())
-        {
-            getLocation()
+        if(isGpsEnabled()) {
+            if (hasLocationPermission() && hasLocationCorsePermission()) {
+                getLocation()
+            } else {
+                Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show()
+            }
         }
-        else
-        {
-            Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show()
+        else{
+            showEnableLocationDialog()
+        }
+    }
+
+    private fun showEnableLocationDialog() {
+        // Show an alert dialog to prompt the user to enable location services
+        AlertDialog.Builder(this)
+            .setTitle("Location Services")
+            .setMessage("Please enable location services to use this feature.")
+            .setPositiveButton("OK") { _, _ ->
+                // Open location settings screen to allow the user to enable location services
+                val settingsIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                startActivity(settingsIntent)
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+                Toast.makeText(this, "Unable to access location",Toast.LENGTH_LONG).show()
+            }
+            .show()
+
+    }
+
+    private fun isGpsEnabled(): Boolean {
+        val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
+        Log.d("Location", "Is : ${locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)}")
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+    }
+
+    private fun hasLocationCorsePermission(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            applicationContext,
+            android.Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestLocationCorsePermission() {
+        val permission = ContextCompat.checkSelfPermission(
+            applicationContext, android.Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            permissionsResultCallback.launch(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+        } else {
+            Toast.makeText(applicationContext, "Location granted", Toast.LENGTH_LONG).show()
         }
     }
 
     private fun getLocation() {
+        Log.d("Location", "Here1")
+
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         // Create a location request
@@ -358,6 +409,7 @@ class ChatActivity : AppCompatActivity() {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
+            Log.d("Location", "Here")
 
             ActivityCompat.requestPermissions(
                 this,
@@ -376,7 +428,7 @@ class ChatActivity : AppCompatActivity() {
                 // Handle the updated location
                 val latitude = lastLocation?.latitude
                 val longitude = lastLocation?.longitude
-                //Log.d(TAG, "Latitude: $latitude, Longitude: $longitude")
+                Log.d("Location", "Latitude: $latitude, Longitude: $longitude")
             }
         }, Looper.getMainLooper())
     }
