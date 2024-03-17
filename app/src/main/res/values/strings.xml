@@ -80,7 +80,7 @@
     <string name="explorer">Explorer</string>
     <string name="camera">Camera</string>
 
-<!--    Create post-->
+    <!--    Create post-->
 
     <string name="cancel">Cancel</string>
     <string name="post">Post</string>
@@ -93,6 +93,7 @@
         <item>PRIVATE</item>
         <item>NOT VISIBLE</item>
     </string-array>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="title_activity_maps">MapsActivity</string>
 
 </resources>
