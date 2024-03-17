@@ -24,6 +24,7 @@ android {
         versionName = "1.0"
         buildConfigField ("String", "FCM_KEY", fcmProperty.getProperty("SERVER_KEY"))
         buildConfigField ("String", "GEMINI", fcmProperty.getProperty("GEMINI_API"))
+        buildConfigField ("String", "MAP_API", fcmProperty.getProperty("MAP_API"))
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
