@@ -3,11 +3,13 @@ package project.social.whisper
 import adapters.ChatAdapter
 import adapters.DatabaseAdapter
 import adapters.GlobalStaticAdapter
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -16,12 +18,18 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.github.dhaval2404.imagepicker.ImagePicker
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
+import com.google.android.gms.location.Priority
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -73,6 +81,10 @@ class ChatActivity : AppCompatActivity() {
 
     private lateinit var selfUserName:String
     private lateinit var selfImgUrl:String
+
+    companion object {
+        const val MY_PERMISSIONS_REQUEST_LOCATION = 1
+    }
 
     //Permission callback
     private val permissionsResultCallback = registerForActivityResult(
@@ -327,10 +339,10 @@ class ChatActivity : AppCompatActivity() {
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         // Create a location request
-        val locationRequest = LocationRequest.create().apply {
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            interval = 10000 // Update interval in milliseconds
-        }
+        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10000)
+            .setWaitForAccurateLocation(true)
+            .build()
+
 
         // Check location settings
         val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
@@ -338,13 +350,33 @@ class ChatActivity : AppCompatActivity() {
         val task = client.checkLocationSettings(builder.build())
 
         // Request location updates
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
+                MY_PERMISSIONS_REQUEST_LOCATION
+            )
+
+            return
+        }
         fusedLocationClient.requestLocationUpdates(locationRequest, object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 val lastLocation = locationResult.lastLocation
                 // Handle the updated location
-                val latitude = lastLocation.latitude
-                val longitude = lastLocation.longitude
-                Log.d(TAG, "Latitude: $latitude, Longitude: $longitude")
+                val latitude = lastLocation?.latitude
+                val longitude = lastLocation?.longitude
+                //Log.d(TAG, "Latitude: $latitude, Longitude: $longitude")
             }
         }, Looper.getMainLooper())
     }
@@ -726,6 +758,25 @@ class ChatActivity : AppCompatActivity() {
         }catch(e:Exception)
         {
             Log.d("DB_ERROR",e.toString())
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int,
+                                            permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            MY_PERMISSIONS_REQUEST_LOCATION -> {
+                // If request is cancelled, the result arrays are empty.
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    Toast.makeText(this, "Granted", Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(this, "Denied", Toast.LENGTH_LONG).show()
+                }
+                return
+            }
+            else -> {
+                // Ignore all other requests.
+            }
         }
     }
 
