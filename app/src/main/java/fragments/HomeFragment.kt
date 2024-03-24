@@ -104,6 +104,7 @@ class HomeFragment : Fragment() {
                     val fm = requireActivity().supportFragmentManager
                     val ft = fm.beginTransaction()
                     ft.replace(R.id.main_container, PostFragment())
+                    ft.addToBackStack(null)
                     ft.commit()
                 }
             }
