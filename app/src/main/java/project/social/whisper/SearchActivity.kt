@@ -75,42 +75,57 @@ class SearchActivity : AppCompatActivity() {
         try {
             DatabaseAdapter.userDetailsTable.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    for (j in snapshot.children) {
-                        for(i in j.children) {
 
-                            //User Authentication UID
-                            val uid = j.key!!
+                    if(snapshot.exists()) {
+                        for (j in snapshot.children) {
+                            if(j.exists()) {
+                                for (i in j.children) {
+                                    if(i.exists()) {
+                                        //User Authentication UID
+                                        val uid = j.key!!
 
-                            //User Key
-                            val key = i.key!!
+                                        //User Key
+                                        val key = i.key!!
 
-                            //If it is current user
-                            if (uid == GlobalStaticAdapter.uid) {
-                                break
-                            }
+                                        //If it is current user
+                                        if (uid == GlobalStaticAdapter.uid) {
+                                            break
+                                        }
 
-                            //If account is PUBLIC
-                            val type =
-                                i.child("ACCOUNT_TYPE").getValue(String::class.java) ?: "PUBLIC"
+                                        //If account is PUBLIC
+                                        val type =
+                                            i.child("ACCOUNT_TYPE").getValue(String::class.java)
+                                                ?: "PUBLIC"
 
-                            //If account is not visible
-                            if (type == "NOT VISIBLE") {
-                                continue
-                            }
+                                        //If account is not visible
+                                        if (type == "NOT VISIBLE") {
+                                            continue
+                                        }
 
-                            val userName: String =
-                                i.child("USER_NAME").getValue(String::class.java)!!
+                                        val userName: String =
+                                            i.child("USER_NAME").getValue(String::class.java)!!
 
-                            val image: String =
-                                i.child("IMAGE").getValue(String::class.java)
-                                    ?: getString(R.string.image_not_found)
+                                        val image: String =
+                                            i.child("IMAGE").getValue(String::class.java)
+                                                ?: getString(R.string.image_not_found)
 
-                            //FCM token
-                            val fcm = i.child("FCM_TOKEN").getValue(String::class.java)
-                                ?:""
+                                        //FCM token
+                                        val fcm = i.child("FCM_TOKEN").getValue(String::class.java)
+                                            ?: ""
 
-                            if ((userName.lowercase()).contains(query.lowercase())) {
-                                searchResults.add(SearchModel(userName, image, uid, key, fcm))
+                                        if ((userName.lowercase()).contains(query.lowercase())) {
+                                            searchResults.add(
+                                                SearchModel(
+                                                    userName,
+                                                    image,
+                                                    uid,
+                                                    key,
+                                                    fcm
+                                                )
+                                            )
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
