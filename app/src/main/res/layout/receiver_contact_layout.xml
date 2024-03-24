@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/ll_sender_chat"
+    android:id="@+id/ll_receiver_contact_chat"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="10dp"
     android:layout_marginBottom="10dp"
-    android:layout_below="@+id/rl_sender_contact_layout">
+    android:layout_below="@+id/rl_receiver_contact_layout">
 
     <LinearLayout
-        android:id="@+id/cl_sender_layout"
+        android:id="@+id/ll_receiver_contact_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -26,7 +26,7 @@
             android:maxWidth="@dimen/_250sdp"
             android:minWidth="@dimen/_45sdp">
             <TextView
-                android:id="@+id/tv_sender_contact_chat"
+                android:id="@+id/tv_receiver_contact_chat"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/app_name"
@@ -38,6 +38,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_receiver_contact"
             android:layout_width="@dimen/_250sdp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -47,7 +48,7 @@
             android:background="@drawable/receiver_contact_bottom">
 
             <TextView
-                android:id="@+id/tv_sender_contact_number_chat"
+                android:id="@+id/tv_receiver_contact_number_chat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/app_name"
@@ -57,7 +58,7 @@
                 android:textSize="@dimen/_13ssp" />
 
             <TextView
-                android:id="@+id/tv_sender_contact_time"
+                android:id="@+id/tv_receiver_contact_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/app_name"

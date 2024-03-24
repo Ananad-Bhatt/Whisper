@@ -5,6 +5,7 @@ import adapters.DatabaseAdapter
 import adapters.GlobalStaticAdapter
 import android.Manifest
 import android.R.attr.name
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -110,6 +111,7 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("Range")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -119,24 +121,79 @@ class ChatActivity : AppCompatActivity() {
         //Activity Results
         readContacts = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
-        ) {
-            if (it.resultCode == Activity.RESULT_OK) {
+        ) {it1 ->
+            if (it1.resultCode == Activity.RESULT_OK) {
 
-                val contactData: Uri = (it.data)?.data!!
+                val data: Uri? = (it1.data)?.data
 
-                val cursor = contentResolver.query(contactData, null, null, null, null)
+                Log.d("CONTACT_ERROR", data.toString())
 
-                cursor!!.moveToFirst()
-                val contactName =
-                    cursor.getString(cursor!!.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
+                data?.let {
+                    val cursor = contentResolver.query(
+                        data,
+                        null,
+                        null,
+                        null,
+                        null
+                    )
 
-                cursor.moveToFirst()
-                val contactNumber = cursor.getString(cursor!!.getColumnIndex(Phone.NUMBER))
+                    cursor?.let {
+                        if (it.moveToFirst()) {
+                            val name =
+                                it.getString(it.getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME))
 
-                sendContactMessage(contactName, contactNumber)
+                            if (Integer.parseInt(
+                                    it.getString(
+                                        it.getColumnIndex(
+                                            ContactsContract.Contacts.HAS_PHONE_NUMBER
+                                        )
+                                    )
+                                ) > 0 // Check if the contact has phone numbers
+                            ) {
 
-            } else {
-                Toast.makeText(this, "Contact cancel",Toast.LENGTH_LONG).show()
+                                val id =
+                                    it.getString(it.getColumnIndex(ContactsContract.Contacts._ID))
+
+                                val phonesCursor = contentResolver.query(
+                                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                                    null,
+                                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + id,
+                                    null,
+                                    null
+                                )
+
+                                val numbers = mutableSetOf<String>()
+                                phonesCursor?.let {
+                                    while (phonesCursor.moveToNext()) {
+                                        val phoneNumber =
+                                            phonesCursor.getString(
+                                                phonesCursor.getColumnIndex(
+                                                    ContactsContract.CommonDataKinds.Phone.NUMBER
+                                                )
+                                            ).replace("-", "").replace(" ", "")
+                                        numbers.add(phoneNumber)
+                                    }
+                                    sendContactMessage(name, numbers.toString())
+                                    Log.d("CONTACT_ERROR", "$name $numbers")
+                                }
+
+                                phonesCursor?.close()
+
+                            } else {
+                                Toast.makeText(
+                                    this,
+                                    "$name - No numbers",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                                Log.d("CONTACT_ERROR", "$name - No numbers")
+                            }
+                        }
+
+                        cursor.close()
+                    }
+
+
+                }
             }
         }
 

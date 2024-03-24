@@ -191,7 +191,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun checkEmailExistWithGoogle(userEmail:String?) {
-        DatabaseAdapter.usersTable.addListenerForSingleValueEvent(object: ValueEventListener{
+        DatabaseAdapter.userDetailsTable.child(GlobalStaticAdapter.uid).addListenerForSingleValueEvent(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 if(snapshot.exists())
                 {
@@ -208,6 +208,11 @@ class LoginActivity : AppCompatActivity() {
                             }
                         }
                     }
+                    //Move to diff Activity
+                    val i = Intent(applicationContext, AddDetailsActivity::class.java)
+                    startActivity(i)
+                }
+                else{
                     //Move to diff Activity
                     val i = Intent(applicationContext, AddDetailsActivity::class.java)
                     startActivity(i)

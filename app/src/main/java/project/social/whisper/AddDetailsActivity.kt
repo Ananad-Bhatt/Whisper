@@ -46,16 +46,10 @@ class AddDetailsActivity : AppCompatActivity() {
                 // Check for username availability when the user is typing
                 val username = s.toString()
 
-                if(username != " " && b.txtDetIsAvailable.text.toString() != "Space is not allowed") {
-                    if (username.trim().isNotEmpty()) {
-                        checkUsernameAvailability(username, b.txtDetIsAvailable)
-                    } else {
-                        b.txtDetIsAvailable.visibility = View.GONE
-                    }
-                }
-                else
-                {
-                    b.txtDetIsAvailable.text = "Space is not allowed"
+                if (username.trim().isNotEmpty()) {
+                    checkUsernameAvailability(username, b.txtDetIsAvailable)
+                } else {
+                    b.txtDetIsAvailable.visibility = View.GONE
                 }
             }
         })
@@ -63,8 +57,7 @@ class AddDetailsActivity : AppCompatActivity() {
         b.btnDetCreateAcc.setOnClickListener {
             if(b.txtDetIsAvailable.text.toString() == "User name is already exist"
                 || b.edtDetUserName.text.trim().toString() == ""
-                || b.edtDetUserName.text.toString().contains(" ")
-                || b.txtDetIsAvailable.text.toString() == "Space is not allowed")
+                || b.edtDetUserName.text.toString().contains(" "))
             {
                 Toast.makeText(this, "Please enter unique user name and should not contain space", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
@@ -72,6 +65,12 @@ class AddDetailsActivity : AppCompatActivity() {
             else
             {
                 try {
+
+                    GlobalStaticAdapter.key =
+                        DatabaseAdapter.userDetailsTable.push().key!!
+
+                    Log.d("DB_ERROR", GlobalStaticAdapter.key)
+
                     DatabaseAdapter.userDetailsTable.child(GlobalStaticAdapter.uid)
                         .child(GlobalStaticAdapter.key)
                         .child("USER_NAME")
