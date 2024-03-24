@@ -17,6 +17,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import project.social.whisper.databinding.ActivityLoginBinding
+import services.NotificationService
 
 class LoginActivity : AppCompatActivity() {
 
@@ -59,8 +60,8 @@ class LoginActivity : AppCompatActivity() {
         }
 
         b.btnLogLogin.setOnClickListener {
-            val mail = b.edtLogEmail.text.toString()
-            val pass = b.edtLogPassword.text.toString()
+            val mail = b.edtLogEmail.text.trim().toString()
+            val pass = b.edtLogPassword.text.trim().toString()
 
             if(mail == "")
             {
@@ -77,8 +78,7 @@ class LoginActivity : AppCompatActivity() {
 
             DatabaseAdapter.signInWithMail(mail, pass) { isLogin ->
                 if (isLogin) {
-                    val mainActivity = Intent(applicationContext, MainActivity::class.java)
-                    startActivity(mainActivity)
+                    checkIfUsernameExist()
                 } else {
                     Toast.makeText(
                         this@LoginActivity,
@@ -88,6 +88,60 @@ class LoginActivity : AppCompatActivity() {
                         .show()
                 }
             }
+        }
+    }
+
+    private fun checkIfUsernameExist() {
+
+        GlobalStaticAdapter.uid = DatabaseAdapter.returnUser()?.uid ?: "None"
+
+        if(GlobalStaticAdapter.uid != "None") {
+            DatabaseAdapter.userDetailsTable.child(GlobalStaticAdapter.uid)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+
+                        if (snapshot.exists()) {
+                            for(s in snapshot.children)
+                            {
+                                if(s.exists())
+                                {
+
+                                    GlobalStaticAdapter.key = s.key!!
+
+                                    GlobalStaticAdapter.userName = s.child("USER_NAME")
+                                        .getValue(String::class.java)!!
+
+                                    GlobalStaticAdapter.about = s.child("ABOUT")
+                                        .getValue(String::class.java)!!
+
+                                    GlobalStaticAdapter.accountType = s.child("ACCOUNT_TYPE")
+                                        .getValue(String::class.java)!!
+
+                                    GlobalStaticAdapter.imageUrl = s.child("IMAGE")
+                                        .getValue(String::class.java)!!
+
+                                    //FCM Token
+                                    NotificationService.generateToken()
+
+                                    val mainActivity = Intent(applicationContext, MainActivity::class.java)
+                                    startActivity(mainActivity)
+                                    break
+                                }
+                                else
+                                {
+                                    val mainActivity = Intent(applicationContext, AddDetailsActivity::class.java)
+                                    startActivity(mainActivity)
+                                }
+                            }
+                        }
+
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+
+                    }
+
+                })
         }
     }
 
@@ -107,23 +161,19 @@ class LoginActivity : AppCompatActivity() {
                             if (t.isSuccessful) {
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d("DB_ERROR", "signInWithCredential:success")
-                                val user = auth.currentUser
-                                if(user!=null)
+                                if(DatabaseAdapter.returnUser()!=null)
                                 {
-                                    val uid = user.uid
+                                    val uid = DatabaseAdapter.returnUser()?.uid!!
 
-                                    val key = DatabaseAdapter.userDetailsTable.child(uid).push().key!!
-                                    GlobalStaticAdapter.key = key
+                                    GlobalStaticAdapter.uid = uid
 
                                     DatabaseAdapter.usersTable.child(uid).child("EMAIL")
-                                        .setValue(user.email?.lowercase())
+                                        .setValue(DatabaseAdapter.returnUser()?.email?.lowercase())
 
                                     DatabaseAdapter.usersTable.child(uid)
                                         .child("EMAIL_VERIFIED").setValue(true)
 
-                                    //Move to diff Activity
-                                    val i = Intent(this, MainActivity::class.java)
-                                    startActivity(i)
+                                    checkEmailExistWithGoogle(DatabaseAdapter.returnUser()?.email?.lowercase())
                                 }
                             } else {
                                 // If sign in fails, display a message to the user.
@@ -138,5 +188,87 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(this, "Something went wrong",Toast.LENGTH_LONG).show()
             }
         }
+    }
+
+    private fun checkEmailExistWithGoogle(userEmail:String?) {
+        DatabaseAdapter.usersTable.addListenerForSingleValueEvent(object: ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if(snapshot.exists())
+                {
+                    for(s in snapshot.children)
+                    {
+                        if(s.exists())
+                        {
+                            val email = s.child("EMAIL").getValue(String::class.java)?:"none"
+
+                            if(email == userEmail)
+                            {
+                                collectValues()
+                                return
+                            }
+                        }
+                    }
+                    //Move to diff Activity
+                    val i = Intent(applicationContext, AddDetailsActivity::class.java)
+                    startActivity(i)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
+    }
+
+    private fun collectValues() {
+
+        DatabaseAdapter.userDetailsTable.child(GlobalStaticAdapter.uid)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+
+                    if (snapshot.exists()) {
+                        for(s in snapshot.children)
+                        {
+                            if(s.exists())
+                            {
+
+                                GlobalStaticAdapter.key = s.key!!
+
+                                GlobalStaticAdapter.userName = s.child("USER_NAME")
+                                    .getValue(String::class.java)!!
+
+                                GlobalStaticAdapter.about = s.child("ABOUT")
+                                    .getValue(String::class.java)!!
+
+                                GlobalStaticAdapter.accountType = s.child("ACCOUNT_TYPE")
+                                    .getValue(String::class.java)!!
+
+                                GlobalStaticAdapter.imageUrl = s.child("IMAGE")
+                                    .getValue(String::class.java)!!
+
+                                //FCM Token
+                                NotificationService.generateToken()
+
+                                //Move to diff Activity
+                                val i = Intent(applicationContext, MainActivity::class.java)
+                                startActivity(i)
+                                break
+                            }
+                            else
+                            {
+                                val mainActivity = Intent(applicationContext, AddDetailsActivity::class.java)
+                                startActivity(mainActivity)
+                            }
+                        }
+                    }
+
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+
+                }
+
+            })
     }
 }
