@@ -1,5 +1,7 @@
 package adapters
 
+import project.social.whisper.R
+
 class GlobalStaticAdapter {
     companion object{
 
@@ -14,10 +16,10 @@ class GlobalStaticAdapter {
             var about = ""
 
             //Account type
-            var accountType = ""
+            var accountType = "PUBLIC"
 
             //Image
-            var imageUrl = ""
+            var imageUrl:String = (R.string.image_not_found).toString()
 
             //UserName
             var userName = ""

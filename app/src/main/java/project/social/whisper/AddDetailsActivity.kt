@@ -1,6 +1,7 @@
 package project.social.whisper
 
 import adapters.DatabaseAdapter
+import adapters.GlobalStaticAdapter
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.Drawable
@@ -22,8 +23,6 @@ import project.social.whisper.databinding.ActivityAddDetailsBinding
 
 class AddDetailsActivity : AppCompatActivity() {
 
-    //DB
-    private var userTable = Firebase.database.getReference("USERS")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -46,37 +45,45 @@ class AddDetailsActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 // Check for username availability when the user is typing
                 val username = s.toString()
-                if(username.isNotEmpty()) {
-                    checkUsernameAvailability(username, b.txtDetIsAvailable)
-                }else
+
+                if(username != " " && b.txtDetIsAvailable.text.toString() != "Space is not allowed") {
+                    if (username.trim().isNotEmpty()) {
+                        checkUsernameAvailability(username, b.txtDetIsAvailable)
+                    } else {
+                        b.txtDetIsAvailable.visibility = View.GONE
+                    }
+                }
+                else
                 {
-                    b.txtDetIsAvailable.visibility = View.GONE
+                    b.txtDetIsAvailable.text = "Space is not allowed"
                 }
             }
         })
 
         b.btnDetCreateAcc.setOnClickListener {
             if(b.txtDetIsAvailable.text.toString() == "User name is already exist"
-                || b.edtDetUserName.text.toString() == "" )
+                || b.edtDetUserName.text.trim().toString() == ""
+                || b.edtDetUserName.text.toString().contains(" ")
+                || b.txtDetIsAvailable.text.toString() == "Space is not allowed")
             {
-                Toast.makeText(this, "Please enter unique user name", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Please enter unique user name and should not contain space", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
             else
             {
-                val key = DatabaseAdapter.returnUser()?.uid
-
-                if (key != null) {
-                    try {
-                        userTable.child(key).child("USER_NAME").setValue(b.edtDetUserName.text.toString().lowercase())
-                    }catch(e:Exception)
-                    {
-                        Log.d("DB_ERROR",e.toString())
-                    }
-
-                    val mainAct = Intent(this,MainActivity::class.java)
-                    startActivity(mainAct)
+                try {
+                    DatabaseAdapter.userDetailsTable.child(GlobalStaticAdapter.uid)
+                        .child(GlobalStaticAdapter.key)
+                        .child("USER_NAME")
+                        .setValue(b.edtDetUserName.text.toString().lowercase())
+                }catch(e:Exception)
+                {
+                    Log.d("DB_ERROR",e.toString())
                 }
+
+                GlobalStaticAdapter.userName = b.edtDetUserName.text.toString().lowercase()
+                val mainAct = Intent(this,MainActivity::class.java)
+                startActivity(mainAct)
             }
         }
 
@@ -89,33 +96,59 @@ class AddDetailsActivity : AppCompatActivity() {
         // Replace "your_username_key" with the key used to store usernames in your database
 
 
-        userTable.addListenerForSingleValueEvent(object : ValueEventListener {
+        DatabaseAdapter.userDetailsTable.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
 
-                for (userSnapshot in snapshot.children) {
-                    val dbUserName = userSnapshot.child("USER_NAME").getValue(String::class.java)
+                if (snapshot.exists()) {
+                    for (s in snapshot.children) {
+                        if (s.exists()) {
+                            for (userSnapshot in s.children) {
+                                if (userSnapshot.exists()) {
+                                    val dbUserName =
+                                        userSnapshot.child("USER_NAME").getValue(String::class.java)
 
-                    if (dbUserName != null && dbUserName.equals(username, ignoreCase = true)) {
-                        availabilityTextView.text = "User name is already exist"
-                        val drawableStart: Drawable? = ContextCompat.getDrawable(applicationContext, R.drawable.cross)
-                        val textColor = Color.parseColor("#FF0000")
-                        availabilityTextView.setTextColor(textColor)
-                        availabilityTextView.setCompoundDrawablesWithIntrinsicBounds(drawableStart, null, null, null)
-                        availabilityTextView.visibility = View.VISIBLE
-                        break
-                    }
-                    else
-                    {
-                        availabilityTextView.text = "User name is available"
-                        val drawableStart: Drawable? = ContextCompat.getDrawable(applicationContext, R.drawable.tick)
-                        val textColor = Color.parseColor("#6B9738")
-                        availabilityTextView.setTextColor(textColor)
-                        availabilityTextView.setCompoundDrawablesWithIntrinsicBounds(drawableStart, null, null, null)
-                        availabilityTextView.visibility = View.VISIBLE
+                                    if (dbUserName != null && dbUserName.equals(
+                                            username,
+                                            ignoreCase = true
+                                        )
+                                    ) {
+                                        availabilityTextView.text = "User name is already exist"
+                                        val drawableStart: Drawable? = ContextCompat.getDrawable(
+                                            applicationContext,
+                                            R.drawable.cross
+                                        )
+                                        val textColor = Color.parseColor("#FF0000")
+                                        availabilityTextView.setTextColor(textColor)
+                                        availabilityTextView.setCompoundDrawablesWithIntrinsicBounds(
+                                            drawableStart,
+                                            null,
+                                            null,
+                                            null
+                                        )
+                                        availabilityTextView.visibility = View.VISIBLE
+                                        break
+                                    } else {
+                                        availabilityTextView.text = "User name is available"
+                                        val drawableStart: Drawable? = ContextCompat.getDrawable(
+                                            applicationContext,
+                                            R.drawable.tick
+                                        )
+                                        val textColor = Color.parseColor("#6B9738")
+                                        availabilityTextView.setTextColor(textColor)
+                                        availabilityTextView.setCompoundDrawablesWithIntrinsicBounds(
+                                            drawableStart,
+                                            null,
+                                            null,
+                                            null
+                                        )
+                                        availabilityTextView.visibility = View.VISIBLE
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
-
             override fun onCancelled(error: DatabaseError) {
                 // Handle the error
                 availabilityTextView.text = "Error checking username availability"

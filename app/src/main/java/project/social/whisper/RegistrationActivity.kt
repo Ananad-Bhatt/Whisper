@@ -14,6 +14,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import project.social.whisper.databinding.ActivityRegistrationBinding
 
 class RegistrationActivity : AppCompatActivity() {
@@ -24,11 +27,13 @@ class RegistrationActivity : AppCompatActivity() {
     private lateinit var gClient:GoogleSignInClient
     private var RC_SIGN_IN = 123
 
+    private lateinit var b:ActivityRegistrationBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         //View binding
-        val b = ActivityRegistrationBinding.inflate(layoutInflater)
+        b = ActivityRegistrationBinding.inflate(layoutInflater)
         val view = b.root
         setContentView(view)
 
@@ -41,17 +46,6 @@ class RegistrationActivity : AppCompatActivity() {
 
         //Google
         b.btnRegGoogle.setOnClickListener {
-            //Google sign in
-//            signInRequest = BeginSignInRequest.builder()
-//                .setGoogleIdTokenRequestOptions(
-//                    BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
-//                        .setSupported(true)
-//                        // Your server's client ID, not your Android client ID.
-//                        .setServerClientId(getString(R.string.default_web_client_id))
-//                        // Only show accounts previously used to sign in.
-//                        .setFilterByAuthorizedAccounts(true)
-//                        .build())
-//                .build()
 
             gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -66,7 +60,7 @@ class RegistrationActivity : AppCompatActivity() {
 
         //Verify email
         b.btnRegVerify.setOnClickListener {
-            if(b.edtRegEmail.text.toString().isEmpty())
+            if(b.edtRegEmail.text.trim().toString().isEmpty())
             {
                 Toast.makeText(this,"Email cannot be empty!", Toast.LENGTH_LONG).show()
                 b.edtRegEmail.error = "Enter email"
@@ -80,7 +74,7 @@ class RegistrationActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            if(b.edtRegPassword.text.toString().isEmpty())
+            if(b.edtRegPassword.text.trim().toString().isEmpty())
             {
                 Toast.makeText(this,"Password cannot be empty!", Toast.LENGTH_LONG).show()
                 b.edtRegPassword.error = "Enter password"
@@ -88,7 +82,7 @@ class RegistrationActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            if(b.edtRegConPassword.text.toString().isEmpty())
+            if(b.edtRegConPassword.text.trim().toString().isEmpty())
             {
                 Toast.makeText(this,"Confirm your password", Toast.LENGTH_LONG).show()
                 b.edtRegConPassword.error = "Confirm password"
@@ -112,60 +106,92 @@ class RegistrationActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            checkIfUserIsExistOrNot()
+        }
+    }
 
-            //If everything perfect
-            DatabaseAdapter.signUpWithMail(b.edtRegEmail.text.toString(), b.edtRegPassword.text.toString()) {
-                when (it) {
-                    "true" -> {
-                        Toast.makeText(this,"Done : ${DatabaseAdapter.returnUser()?.email}",
-                            Toast.LENGTH_LONG)
-                            .show()
+    private fun checkIfUserIsExistOrNot() {
 
-                        DatabaseAdapter.verifyEmail { it1 ->
-                            if(it1) {
-                                Toast.makeText(this,"Email verification link is sent to your email, Please verify your email",
-                                    Toast.LENGTH_LONG).show()
-                            }
-                            else
+
+        DatabaseAdapter.usersTable.addListenerForSingleValueEvent(object: ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if(snapshot.exists())
+                {
+                    for(s in snapshot.children)
+                    {
+                        if(s.exists())
+                        {
+                            val email = s.child("EMAIL").getValue(String::class.java)?:"none"
+
+                            if(email == b.edtRegEmail.text.toString())
                             {
-                                Toast.makeText(this,"We are unable to send you verification mail",
-                                    Toast.LENGTH_LONG).show()
+                                Toast.makeText(applicationContext, "Email ID is already exist, Please Login"
+                                    , Toast.LENGTH_LONG).show()
+                                return
                             }
-
-                            //Store user details in Real Time Database
-                            val key = DatabaseAdapter.returnUser()?.uid
-
-                            if (key != null) {
-                                try {
-                                    DatabaseAdapter.usersTable.child(key).child("EMAIL")
-                                        .setValue(DatabaseAdapter.returnUser()?.email?.lowercase())
-
-                                    DatabaseAdapter.usersTable.child(key).child("EMAIL_VERIFIED")
-                                        .setValue(false)
-
-                                }catch(e:Exception)
-                                {
-                                    Log.d("DB_ERROR",e.toString())
-                                }
-                            }
-                            else
-                            {
-                                return@verifyEmail
-                            }
-
-                            //Move to diff activity
-                            val i = Intent(this, MainActivity::class.java)
-                            startActivity(i)
                         }
                     }
-                    "exist" -> {
-                        Toast.makeText(this,"Email ID is already exist", Toast.LENGTH_LONG).show()
-                        return@signUpWithMail
+                    signUpWithEmail()
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
+    }
+
+    private fun signUpWithEmail() {
+        //If everything perfect
+        DatabaseAdapter.signUpWithMail(b.edtRegEmail.text.toString(), b.edtRegPassword.text.toString()) {
+            when (it) {
+                "true" -> {
+                    Toast.makeText(this,"Successfully created account as ${DatabaseAdapter.returnUser()?.email}",
+                        Toast.LENGTH_LONG)
+                        .show()
+
+                    DatabaseAdapter.verifyEmail { it1 ->
+                        if(it1) {
+                            Toast.makeText(this,"Email verification link is sent to your email, Please verify your email",
+                                Toast.LENGTH_LONG).show()
+                        }
+                        else
+                        {
+                            Toast.makeText(this,"We are unable to send you verification mail",
+                                Toast.LENGTH_LONG).show()
+                        }
+
+                        //Store user details in Real Time Database
+                        val uid = DatabaseAdapter.returnUser()?.uid!!
+                        val key = DatabaseAdapter.userDetailsTable.child(uid).push().key!!
+                        GlobalStaticAdapter.uid = uid
+                        GlobalStaticAdapter.key = key
+
+                        try {
+                            DatabaseAdapter.usersTable.child(uid).child("EMAIL")
+                                .setValue(DatabaseAdapter.returnUser()?.email?.lowercase())
+
+                            DatabaseAdapter.usersTable.child(uid).child("EMAIL_VERIFIED")
+                                .setValue(false)
+
+                        }catch(e:Exception)
+                        {
+                            Log.d("DB_ERROR",e.toString())
+                        }
+
+                        //Move to diff activity
+                        val i = Intent(this, AddDetailsActivity::class.java)
+                        startActivity(i)
                     }
-                    else -> {
-                        Toast.makeText(this,"Something went wrong", Toast.LENGTH_LONG).show()
-                        return@signUpWithMail
-                    }
+                }
+                "exist" -> {
+                    Toast.makeText(this,"Email ID is already exist", Toast.LENGTH_LONG).show()
+                    return@signUpWithMail
+                }
+                else -> {
+                    Toast.makeText(this,"Something went wrong", Toast.LENGTH_LONG).show()
+                    return@signUpWithMail
                 }
             }
         }
@@ -196,6 +222,7 @@ class RegistrationActivity : AppCompatActivity() {
                                     val key = DatabaseAdapter.userDetailsTable.child(uid).push().key!!
 
                                     GlobalStaticAdapter.key = key
+                                    GlobalStaticAdapter.uid = uid
 
                                     DatabaseAdapter.usersTable.child(uid).child("EMAIL")
                                         .setValue(DatabaseAdapter.returnUser()?.email?.lowercase())
@@ -203,9 +230,7 @@ class RegistrationActivity : AppCompatActivity() {
                                     DatabaseAdapter.usersTable.child(uid)
                                         .child("EMAIL_VERIFIED").setValue(true)
 
-                                    //Move to diff Activity
-                                    val i = Intent(this, MainActivity::class.java)
-                                    startActivity(i)
+                                    checkEmailExistWithGoogle(DatabaseAdapter.returnUser()?.email?.lowercase())
                                 }
                             } else {
                                 // If sign in fails, display a message to the user.
@@ -220,5 +245,37 @@ class RegistrationActivity : AppCompatActivity() {
                 Toast.makeText(this, "Something went wrong",Toast.LENGTH_LONG).show()
             }
         }
+    }
+
+    private fun checkEmailExistWithGoogle(userEmail:String?) {
+        DatabaseAdapter.usersTable.addListenerForSingleValueEvent(object: ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if(snapshot.exists())
+                {
+                    for(s in snapshot.children)
+                    {
+                        if(s.exists())
+                        {
+                            val email = s.child("EMAIL").getValue(String::class.java)?:"none"
+
+                            if(email == userEmail)
+                            {
+                                Toast.makeText(applicationContext, "Account is already exist, Please Login"
+                                    , Toast.LENGTH_LONG).show()
+                                return
+                            }
+                        }
+                    }
+                    //Move to diff Activity
+                    val i = Intent(applicationContext, AddDetailsActivity::class.java)
+                    startActivity(i)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
     }
 }
