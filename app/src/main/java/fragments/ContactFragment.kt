@@ -1,5 +1,6 @@
 package fragments
 
+import adapters.ContactRecyclerViewAdapter
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.util.Log
@@ -10,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.FrameLayout
 import androidx.activity.addCallback
+import androidx.recyclerview.widget.LinearLayoutManager
 import models.ContactModel
 import project.social.whisper.R
 import project.social.whisper.databinding.FragmentContactBinding
@@ -54,7 +56,9 @@ class ContactFragment : Fragment() {
 
         readContact()
         if(isAdded) {
-
+            val adapter = ContactRecyclerViewAdapter(requireActivity(), contact)
+            b.rvContactFrag.layoutManager = LinearLayoutManager(requireActivity())
+            b.rvContactFrag.adapter = adapter
         }
 
         return b.root

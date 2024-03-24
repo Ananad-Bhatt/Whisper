@@ -4,6 +4,7 @@ import adapters.ChatAdapter
 import adapters.DatabaseAdapter
 import adapters.GlobalStaticAdapter
 import android.Manifest
+import android.R.attr.name
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -11,6 +12,8 @@ import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Looper
+import android.provider.ContactsContract
+import android.provider.ContactsContract.CommonDataKinds.Phone
 import android.provider.Settings
 import android.util.Log
 import android.view.View
@@ -36,12 +39,12 @@ import com.google.android.gms.location.Priority
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
-import fragments.ContactFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import models.ChatModel
+import models.ContactModel
 import project.social.whisper.databinding.ActivityChatBinding
 import services.NotificationService
 import java.math.BigInteger
@@ -50,6 +53,7 @@ import java.util.Date
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+
 
 class ChatActivity : AppCompatActivity() {
 
@@ -117,7 +121,20 @@ class ChatActivity : AppCompatActivity() {
             ActivityResultContracts.StartActivityForResult()
         ) {
             if (it.resultCode == Activity.RESULT_OK) {
-                Toast.makeText(this, "Contact selected",Toast.LENGTH_LONG).show()
+
+                val contactData: Uri = (it.data)?.data!!
+
+                val cursor = contentResolver.query(contactData, null, null, null, null)
+
+                cursor!!.moveToFirst()
+                val contactName =
+                    cursor.getString(cursor!!.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
+
+                cursor.moveToFirst()
+                val contactNumber = cursor.getString(cursor!!.getColumnIndex(Phone.NUMBER))
+
+                sendContactMessage(contactName, contactNumber)
+
             } else {
                 Toast.makeText(this, "Contact cancel",Toast.LENGTH_LONG).show()
             }
@@ -280,13 +297,18 @@ class ChatActivity : AppCompatActivity() {
                         requestContactPermission()
 
                         if (hasContactPermission()) {
-                            val fragment = ContactFragment()
 
-                            supportFragmentManager.beginTransaction()
-                                .replace(R.id.fl_chat_act_cont, fragment)
-                                .commit()
+                            val intentContact =
+                            Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
+                            readContacts.launch(intentContact)
 
-                            b.flChatActCont.visibility = View.VISIBLE
+//                            val fragment = ContactFragment()
+//
+//                            b.flChatActCont.visibility = View.VISIBLE
+//
+//                            supportFragmentManager.beginTransaction()
+//                                .replace(R.id.fl_chat_act_cont, fragment)
+//                                .commit()
                         }
                     }
 
@@ -317,6 +339,36 @@ class ChatActivity : AppCompatActivity() {
         b.btnDecMsgReq.setOnClickListener {
             Toast.makeText(this,"Request declined!",Toast.LENGTH_LONG).show()
             b.llChatActMsgReq.visibility = View.GONE
+        }
+    }
+
+    private fun sendContactMessage(contactName: String?, contactNumber: String?) {
+        val msg = "contact:184641,$contactName,$contactNumber"
+        val encMsg = DatabaseAdapter.encryptMessage(msg, sharedSecret)
+        val chatMap = HashMap<String, Any>()
+        chatMap["SENDER_KEY"] = senderKey
+        chatMap["SENDER_UID"] = DatabaseAdapter.returnUser()?.uid!!
+        chatMap["MESSAGE"] = encMsg
+        chatMap["TIMESTAMP"] = Date().time
+
+        try {
+            DatabaseAdapter.chatTable.child(senderRoom).push().setValue(chatMap)
+            DatabaseAdapter.chatTable.child(receiverRoom).push().setValue(chatMap)
+
+            runBlocking {
+                launch(Dispatchers.IO) {
+                    NotificationService.sendNotification("Shared Contact", fcmToken, selfUserName)
+                }
+            }
+
+            lifecycleScope.launch {
+                receiveLastMessage()
+                populateRecyclerView()
+                isRequesting(encMsg)
+            }
+        }catch(e:Exception)
+        {
+            Log.d("DB_ERROR",e.toString())
         }
     }
 
@@ -617,19 +669,30 @@ class ChatActivity : AppCompatActivity() {
         for(data in chatsTemp) {
             Log.d("IMG_ERROR","0")
             if (data.MESSAGE?.contains("https://firebasestorage.googleapis.com")!!) {
+
                 Log.d("IMG_ERROR","INSIDE IF : ${chats.size}")
+
                 val uri = DatabaseAdapter.downloadImageAndConvertToUri(applicationContext, data.MESSAGE!!, (Date().time).toString())
+
                 val decryptedUri = DatabaseAdapter.decryptImage(uri, sharedSecret, applicationContext)
+
                 data.MESSAGE = decryptedUri.toString()
+
                 Log.d("IMG_ERROR", "1")
+
                 chats.add(data)
+
                 Log.d("IMG_ERROR","Chat size : ${chats.size}")
                 Log.d("IMG_ERROR", "2")
+
             } else {
                 data.MESSAGE =
                     DatabaseAdapter.decryptMessage(data.MESSAGE!!, sharedSecret)
+
                 Log.d("IMG_ERROR", "3")
+
                 chats.add(data)
+
                 Log.d("IMG_ERROR","Chat size : ${chats.size}")
             }
 

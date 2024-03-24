@@ -1,6 +1,7 @@
 package adapters
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,8 +36,11 @@ class ContactRecyclerViewAdapter(private val context: Context, private val conta
         holder.number.text = contactList[position].number
 
         holder.container.setOnClickListener {
-            DatabaseAdapter.contactName = contactList[position].name
-            DatabaseAdapter.contactNumber = contactList[position].number
+            GlobalStaticAdapter.contactName = contactList[position].name
+            GlobalStaticAdapter.contactNumber = contactList[position].number
+
+            val i = Intent(context, ChatActivity::class.java)
+            context.startActivity(i)
         }
     }
 

@@ -5,6 +5,10 @@ import project.social.whisper.R
 class GlobalStaticAdapter {
     companion object{
 
+        //Contact Name and Contact Number
+        var contactName = ""
+        var contactNumber = ""
+
         //USER PROFILE
             //User uid (From Email)
             var uid = ""

@@ -108,11 +108,15 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
         return if(chats[position].SENDER_KEY.equals(GlobalStaticAdapter.key)) {
             if(chats[position].MESSAGE!!.contains("project.social.whisper"))
                 SENDER_VIEW_IMAGE_TYPE
+            else if(chats[position].MESSAGE!!.contains("contact:184641"))
+                SENDER_CONTACT_TYPE
             else
                 SENDER_VIEW_TYPE
         } else {
             if(chats[position].MESSAGE!!.contains("project.social.whisper"))
                 RECEIVER_VIEW_IMAGE_TYPE
+            else if(chats[position].MESSAGE!!.contains("contact:184641"))
+                RECEIVER_CONTACT_TYPE
             else
                 RECEIVER_VIEW_TYPE
         }
