@@ -6,6 +6,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.ContactsContract.Data
 import android.widget.Toast
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import project.social.whisper.databinding.ActivityForgotPasswordBinding
 
 class ForgotPasswordActivity : AppCompatActivity() {
@@ -24,28 +27,64 @@ class ForgotPasswordActivity : AppCompatActivity() {
             }
             else
             {
-                DatabaseAdapter.passwordResetMail(b.edtRstEmail.text.toString()){isValid ->
-                    if(isValid == "true")
-                    {
-                        Toast.makeText(this@ForgotPasswordActivity,
-                            "Password reset link is send to your email address",
-                            Toast.LENGTH_LONG).show()
+                sendPasswordResetEmail(b.edtRstEmail.text.toString())
+            }
+        }
+    }
 
-                        val i = Intent(this@ForgotPasswordActivity, LoginActivity::class.java)
-                        startActivity(i)
-                    }
-                    else if(isValid == "exist")
+    private fun sendPasswordResetEmail(email: String) {
+
+        DatabaseAdapter.usersTable.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if(snapshot.exists())
+                {
+                    for(s in snapshot.children)
                     {
-                        Toast.makeText(this@ForgotPasswordActivity,
-                            "Email address is not exist, First register with this email address",
-                            Toast.LENGTH_LONG).show()
+                        val email2 = s.child("EMAIL").getValue(String::class.java)!!
+
+                        if(email2 == email)
+                        {
+                            sending(email)
+                            return
+                        }
                     }
-                    else
-                    {
-                        Toast.makeText(this@ForgotPasswordActivity,
-                            "Something went wrong, Try again",
-                            Toast.LENGTH_LONG).show()
-                    }
+                    Toast.makeText(applicationContext, "Email ID does not exist, Register first"
+                        , Toast.LENGTH_LONG).show()
+                }
+                else
+                {
+                    Toast.makeText(applicationContext, "Email ID does not exist, Register first"
+                        , Toast.LENGTH_LONG).show()
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
+    }
+
+    private fun sending(email: String) {
+        DatabaseAdapter.passwordResetMail(email){isValid ->
+            when (isValid) {
+                "true" -> {
+                    Toast.makeText(this@ForgotPasswordActivity,
+                        "Password reset link is send to your email address",
+                        Toast.LENGTH_LONG).show()
+
+                    val i = Intent(this@ForgotPasswordActivity, LoginActivity::class.java)
+                    startActivity(i)
+                }
+                "exist" -> {
+                    Toast.makeText(this@ForgotPasswordActivity,
+                        "Email address does not exist, First register with this email address",
+                        Toast.LENGTH_LONG).show()
+                }
+                else -> {
+                    Toast.makeText(this@ForgotPasswordActivity,
+                        "Something went wrong, Try again",
+                        Toast.LENGTH_LONG).show()
                 }
             }
         }
