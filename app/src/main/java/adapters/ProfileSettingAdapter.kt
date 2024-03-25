@@ -10,6 +10,9 @@ import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import fragments.ManageAccountsFragment
 import fragments.ManageChannelFragment
 import fragments.ProfileSettingAccountFragment
@@ -55,9 +58,29 @@ class ProfileSettingAdapter(val context: FragmentActivity, private val items: Li
 
                 "Log Out" -> {
                     //Log out
-                    FirebaseAuth.getInstance().signOut()
-                    val i = Intent(context, StartUpActivity::class.java)
-                    context.startActivity(i)
+                    
+                    DatabaseAdapter.userDetailsTable.child(GlobalStaticAdapter.uid)
+                        .addListenerForSingleValueEvent(object:ValueEventListener{
+                            override fun onDataChange(snapshot: DataSnapshot) {
+
+                                for(s in snapshot.children)
+                                {
+                                    val key = s.key!!
+
+                                    DatabaseAdapter.userDetailsTable.child(GlobalStaticAdapter.uid)
+                                        .child(key).child("FCM_TOKEN")
+                                        .removeValue()
+                                }
+                                FirebaseAuth.getInstance().signOut()
+                                val i = Intent(context, StartUpActivity::class.java)
+                                context.startActivity(i)
+                            }
+
+                            override fun onCancelled(error: DatabaseError) {
+                                
+                            }
+
+                        })
                 }
             }
         }
