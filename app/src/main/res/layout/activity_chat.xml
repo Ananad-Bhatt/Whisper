@@ -38,14 +38,14 @@
                     android:layout_weight="1"
                     android:textColor="@color/white"/>
 
-                <ImageButton
+                <com.zegocloud.uikit.prebuilt.call.invite.widget.ZegoSendCallInvitationButton
                     android:id="@+id/ib_chat_act_voice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="#00FFFFFF"
                     android:src="@drawable/call"/>
 
-                <ImageButton
+                <com.zegocloud.uikit.prebuilt.call.invite.widget.ZegoSendCallInvitationButton
                     android:id="@+id/ib_chat_act_video"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

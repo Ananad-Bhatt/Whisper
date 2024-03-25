@@ -14,7 +14,6 @@ import android.os.Bundle
 import android.os.Looper
 import android.provider.ContactsContract
 import android.provider.Settings
-import android.provider.Settings.Global
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -39,6 +38,9 @@ import com.google.android.gms.location.Priority
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationConfig
+import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationService
+import com.zegocloud.uikit.service.defines.ZegoUIKitUser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -119,6 +121,11 @@ class ChatActivity : AppCompatActivity() {
 
         b = ActivityChatBinding.inflate(layoutInflater)
         setContentView(b.root)
+
+        startService(GlobalStaticAdapter.userName)
+
+        setVoiceCall(GlobalStaticAdapter.userName2)
+        setVideoCall(GlobalStaticAdapter.userName2)
 
         //Activity Results
         readContacts = registerForActivityResult(
@@ -444,6 +451,18 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
+    private fun setVideoCall(targetUserID: String) {
+        b.ibChatActVideo.setIsVideoCall(true)
+        b.ibChatActVideo.resourceID = "zego_uikit_call" // Please fill in the resource ID name that has been configured in the ZEGOCLOUD's console here.
+        b.ibChatActVideo.setInvitees(listOf<ZegoUIKitUser>(ZegoUIKitUser(targetUserID)))
+    }
+
+    private fun setVoiceCall(targetUserID: String) {
+        b.ibChatActVoice.setIsVideoCall(false)
+        b.ibChatActVoice.resourceID = "zego_uikit_call" // Please fill in the resource ID name that has been configured in the ZEGOCLOUD's console here.
+        b.ibChatActVoice.setInvitees(listOf<ZegoUIKitUser>(ZegoUIKitUser(targetUserID)))
+    }
+
 //    private fun sendContactMessage(contactName: String?, contactNumber: String?) {
 //        val msg = "contact:184641,$contactName,$contactNumber"
 //        val encMsg = DatabaseAdapter.encryptMessage(msg, sharedSecret)
@@ -729,6 +748,7 @@ class ChatActivity : AppCompatActivity() {
         DatabaseAdapter.deleteTempFiles(cacheDir)
         // Remove the callback when the activity is destroyed
         callback.remove()
+        ZegoUIKitPrebuiltCallInvitationService.unInit()
         super.onDestroy()
     }
 
@@ -1047,6 +1067,21 @@ class ChatActivity : AppCompatActivity() {
         flag = false
     }
 
+    private fun startService(userId: String) {
+        val application = application // Android's application context
+        val appID: Long = 863594643 // yourAppID
+        val appSign =
+            "ecdc85bb9fd335d53cd147c9e4d2c9733a0b507b97acbac94c053e5105772515" // yourAppSign
+        val callInvitationConfig = ZegoUIKitPrebuiltCallInvitationConfig()
+        ZegoUIKitPrebuiltCallInvitationService.init(
+            getApplication(),
+            appID,
+            appSign,
+            userId,
+            userId,
+            callInvitationConfig
+        )
+    }
 }
 
 
