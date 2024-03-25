@@ -78,6 +78,9 @@ class ProfileEditFragment : Fragment() {
             if (it.resultCode == Activity.RESULT_OK) {
                 val data = it.data
                 val uri: Uri? = data?.data
+
+                Glide.with(requireActivity()).load(uri).into(b.imgEditProfileUserImage)
+
                 uploadImage(uri)
             } else {
                 if(isAdded) {
@@ -99,6 +102,9 @@ class ProfileEditFragment : Fragment() {
 
                 DatabaseAdapter.userDetailsTable.child(uid).child(key).child("ABOUT")
                     .setValue(b.edtEditProfileAbout.text.toString())
+
+                GlobalStaticAdapter.userName = b.edtEditProfileUserName.text.toString()
+                GlobalStaticAdapter.about = b.edtEditProfileAbout.text.toString()
 
                 val fm1 = requireActivity().supportFragmentManager
                 val ft1 = fm1.beginTransaction()
