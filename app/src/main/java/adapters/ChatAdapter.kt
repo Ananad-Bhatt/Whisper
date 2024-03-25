@@ -1,7 +1,5 @@
 package adapters
 
-import android.R.attr.label
-import android.R.attr.text
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -14,8 +12,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat.getSystemService
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import models.ChatModel
@@ -37,6 +37,8 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
     private val RECEIVER_VIEW_VIDEO_TYPE = 6
     private val SENDER_CONTACT_TYPE = 7
     private val RECEIVER_CONTACT_TYPE = 8
+    private val SENDER_LOCATION_TYPE = 9
+    private val RECEIVER_LOCATION_TYPE = 10
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
@@ -65,6 +67,16 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
                     .inflate(R.layout.receiver_contact_layout, parent, false)
                 ReceiverContactHolder(view)
             }
+            SENDER_LOCATION_TYPE -> {
+                val view = LayoutInflater.from(context)
+                    .inflate(R.layout.sender_layout, parent, false)
+                SenderChatHolder(view)
+            }
+            RECEIVER_LOCATION_TYPE -> {
+                val view = LayoutInflater.from(context)
+                    .inflate(R.layout.receiver_layout, parent, false)
+                ReceiverChatHolder(view)
+            }
             else -> {
                 val view = LayoutInflater.from(context)
                     .inflate(R.layout.receiver_image_layout, parent, false)
@@ -84,15 +96,64 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
 
             SenderChatHolder::class.java -> {
                 val h = holder as SenderChatHolder
-                Log.d("IMG_ERROR","WTH${m.MESSAGE}")
-                h.senderMessage.text = m.MESSAGE
-                h.senderTime.text = f.format(d)
+
+                if(m.MESSAGE?.contains("location:17861")!!)
+                {
+                    h.senderTime.text = f.format(d)
+
+                    val c = m.MESSAGE?.split(",")!!
+
+                    h.senderMessage.text = "Click Here to Open Location in Map"
+
+                    h.senderMainView.setOnClickListener {
+                        val strUri =
+                            "http://maps.google.com/maps?q=loc:${c[1]},${c[2]} (User Location)"
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(strUri))
+
+                        intent.setClassName(
+                            "com.google.android.apps.maps",
+                            "com.google.android.maps.MapsActivity"
+                        )
+
+                        context.startActivity(intent)
+                    }
+
+                }
+                else {
+                    Log.d("IMG_ERROR", "WTH${m.MESSAGE}")
+                    h.senderMessage.text = m.MESSAGE
+                    h.senderTime.text = f.format(d)
+                }
             }
 
             ReceiverChatHolder::class.java -> {
                 val h = holder as ReceiverChatHolder
-                h.receiverMessage.text = m.MESSAGE
-                h.receiverTime.text = f.format(d)
+
+                if(m.MESSAGE?.contains("location:17861")!!)
+                {
+                    h.receiverTime.text = f.format(d)
+
+                    val c = m.MESSAGE?.split(",")!!
+
+                    h.receiverMessage.text = "Click Here to Open Location in Map"
+
+                    h.receiverMainView.setOnClickListener {
+                        val strUri =
+                            "http://maps.google.com/maps?q=loc:${c[1]},${c[2]} (User Location)"
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(strUri))
+
+                        intent.setClassName(
+                            "com.google.android.apps.maps",
+                            "com.google.android.maps.MapsActivity"
+                        )
+
+                        context.startActivity(intent)
+                    }
+
+                }else {
+                    h.receiverMessage.text = m.MESSAGE
+                    h.receiverTime.text = f.format(d)
+                }
             }
 
             SenderImageChatHolder::class.java -> {
@@ -174,6 +235,8 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
                 SENDER_VIEW_IMAGE_TYPE
             else if(chats[position].MESSAGE!!.contains("contact:184641"))
                 SENDER_CONTACT_TYPE
+            else if(chats[position].MESSAGE!!.contains("location:17861"))
+                SENDER_LOCATION_TYPE
             else
                 SENDER_VIEW_TYPE
         } else {
@@ -181,6 +244,8 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
                 RECEIVER_VIEW_IMAGE_TYPE
             else if(chats[position].MESSAGE!!.contains("contact:184641"))
                 RECEIVER_CONTACT_TYPE
+            else if(chats[position].MESSAGE!!.contains("location:17861"))
+                RECEIVER_LOCATION_TYPE
             else
                 RECEIVER_VIEW_TYPE
         }
@@ -193,7 +258,7 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
     class SenderChatHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val senderMessage = itemView.findViewById<TextView>(R.id.tv_sender_chat)!!
         val senderTime = itemView.findViewById<TextView>(R.id.tv_sender_chat_time)!!
-        //val senderMainView = itemView.findViewById<RelativeLayout>(R.id.rl_sender_layout)!!
+        val senderMainView = itemView.findViewById<ConstraintLayout>(R.id.cl_sender_layout)!!
     }
 
     class SenderImageChatHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -205,7 +270,7 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
     class ReceiverChatHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val receiverMessage = itemView.findViewById<TextView>(R.id.tv_receiver_chat)!!
         val receiverTime = itemView.findViewById<TextView>(R.id.tv_receiver_chat_time)!!
-        //val receiverMainView = itemView.findViewById<RelativeLayout>(R.id.rl_receiver_layout)!!
+        val receiverMainView = itemView.findViewById<LinearLayout>(R.id.ll_receiver_chat)!!
     }
 
     class ReceiverImageChatHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

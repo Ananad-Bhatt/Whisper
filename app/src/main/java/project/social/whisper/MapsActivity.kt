@@ -1,5 +1,8 @@
 package project.social.whisper
 
+import adapters.GlobalStaticAdapter
+import android.app.Activity
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +12,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import project.social.whisper.databinding.ActivityMapsBinding
 
@@ -19,6 +23,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private var lat:Double = 0.0
     private var long:Double = 0.0
+
+    private lateinit var marker: Marker
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +41,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
         //Log.d("MAPS_ERROR","HEllo2")
+
+        binding.btnLocActSend.setOnClickListener {
+
+            val returnIntent = Intent()
+            returnIntent.putExtra("lat", (marker.position.latitude).toString())
+            returnIntent.putExtra("long", (marker.position.longitude).toString())
+            setResult(Activity.RESULT_OK, returnIntent)
+            finish()
+
+        }
+
     }
 
     /**
@@ -51,8 +68,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         //Log.d("MAPS_ERROR","HEllo")
         // Add a marker in location and move the camera
         val sydney = LatLng(lat, long)
-        mMap.mapType = GoogleMap.MAP_TYPE_SATELLITE;
-        mMap.addMarker(MarkerOptions().position(sydney).title("User location"))
+        mMap.mapType = GoogleMap.MAP_TYPE_HYBRID;
+        marker = mMap.addMarker(MarkerOptions().position(sydney).title("User location").draggable(true))!!
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 18f))
         //Log.d("MAPS_ERROR","HEllo3")

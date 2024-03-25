@@ -14,6 +14,7 @@ import android.os.Bundle
 import android.os.Looper
 import android.provider.ContactsContract
 import android.provider.Settings
+import android.provider.Settings.Global
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -80,6 +81,7 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var callback: OnBackPressedCallback
 
     private lateinit var imageCapture: ActivityResultLauncher<Intent>
+    private lateinit var location: ActivityResultLauncher<Intent>
 
     private lateinit var sharedSecret:ByteArray
 
@@ -194,8 +196,6 @@ class ChatActivity : AppCompatActivity() {
 
                         cursor.close()
                     }
-
-
                 }
             }
         }
@@ -258,6 +258,17 @@ class ChatActivity : AppCompatActivity() {
             }
         }
 
+        location = registerForActivityResult(ActivityResultContracts.StartActivityForResult()
+        ){
+            if (it.resultCode == Activity.RESULT_OK) {
+                val data = it.data
+                val lat = data?.getStringExtra("lat")
+                val long = data?.getStringExtra("long")
+
+                sendingMessage("location:17861,$lat,$long")
+            }
+        }
+
         onBackPressedDispatcher.addCallback(this, callback)
 
         key = GlobalStaticAdapter.key2
@@ -271,6 +282,14 @@ class ChatActivity : AppCompatActivity() {
 
         senderRoom = senderKey + receiverKey
         receiverRoom = receiverKey + senderKey
+
+        if(GlobalStaticAdapter.lat != "" && GlobalStaticAdapter.long != "")
+        {
+            sendingMessage("location:17861,${GlobalStaticAdapter.lat},${GlobalStaticAdapter.long}")
+            GlobalStaticAdapter.lat = ""
+            GlobalStaticAdapter.long = ""
+        }
+
 
         DatabaseAdapter.keysTable.addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -577,7 +596,10 @@ class ChatActivity : AppCompatActivity() {
                     val i = Intent(applicationContext, MapsActivity::class.java)
                     i.putExtra("lat", latitude)
                     i.putExtra("long", longitude)
-                    startActivity(i)
+                    location.launch(i)
+
+                    fusedLocationClient.removeLocationUpdates(this)
+
                 }
             }
         }, Looper.getMainLooper())

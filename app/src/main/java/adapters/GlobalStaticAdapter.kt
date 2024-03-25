@@ -53,5 +53,11 @@ class GlobalStaticAdapter {
         //ANOTHER USER NOTIFICATION TOKEN
             var fcmToken2 = ""
 
+        //Location
+        var lat = ""
+        var long = ""
+
+        //Shared Secret key
+        var sharedSecret:ByteArray = byteArrayOf()
     }
 }
