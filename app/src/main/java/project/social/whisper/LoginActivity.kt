@@ -106,28 +106,34 @@ class LoginActivity : AppCompatActivity() {
                             {
                                 if(s.exists())
                                 {
+                                    val isOpened = s.child("IS_OPENED")
+                                        .getValue(Boolean::class.java) ?: true
 
-                                    GlobalStaticAdapter.key = s.key!!
+                                    if(isOpened) {
 
-                                    GlobalStaticAdapter.userName = s.child("USER_NAME")
-                                        .getValue(String::class.java)!!
+                                        GlobalStaticAdapter.key = s.key!!
 
-                                    GlobalStaticAdapter.about = s.child("ABOUT")
-                                        .getValue(String::class.java) ?: ""
+                                        GlobalStaticAdapter.userName = s.child("USER_NAME")
+                                            .getValue(String::class.java)!!
 
-                                    GlobalStaticAdapter.accountType = s.child("ACCOUNT_TYPE")
-                                        .getValue(String::class.java) ?: "PUBLIC"
+                                        GlobalStaticAdapter.about = s.child("ABOUT")
+                                            .getValue(String::class.java) ?: ""
 
-                                    GlobalStaticAdapter.imageUrl = s.child("IMAGE")
-                                        .getValue(String::class.java)
-                                        ?: getString(R.string.image_not_found)
+                                        GlobalStaticAdapter.accountType = s.child("ACCOUNT_TYPE")
+                                            .getValue(String::class.java) ?: "PUBLIC"
 
-                                    //FCM Token
-                                    NotificationService.generateToken()
+                                        GlobalStaticAdapter.imageUrl = s.child("IMAGE")
+                                            .getValue(String::class.java)
+                                            ?: getString(R.string.image_not_found)
 
-                                    val mainActivity = Intent(applicationContext, MainActivity::class.java)
-                                    startActivity(mainActivity)
-                                    break
+                                        //FCM Token
+                                        NotificationService.generateToken()
+
+                                        val mainActivity =
+                                            Intent(applicationContext, MainActivity::class.java)
+                                        startActivity(mainActivity)
+                                        return
+                                    }
                                 }
                                 else
                                 {
@@ -208,10 +214,16 @@ class LoginActivity : AppCompatActivity() {
                     {
                         if(s.exists())
                         {
-                            GlobalStaticAdapter.key = s.key!!
+                            val isOpened = s.child("IS_OPENED")
+                                .getValue(Boolean::class.java) ?: true
 
-                            collectValues()
-                            return
+                            if(isOpened) {
+
+                                GlobalStaticAdapter.key = s.key!!
+
+                                collectValues()
+                                return
+                            }
                         }
                     }
                     //Move to diff Activity

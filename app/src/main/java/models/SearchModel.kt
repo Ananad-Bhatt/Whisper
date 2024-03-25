@@ -5,5 +5,6 @@ data class SearchModel (
     val userImg: String, // Url for the image
     val userUid: String,
     val userKey: String,
+    val about: String,
     val fcm: String
 )

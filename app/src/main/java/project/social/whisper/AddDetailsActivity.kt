@@ -20,6 +20,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import project.social.whisper.databinding.ActivityAddDetailsBinding
+import services.NotificationService
 
 class AddDetailsActivity : AppCompatActivity() {
 
@@ -64,6 +65,13 @@ class AddDetailsActivity : AppCompatActivity() {
             }
             else
             {
+                if(GlobalStaticAdapter.key != "")
+                {
+                    DatabaseAdapter.userDetailsTable.child(GlobalStaticAdapter.uid)
+                        .child(GlobalStaticAdapter.key)
+                        .child("IS_OPENED").setValue(false)
+                }
+
                 val user = DatabaseAdapter.returnUser()!!
                 if(user.isEmailVerified) {
 
@@ -71,6 +79,15 @@ class AddDetailsActivity : AppCompatActivity() {
 
                         GlobalStaticAdapter.key =
                             DatabaseAdapter.userDetailsTable.push().key!!
+
+                        GlobalStaticAdapter.about = ""
+
+                        NotificationService.generateToken()
+
+                        DatabaseAdapter.userDetailsTable.child(GlobalStaticAdapter.uid)
+                            .child(GlobalStaticAdapter.key)
+                            .child("IS_OPENED")
+                            .setValue(true)
 
                         Log.d("DB_ERROR", GlobalStaticAdapter.key)
 
@@ -106,8 +123,10 @@ class AddDetailsActivity : AppCompatActivity() {
 
                 if (snapshot.exists()) {
                     for (s in snapshot.children) {
+                        Log.d("DB_ERROR", s.key!!)
                         if (s.exists()) {
                             for (userSnapshot in s.children) {
+                                Log.d("DB_ERROR", userSnapshot.key!!)
                                 if (userSnapshot.exists()) {
                                     val dbUserName =
                                         userSnapshot.child("USER_NAME").getValue(String::class.java)
@@ -131,7 +150,7 @@ class AddDetailsActivity : AppCompatActivity() {
                                             null
                                         )
                                         availabilityTextView.visibility = View.VISIBLE
-                                        break
+                                        return
                                     } else {
                                         availabilityTextView.text = "User name is available"
                                         val drawableStart: Drawable? = ContextCompat.getDrawable(
@@ -177,6 +196,5 @@ class AddDetailsActivity : AppCompatActivity() {
                 availabilityTextView.visibility = View.VISIBLE
             }
         })
-
     }
 }

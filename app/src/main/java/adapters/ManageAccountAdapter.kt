@@ -1,16 +1,19 @@
 package adapters
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import fragments.ProfileFragment
 import models.SearchModel
+import project.social.whisper.MainActivity
 import project.social.whisper.R
 
 class ManageAccountAdapter(private val context: FragmentActivity, private val searchResults:ArrayList<SearchModel>) :
@@ -33,11 +36,27 @@ class ManageAccountAdapter(private val context: FragmentActivity, private val se
         holder.userName.text = searchResults[position].userName
 
         holder.container.setOnClickListener {
+
+            DatabaseAdapter.userDetailsTable.child(GlobalStaticAdapter.uid)
+                .child(GlobalStaticAdapter.key)
+                .child("IS_OPENED")
+                .setValue(false)
+
             GlobalStaticAdapter.key = searchResults[position].userKey
-            val fm1 = context.supportFragmentManager
-            val ft1 = fm1.beginTransaction()
-            ft1.replace(R.id.main_container, ProfileFragment())
-            ft1.commit()
+
+            DatabaseAdapter.userDetailsTable.child(GlobalStaticAdapter.uid)
+                .child(GlobalStaticAdapter.key)
+                .child("IS_OPENED")
+                .setValue(true)
+
+            GlobalStaticAdapter.userName = searchResults[position].userName
+            //GlobalStaticAdapter.about = searchResults[position].about
+            GlobalStaticAdapter.imageUrl = searchResults[position].userImg
+            GlobalStaticAdapter.about = searchResults[position].about
+
+            val i = Intent(context, MainActivity::class.java)
+            context.startActivity(i)
+
         }
 
     }

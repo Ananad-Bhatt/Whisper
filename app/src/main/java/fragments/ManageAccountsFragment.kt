@@ -3,6 +3,7 @@ package fragments
 import adapters.DatabaseAdapter
 import adapters.GlobalStaticAdapter
 import adapters.ManageAccountAdapter
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -14,6 +15,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import models.SearchModel
+import project.social.whisper.AddDetailsActivity
 import project.social.whisper.R
 import project.social.whisper.databinding.FragmentManageAccountsBinding
 
@@ -60,16 +62,9 @@ class ManageAccountsFragment : Fragment() {
         }
 
         b.btnManageAccFrag.setOnClickListener {
-            key =
-                DatabaseAdapter.userDetailsTable
-                .child(uid)
-                .push().key!!
-
             if(isAdded) {
-                val fm1 = requireActivity().supportFragmentManager
-                val ft1 = fm1.beginTransaction()
-                ft1.replace(R.id.main_container, ProfileFragment())
-                ft1.commit()
+                val i = Intent(requireActivity(), AddDetailsActivity::class.java)
+                startActivity(i)
             }
         }
 
@@ -96,7 +91,9 @@ class ManageAccountsFragment : Fragment() {
 
                             val fcm = s.child("FCM_TOKEN").getValue(String::class.java)?:""
 
-                            accounts.add(SearchModel(userName, imgUrl, uid, userKey, fcm))
+                            val about = s.child("ABOUT").getValue(String::class.java)?:""
+
+                            accounts.add(SearchModel(userName, imgUrl, uid, userKey, about, fcm))
                             ad.notifyItemInserted(accounts.size)
                         }
                     }

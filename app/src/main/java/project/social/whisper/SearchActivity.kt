@@ -113,6 +113,9 @@ class SearchActivity : AppCompatActivity() {
                                         val fcm = i.child("FCM_TOKEN").getValue(String::class.java)
                                             ?: ""
 
+                                        val about = i.child("ABOUT").getValue(String::class.java)
+                                            ?: ""
+
                                         if ((userName.lowercase()).contains(query.lowercase())) {
                                             searchResults.add(
                                                 SearchModel(
@@ -120,6 +123,7 @@ class SearchActivity : AppCompatActivity() {
                                                     image,
                                                     uid,
                                                     key,
+                                                    about,
                                                     fcm
                                                 )
                                             )

@@ -40,6 +40,7 @@ class SearchRecyclerViewAdapter(private val context:Context,private val searchRe
             GlobalStaticAdapter.key2 = searchResults[position].userKey
             GlobalStaticAdapter.fcmToken2 = searchResults[position].fcm
             GlobalStaticAdapter.imageUrl2 = searchResults[position].userImg
+            GlobalStaticAdapter.about2 = searchResults[position].about
 
             context.startActivity(i)
         }
