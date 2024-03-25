@@ -80,6 +80,13 @@ class SplashActivity : AppCompatActivity() {
                             }
 
                         }
+                        else{
+                            //If user is null then redirects
+                            val login = Intent(applicationContext, StartUpActivity::class.java)
+                            startActivity(login)
+                            //Finishing activity so, it clears from stack
+                            finish()
+                        }
                     }
 
                     override fun onCancelled(error: DatabaseError) {

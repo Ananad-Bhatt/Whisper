@@ -173,6 +173,7 @@ TODOs :
 	Final all the pending features
 
 	Monday
+		FIX ALL THE BUGS
 		Mobile number OTP verification
 		Update UI
 		Followers and Following
@@ -198,3 +199,10 @@ Features :
 
 	if possible :
 		Customization
+
+
+
+
+LOGIN and REGISTRATION :
+	If login with Email and Password -> Verify email first
+	If login with email and pass and then try to login with google then provider will be changed, and if after that try to change password then again provider will be changed to email.

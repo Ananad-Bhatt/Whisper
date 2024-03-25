@@ -80,6 +80,7 @@ class LoginActivity : AppCompatActivity() {
                 if (isLogin) {
                     checkIfUsernameExist()
                 } else {
+                    Log.d("DB_ERROR", "Hi")
                     Toast.makeText(
                         this@LoginActivity,
                         "Email or password is wrong",
@@ -112,13 +113,14 @@ class LoginActivity : AppCompatActivity() {
                                         .getValue(String::class.java)!!
 
                                     GlobalStaticAdapter.about = s.child("ABOUT")
-                                        .getValue(String::class.java)!!
+                                        .getValue(String::class.java) ?: ""
 
                                     GlobalStaticAdapter.accountType = s.child("ACCOUNT_TYPE")
-                                        .getValue(String::class.java)!!
+                                        .getValue(String::class.java) ?: "PUBLIC"
 
                                     GlobalStaticAdapter.imageUrl = s.child("IMAGE")
-                                        .getValue(String::class.java)!!
+                                        .getValue(String::class.java)
+                                        ?: getString(R.string.image_not_found)
 
                                     //FCM Token
                                     NotificationService.generateToken()
@@ -134,7 +136,10 @@ class LoginActivity : AppCompatActivity() {
                                 }
                             }
                         }
-
+                        else{
+                            val mainActivity = Intent(applicationContext, AddDetailsActivity::class.java)
+                            startActivity(mainActivity)
+                        }
                     }
 
                     override fun onCancelled(error: DatabaseError) {
@@ -142,6 +147,10 @@ class LoginActivity : AppCompatActivity() {
                     }
 
                 })
+        }
+        else
+        {
+            Toast.makeText(applicationContext, "Something went wrong, please Try again!!!", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -173,7 +182,7 @@ class LoginActivity : AppCompatActivity() {
                                     DatabaseAdapter.usersTable.child(uid)
                                         .child("EMAIL_VERIFIED").setValue(true)
 
-                                    checkEmailExistWithGoogle(DatabaseAdapter.returnUser()?.email?.lowercase())
+                                    checkUserNameExistWithGoogle()
                                 }
                             } else {
                                 // If sign in fails, display a message to the user.
@@ -190,7 +199,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkEmailExistWithGoogle(userEmail:String?) {
+    private fun checkUserNameExistWithGoogle() {
         DatabaseAdapter.userDetailsTable.child(GlobalStaticAdapter.uid).addListenerForSingleValueEvent(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 if(snapshot.exists())
@@ -199,13 +208,10 @@ class LoginActivity : AppCompatActivity() {
                     {
                         if(s.exists())
                         {
-                            val email = s.child("EMAIL").getValue(String::class.java)?:"none"
+                            GlobalStaticAdapter.key = s.key!!
 
-                            if(email == userEmail)
-                            {
-                                collectValues()
-                                return
-                            }
+                            collectValues()
+                            return
                         }
                     }
                     //Move to diff Activity
@@ -229,45 +235,31 @@ class LoginActivity : AppCompatActivity() {
     private fun collectValues() {
 
         DatabaseAdapter.userDetailsTable.child(GlobalStaticAdapter.uid)
+            .child(GlobalStaticAdapter.key)
             .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
+                override fun onDataChange(s: DataSnapshot) {
+                    if(s.exists())
+                    {
+                        GlobalStaticAdapter.userName = s.child("USER_NAME")
+                            .getValue(String::class.java)!!
 
-                    if (snapshot.exists()) {
-                        for(s in snapshot.children)
-                        {
-                            if(s.exists())
-                            {
+                        GlobalStaticAdapter.about = s.child("ABOUT")
+                            .getValue(String::class.java) ?: ""
 
-                                GlobalStaticAdapter.key = s.key!!
+                        GlobalStaticAdapter.accountType = s.child("ACCOUNT_TYPE")
+                            .getValue(String::class.java) ?: "PUBLIC"
 
-                                GlobalStaticAdapter.userName = s.child("USER_NAME")
-                                    .getValue(String::class.java)!!
+                        GlobalStaticAdapter.imageUrl = s.child("IMAGE")
+                            .getValue(String::class.java)
+                            ?: getString(R.string.image_not_found)
 
-                                GlobalStaticAdapter.about = s.child("ABOUT")
-                                    .getValue(String::class.java)!!
+                        //FCM Token
+                        NotificationService.generateToken()
 
-                                GlobalStaticAdapter.accountType = s.child("ACCOUNT_TYPE")
-                                    .getValue(String::class.java)!!
-
-                                GlobalStaticAdapter.imageUrl = s.child("IMAGE")
-                                    .getValue(String::class.java)!!
-
-                                //FCM Token
-                                NotificationService.generateToken()
-
-                                //Move to diff Activity
-                                val i = Intent(applicationContext, MainActivity::class.java)
-                                startActivity(i)
-                                break
-                            }
-                            else
-                            {
-                                val mainActivity = Intent(applicationContext, AddDetailsActivity::class.java)
-                                startActivity(mainActivity)
-                            }
-                        }
+                        //Move to diff Activity
+                        val i = Intent(applicationContext, MainActivity::class.java)
+                        startActivity(i)
                     }
-
                 }
 
                 override fun onCancelled(error: DatabaseError) {

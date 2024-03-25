@@ -64,25 +64,36 @@ class AddDetailsActivity : AppCompatActivity() {
             }
             else
             {
-                try {
+                val user = DatabaseAdapter.returnUser()!!
+                if(user.isEmailVerified) {
 
-                    GlobalStaticAdapter.key =
-                        DatabaseAdapter.userDetailsTable.push().key!!
+                    try {
 
-                    Log.d("DB_ERROR", GlobalStaticAdapter.key)
+                        GlobalStaticAdapter.key =
+                            DatabaseAdapter.userDetailsTable.push().key!!
 
-                    DatabaseAdapter.userDetailsTable.child(GlobalStaticAdapter.uid)
-                        .child(GlobalStaticAdapter.key)
-                        .child("USER_NAME")
-                        .setValue(b.edtDetUserName.text.toString().lowercase())
-                }catch(e:Exception)
-                {
-                    Log.d("DB_ERROR",e.toString())
+                        Log.d("DB_ERROR", GlobalStaticAdapter.key)
+
+                        DatabaseAdapter.userDetailsTable.child(GlobalStaticAdapter.uid)
+                            .child(GlobalStaticAdapter.key)
+                            .child("USER_NAME")
+                            .setValue(b.edtDetUserName.text.toString().lowercase())
+                    }catch(e:Exception)
+                    {
+                        Log.d("DB_ERROR",e.toString())
+                    }
+
+                    GlobalStaticAdapter.userName = b.edtDetUserName.text.toString().lowercase()
+                    GlobalStaticAdapter.imageUrl = getString(R.string.image_not_found)
+
+                    DatabaseAdapter.usersTable.child(GlobalStaticAdapter.uid).child("EMAIL_VERIFIED").setValue(true)
+                    val mainAct = Intent(this, MainActivity::class.java)
+                    startActivity(mainAct)
                 }
-
-                GlobalStaticAdapter.userName = b.edtDetUserName.text.toString().lowercase()
-                val mainAct = Intent(this,MainActivity::class.java)
-                startActivity(mainAct)
+                else
+                {
+                    Toast.makeText(applicationContext, "First verify email to continue", Toast.LENGTH_LONG).show()
+                }
             }
         }
 
@@ -90,11 +101,6 @@ class AddDetailsActivity : AppCompatActivity() {
 
     private fun checkUsernameAvailability(username: String, availabilityTextView: TextView) {
         // Check if the username exists in the database
-        // Update the visibility of the TextView accordingly
-
-        // Replace "your_username_key" with the key used to store usernames in your database
-
-
         DatabaseAdapter.userDetailsTable.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
 
@@ -146,6 +152,23 @@ class AddDetailsActivity : AppCompatActivity() {
                             }
                         }
                     }
+                }
+                else
+                {
+                    availabilityTextView.text = "User name is available"
+                    val drawableStart: Drawable? = ContextCompat.getDrawable(
+                        applicationContext,
+                        R.drawable.tick
+                    )
+                    val textColor = Color.parseColor("#6B9738")
+                    availabilityTextView.setTextColor(textColor)
+                    availabilityTextView.setCompoundDrawablesWithIntrinsicBounds(
+                        drawableStart,
+                        null,
+                        null,
+                        null
+                    )
+                    availabilityTextView.visibility = View.VISIBLE
                 }
             }
             override fun onCancelled(error: DatabaseError) {
