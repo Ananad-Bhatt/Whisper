@@ -4,7 +4,6 @@ import adapters.ChatAdapter
 import adapters.DatabaseAdapter
 import adapters.GlobalStaticAdapter
 import android.Manifest
-import android.R.attr.name
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
@@ -14,7 +13,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Looper
 import android.provider.ContactsContract
-import android.provider.ContactsContract.CommonDataKinds.Phone
 import android.provider.Settings
 import android.util.Log
 import android.view.View
@@ -45,7 +43,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import models.ChatModel
-import models.ContactModel
 import project.social.whisper.databinding.ActivityChatBinding
 import services.NotificationService
 import java.math.BigInteger
@@ -91,6 +88,9 @@ class ChatActivity : AppCompatActivity() {
 
     private lateinit var selfUserName:String
     private lateinit var selfImgUrl:String
+
+    private var publicKeyForShared = ""
+    private var privateKeyForShared = ""
 
     companion object {
         const val MY_PERMISSIONS_REQUEST_LOCATION = 1
@@ -173,7 +173,10 @@ class ChatActivity : AppCompatActivity() {
                                             ).replace("-", "").replace(" ", "")
                                         numbers.add(phoneNumber)
                                     }
-                                    sendContactMessage(name, numbers.toString())
+
+                                    val msg = "contact:184641,$name,${numbers.toString()}"
+
+                                    sendingMessage(msg)
                                     Log.d("CONTACT_ERROR", "$name $numbers")
                                 }
 
@@ -220,9 +223,35 @@ class ChatActivity : AppCompatActivity() {
                 val data = it.data
                 val uri: Uri? = data?.data
 
-                val encryptedUri = DatabaseAdapter.encryptImage(uri!!, sharedSecret, applicationContext)
+                if(!::sharedSecret.isInitialized)
+                {
+                    DatabaseAdapter.keysTable.addListenerForSingleValueEvent(object: ValueEventListener{
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            publicKeyForShared = snapshot.child(receiverRoom).child("PUBLIC_KEY").getValue(String::class.java)!!
+                            privateKeyForShared = snapshot.child(senderRoom).child("KEY").getValue(String::class.java)!!
 
-                uploadImage(encryptedUri)
+                            val num = DatabaseAdapter.decryptPrivateKey(privateKeyForShared, senderRoom, DatabaseAdapter.returnUser()?.email!!)
+
+                            sharedSecret = BigInteger(publicKeyForShared)
+                                .modPow(BigInteger(num), DatabaseAdapter.p)
+                                .toString().toByteArray(StandardCharsets.ISO_8859_1).toHashSet().toByteArray()
+
+                            val encryptedUri = DatabaseAdapter.encryptImage(uri!!, sharedSecret, applicationContext)
+
+                            uploadImage(encryptedUri)
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+
+                        }
+
+                    })
+                }else{
+                    val encryptedUri = DatabaseAdapter.encryptImage(uri!!, sharedSecret, applicationContext)
+
+                    uploadImage(encryptedUri)
+                }
+
             } else {
                 Toast.makeText(this, "Image selection canceled", Toast.LENGTH_SHORT)
                     .show()
@@ -245,9 +274,6 @@ class ChatActivity : AppCompatActivity() {
 
         DatabaseAdapter.keysTable.addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-
-                var publicKeyForShared = ""
-                var privateKeyForShared = ""
 
                 if(!snapshot.child(senderRoom).exists()) {
                     DatabaseAdapter.generateEncryptionKey(
@@ -399,35 +425,35 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    private fun sendContactMessage(contactName: String?, contactNumber: String?) {
-        val msg = "contact:184641,$contactName,$contactNumber"
-        val encMsg = DatabaseAdapter.encryptMessage(msg, sharedSecret)
-        val chatMap = HashMap<String, Any>()
-        chatMap["SENDER_KEY"] = senderKey
-        chatMap["SENDER_UID"] = DatabaseAdapter.returnUser()?.uid!!
-        chatMap["MESSAGE"] = encMsg
-        chatMap["TIMESTAMP"] = Date().time
-
-        try {
-            DatabaseAdapter.chatTable.child(senderRoom).push().setValue(chatMap)
-            DatabaseAdapter.chatTable.child(receiverRoom).push().setValue(chatMap)
-
-            runBlocking {
-                launch(Dispatchers.IO) {
-                    NotificationService.sendNotification("Shared Contact", fcmToken, selfUserName)
-                }
-            }
-
-            lifecycleScope.launch {
-                receiveLastMessage()
-                populateRecyclerView()
-                isRequesting(encMsg)
-            }
-        }catch(e:Exception)
-        {
-            Log.d("DB_ERROR",e.toString())
-        }
-    }
+//    private fun sendContactMessage(contactName: String?, contactNumber: String?) {
+//        val msg = "contact:184641,$contactName,$contactNumber"
+//        val encMsg = DatabaseAdapter.encryptMessage(msg, sharedSecret)
+//        val chatMap = HashMap<String, Any>()
+//        chatMap["SENDER_KEY"] = senderKey
+//        chatMap["SENDER_UID"] = DatabaseAdapter.returnUser()?.uid!!
+//        chatMap["MESSAGE"] = encMsg
+//        chatMap["TIMESTAMP"] = Date().time
+//
+//        try {
+//            DatabaseAdapter.chatTable.child(senderRoom).push().setValue(chatMap)
+//            DatabaseAdapter.chatTable.child(receiverRoom).push().setValue(chatMap)
+//
+//            runBlocking {
+//                launch(Dispatchers.IO) {
+//                    NotificationService.sendNotification("Shared Contact", fcmToken, selfUserName)
+//                }
+//            }
+//
+//            lifecycleScope.launch {
+//                receiveLastMessage()
+//                populateRecyclerView()
+//                isRequesting(encMsg)
+//            }
+//        }catch(e:Exception)
+//        {
+//            Log.d("DB_ERROR",e.toString())
+//        }
+//    }
 
     private fun hasLocationPermission(): Boolean {
         return ContextCompat.checkSelfPermission(
@@ -821,42 +847,68 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun sendData() {
-        sendingMessage()
+        if(b.edtChatActMessage.text.toString().isNotEmpty()) {
+            sendingMessage(b.edtChatActMessage.text.toString())
+        }
     }
 
-    private fun sendingMessage() {
-        if(b.edtChatActMessage.text.toString().isNotEmpty())
+    private fun sendingMessage(message:String) {
+        if(!::sharedSecret.isInitialized)
         {
-            val msg = b.edtChatActMessage.text.toString()
-            val encMsg = DatabaseAdapter.encryptMessage(msg, sharedSecret)
-            val chatMap = HashMap<String, Any>()
-            chatMap["SENDER_KEY"] = senderKey
-            chatMap["SENDER_UID"] = DatabaseAdapter.returnUser()?.uid!!
-            chatMap["MESSAGE"] = encMsg
-            chatMap["TIMESTAMP"] = Date().time
+            DatabaseAdapter.keysTable.addListenerForSingleValueEvent(object: ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    publicKeyForShared = snapshot.child(receiverRoom).child("PUBLIC_KEY").getValue(String::class.java)!!
+                    privateKeyForShared = snapshot.child(senderRoom).child("KEY").getValue(String::class.java)!!
 
-            try {
-                DatabaseAdapter.chatTable.child(senderRoom).push().setValue(chatMap)
-                DatabaseAdapter.chatTable.child(receiverRoom).push().setValue(chatMap)
+                    val num = DatabaseAdapter.decryptPrivateKey(privateKeyForShared, senderRoom, DatabaseAdapter.returnUser()?.email!!)
 
-                runBlocking {
-                    launch(Dispatchers.IO) {
-                        NotificationService.sendNotification(msg, fcmToken, selfUserName)
-                    }
+                    sharedSecret = BigInteger(publicKeyForShared)
+                        .modPow(BigInteger(num), DatabaseAdapter.p)
+                        .toString().toByteArray(StandardCharsets.ISO_8859_1).toHashSet().toByteArray()
+
+                    sending(message)
                 }
 
-                lifecycleScope.launch {
-                    receiveLastMessage()
-                    populateRecyclerView()
-                    isRequesting(encMsg)
+                override fun onCancelled(error: DatabaseError) {
+
                 }
-            }catch(e:Exception)
-            {
-                Log.d("DB_ERROR",e.toString())
+
+            })
+        }
+        else {
+            sending(message)
+        }
+    }
+
+    private fun sending(msg:String) {
+        val encMsg = DatabaseAdapter.encryptMessage(msg, sharedSecret)
+
+        val chatMap = HashMap<String, Any>()
+        chatMap["SENDER_KEY"] = senderKey
+        chatMap["SENDER_UID"] = DatabaseAdapter.returnUser()?.uid!!
+        chatMap["MESSAGE"] = encMsg
+        chatMap["TIMESTAMP"] = Date().time
+
+        try {
+            DatabaseAdapter.chatTable.child(senderRoom).push().setValue(chatMap)
+            DatabaseAdapter.chatTable.child(receiverRoom).push().setValue(chatMap)
+
+            runBlocking {
+                launch(Dispatchers.IO) {
+                    NotificationService.sendNotification(msg, fcmToken, selfUserName)
+                }
             }
 
-            b.edtChatActMessage.text.clear()
+            lifecycleScope.launch {
+                receiveLastMessage()
+                populateRecyclerView()
+                isRequesting(encMsg)
+            }
+        } catch (e: Exception) {
+            Log.d("DB_ERROR", e.toString())
         }
+
+        b.edtChatActMessage.text.clear()
     }
 
     private suspend fun receiveLastMessage() = withContext(Dispatchers.IO) {
