@@ -36,7 +36,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/register_title"
-                    android:textColor="@color/primary"
+                    style="@style/TEXT"
                     android:textAlignment="center"
                     android:textSize="@dimen/_40ssp"/>
 
@@ -91,7 +91,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/primary"
+                        style="@style/TEXT"
                         android:textStyle="bold"
                         android:text="@string/another_option"
                         android:layout_marginStart="@dimen/_10sdp"

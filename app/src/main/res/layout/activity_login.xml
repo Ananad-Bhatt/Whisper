@@ -31,7 +31,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/login_title"
-                    android:textColor="@color/primary"
+                    style="@style/TEXT"
                     android:textAlignment="center"
                     android:textSize="@dimen/_45ssp"/>
 
@@ -57,7 +57,7 @@
 
                 <TextView
                     android:id="@+id/txt_log_reset_pass"
-                    android:textColor="@color/primary"
+                    style="@style/TEXT"
                     android:layout_width="@dimen/_250sdp"
                     android:layout_height="wrap_content"
                     android:text="@string/reset_password"
@@ -87,7 +87,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/primary"
+                        style="@style/TEXT"
                         android:textStyle="bold"
                         android:text="@string/another_option"
                         android:layout_marginStart="@dimen/_10sdp"

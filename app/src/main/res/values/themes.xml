@@ -1,35 +1,38 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
+
+    <attr name="primary" format="reference|color" />
+
     <style name="Base.Theme.Whisper" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <item name="android:statusBarColor" >@color/main_act_primary</item>
-        <item name="android:navigationBarColor">@color/main_act_primary</item>
-
+        <item name="primary">@color/primary1</item>
+        <item name="android:statusBarColor" >?primary</item>
+        <item name="android:navigationBarColor">?primary</item>
     </style>
 
     <style name="Theme.Whisper" parent="Base.Theme.Whisper" />
 
 <!--    For light mode-->
     <style name="TEXT">
-        <item name="android:textColor">@color/primary</item>
+        <item name="android:textColor">?primary</item>
     </style>
 
     <style name="BODY">
-        <item name="android:background">@color/secondary</item>
+        <item name="android:background">@color/white</item>
     </style>
 
     <style name="ProgressBarStyle">
-        <item name="colorAccent">@color/primary_custom</item>
+        <item name="colorAccent">?primary</item>
     </style>
 
     <style name="BUTTON_FILL">
         <item name="android:layout_height">@dimen/_45sdp</item>
         <item name="android:layout_width">@dimen/_250sdp</item>
-        <item name="android:textColor">@color/btn_fill_text</item>
+        <item name="android:textColor">@color/white</item>
         <item name="android:padding">@dimen/_10sdp</item>
         <item name="android:textSize">@dimen/_17ssp</item>
         <item name="android:layout_gravity">center</item>
-        <item name="android:backgroundTint">@color/primary</item>
+        <item name="android:backgroundTint">?primary</item>
         <item name="android:background">@drawable/btn_back_fill</item>
     </style>
 
@@ -37,7 +40,7 @@
         <item name="android:layout_height">@dimen/_45sdp</item>
         <item name="android:layout_width">@dimen/_250sdp</item>
         <item name="android:padding">@dimen/_10sdp</item>
-        <item name="android:textColor">@color/btn_outlined_text</item>
+        <item name="android:textColor">?primary</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:textSize">@dimen/_17ssp</item>
         <item name="android:background">@drawable/btn_back_outlined</item>
@@ -48,7 +51,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textSize">@dimen/_14ssp</item>
         <item name="android:layout_gravity">center</item>
-        <item name="android:textColorHint">@color/primary</item>
+        <item name="android:textColorHint">?primary</item>
         <item name="android:padding">@dimen/_10sdp</item>
         <item name="android:background">@drawable/edt_back</item>
         <item name="android:ems">15</item>

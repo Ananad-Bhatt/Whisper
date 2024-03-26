@@ -6,31 +6,30 @@
 
     <!--    Black and white-->
 
-    <color name="white">#FFF</color>
-    <color name="black">#000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="grey">#AEADAD</color>
 
-    <!--    Login and registration screen-->
+    <!--    Chat-->
+    <color name="receiver">#1B1B1B</color>
+    <color name="receiver_text">#FFF</color>
 
-    <color name="primary_custom">#20308C</color>
-    <color name="primary">#FFF</color>
-    <color name="secondary">#000</color>
-    <color name="btn_fill_text">#000</color>
-    <color name="btn_outlined_text">#FFF</color>
+    <!--    Theme Purple-->
+    <color name="primary1">#7700FF</color>
 
-    <!--    Main Activity-->
-    <color name="main_act_primary">#000</color>
-    <color name="main_act_secondary">#FFF</color>
-    <color name="main_act_fill_txt">#20308C</color>
+    <!--    Theme Red-->
+    <color name="primary2">#FF0000</color>
 
-<!--    Tab layout-->
-    <color name="selected_tab">#FFF</color>
-    <color name="unselected_tab">#BABABA</color>
+    <!--    Theme Green-->
+    <color name="primary3">#006A4E</color>
 
-    <!--    Link-->
-    <color name="link">#00E1FF</color>
+    <!--    Theme Navy blue-->
+    <color name="primary4">#000080</color>
 
-<!--    Chat-->
-    <color name="sender">@color/main_act_fill_txt</color>
-    <color name="receiver">#000</color>
-    <color name="text_receiver">#FFF</color>
+    <!--    Theme orange-->
+    <color name="primary5">#F25022</color>
+
+    <!--    Theme Yellow-->
+    <color name="primary6">#FFB900</color>
+
 </resources>

@@ -17,13 +17,13 @@
             app:menu="@menu/home_frag_toolbar"
             app:title="@string/app_name"
             app:titleTextColor="@color/white"
-            android:background="@color/main_act_primary"/>
+            android:background="?primary"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/home_frag_tab_layout"
-        android:background="@color/main_act_primary"
+        android:background="?primary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

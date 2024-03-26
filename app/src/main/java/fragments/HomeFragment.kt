@@ -63,17 +63,17 @@ class HomeFragment : Fragment() {
             tab.setTabTextColors(
                 ContextCompat.getColor(
                     requireContext(),
-                    R.color.unselected_tab
+                    R.color.grey
                 ), // Text color for unselected tabs
                 ContextCompat.getColor(
                     requireContext(),
-                    R.color.selected_tab
+                    R.color.white
                 )   // Text color for selected tab
             )
 
             //Selected tab color
             tab.setSelectedTabIndicatorColor(
-                ContextCompat.getColor(requireContext(), R.color.selected_tab)
+                ContextCompat.getColor(requireContext(), R.color.white)
             )
         }
 

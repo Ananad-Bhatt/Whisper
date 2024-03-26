@@ -187,11 +187,11 @@
                 android:textStyle="bold"/>
 
             <TextView
+                style="@style/TEXT"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/see_all"
-                android:textSize="@dimen/_20ssp"
-                android:textColor="@color/link"/>
+                android:textSize="@dimen/_20ssp" />
 
         </LinearLayout>
 

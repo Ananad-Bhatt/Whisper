@@ -23,6 +23,6 @@
             android:layout_alignParentBottom="true"
             app:itemIconSize="@dimen/_20sdp"
             app:itemIconTint="@color/white"
-            android:background="@color/main_act_primary"
+            android:background="?primary"
             app:labelVisibilityMode="unlabeled"/>
 </RelativeLayout>

@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/app_name"
-            android:textColor="@color/text_receiver"
+            android:textColor="@color/receiver_text"
             android:minWidth="@dimen/_45sdp"
             android:maxWidth="@dimen/_250sdp"
             android:textSize="@dimen/_13ssp"/>
@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:text="@string/app_name"
             android:textSize="@dimen/_7ssp"
-            android:textColor="@color/text_receiver"
+            android:textColor="@color/receiver_text"
             android:layout_gravity="end"/>
 
     </LinearLayout>
