@@ -25,6 +25,8 @@ android {
         buildConfigField ("String", "FCM_KEY", fcmProperty.getProperty("SERVER_KEY"))
         buildConfigField ("String", "GEMINI", fcmProperty.getProperty("GEMINI_API"))
         buildConfigField ("String", "MAP_API", fcmProperty.getProperty("MAP_API"))
+        buildConfigField ("String", "APP_SIGN", fcmProperty.getProperty("APP_SIGN"))
+        buildConfigField ("String", "APP_ID", fcmProperty.getProperty("APP_ID"))
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

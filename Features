@@ -188,17 +188,14 @@ Features :
 	E2EE chat
 		E2EE Post
 	Multi account
-		Channels
-		Location sharing
-		Contact sharing
+		Channels, Community
+	Location sharing
+	Contact sharing
 		payment gateway
-		Community
 	Chat BOT
 	Notification
 		Mobile number OTP verification
-
-	if possible :
-		Customization
+		Customization (Theme, App Icon, Notification, Alias, UI)
 
 
 

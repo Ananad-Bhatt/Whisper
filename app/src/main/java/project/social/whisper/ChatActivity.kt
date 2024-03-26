@@ -1069,9 +1069,8 @@ class ChatActivity : AppCompatActivity() {
 
     private fun startService(userId: String) {
         val application = application // Android's application context
-        val appID: Long = 863594643 // yourAppID
-        val appSign =
-            "ecdc85bb9fd335d53cd147c9e4d2c9733a0b507b97acbac94c053e5105772515" // yourAppSign
+        val appID: Long = BuildConfig.APP_ID.toLong() // yourAppID
+        val appSign = BuildConfig.APP_SIGN // yourAppSign
         val callInvitationConfig = ZegoUIKitPrebuiltCallInvitationConfig()
         ZegoUIKitPrebuiltCallInvitationService.init(
             getApplication(),
