@@ -15,7 +15,7 @@
             android:id="@+id/tb_chat_act"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_45sdp"
-            android:background="@color/main_act_primary">
+            android:background="?primary">
 
             <LinearLayout
                 android:id="@+id/ll_chat_act_top"
@@ -109,7 +109,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="@dimen/_45sdp"
-        android:background="@color/main_act_primary">
+        android:background="?primary">
 
         <RelativeLayout
             android:layout_width="match_parent"

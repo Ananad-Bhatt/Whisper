@@ -22,22 +22,17 @@
                 android:layout_height="?actionBarSize"
                 android:background="?primary">
 
-                <LinearLayout
+                <EditText
+                    style="@style/EDITTEXT"
+                    android:id="@+id/toolbar_search"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <EditText
-                        style="@style/EDITTEXT"
-                        android:id="@+id/toolbar_search"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/search"
-                        android:backgroundTint="@color/white"
-                        android:padding="10dp"
-                        android:inputType="textFilter"
-                        android:background="@drawable/edt_back"/>
-
-                </LinearLayout>
+                    android:layout_height="@dimen/_30sdp"
+                    android:hint="@string/search"
+                    android:padding="10dp"
+                    android:backgroundTint="@color/white"
+                    android:layout_marginEnd="20dp"
+                    android:inputType="textFilter"
+                    android:background="@drawable/edt_back"/>
 
             </androidx.appcompat.widget.Toolbar>
 

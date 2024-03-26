@@ -6,6 +6,7 @@
 
     <!--    Black and white-->
 
+    <color name="theme_main">#000000</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
     <color name="grey">#AEADAD</color>

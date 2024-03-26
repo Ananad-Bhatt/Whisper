@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
@@ -64,6 +65,6 @@ class ManageAccountAdapter(private val context: FragmentActivity, private val se
     class SearchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val userImg: ImageView = itemView.findViewById(R.id.img_search_act)
         val userName: TextView = itemView.findViewById(R.id.tv_search_act)
-        val container: CardView = itemView.findViewById(R.id.cv_search_act)
+        val container: LinearLayout = itemView.findViewById(R.id.ll_main_search_rv)
     }
 }

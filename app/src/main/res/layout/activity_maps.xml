@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MapsActivity" >
+    tools:context=".MapsActivity">
 
 
     <fragment
@@ -13,13 +13,27 @@
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"/>
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn_loc_act_send"
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/_50sdp"
-        android:text="Send Location"
-        android:layout_alignParentTop="true"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:padding="@dimen/_10sdp"
         android:layout_alignParentEnd="true"
-        android:layout_gravity="bottom" />
+        android:layout_marginEnd="-20dp"
+        android:background="@drawable/tool_back_card">
+
+        <TextView
+            android:id="@+id/btn_loc_act_send"
+            android:layout_height="wrap_content"
+            style="@style/TEXT"
+            android:layout_width="wrap_content"
+            android:textSize="@dimen/_16ssp"
+            android:text="@string/share_location"
+            android:drawablePadding="@dimen/_10sdp"
+            android:gravity="center"
+            android:layout_marginHorizontal="@dimen/_20sdp"
+            map:drawableEndCompat="@drawable/arrow_right" />
+
+    </LinearLayout>
 
 </RelativeLayout>

@@ -7,6 +7,7 @@
     android:orientation="vertical"
     android:gravity="center"
     style="@style/BODY"
+    android:background="?primary"
     tools:context=".SplashActivity">
 
     <ImageView
@@ -30,6 +31,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/_10ssp"
+        android:text="@string/app_name"
+        android:textColor="@color/white"
         android:layout_marginTop="10dp"/>
 
 </LinearLayout>

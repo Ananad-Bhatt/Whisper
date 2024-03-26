@@ -1,56 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     style="@style/BODY"
+    android:orientation="vertical"
     tools:context=".StartUpActivity">
 
-    <LinearLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:text="@string/app_name"
+        android:textAlignment="center"
+        android:layout_marginTop="80dp"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_30ssp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/title_message"
+        android:textAlignment="center"
+        android:layout_marginBottom="20dp"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_25ssp" />
+
+    <LinearLayout
+        android:id="@+id/ll_start_up_act"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/tool_back_reverse"
         android:orientation="vertical">
 
-        <TextView
-            style="@style/TEXT"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/greeting"
-            android:textAlignment="center"
-            android:textSize="@dimen/_45ssp"/>
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/TEXT"
-            android:textSize="@dimen/_25ssp"
-            android:text="@string/greeting_message"
-            android:textAlignment="center"
-            android:padding="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_20sdp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-    <!--    Lottie animation tag-->
-        <com.airbnb.lottie.LottieAnimationView
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_300sdp"
-            android:layout_marginTop="@dimen/_20sdp"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true"
-            app:lottie_rawRes="@raw/main_screen"/>
+            <!--    Lottie animation tag-->
+                <com.airbnb.lottie.LottieAnimationView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_300sdp"
+                    app:lottie_autoPlay="true"
+                    app:lottie_loop="true"
+                    app:lottie_rawRes="@raw/main_screen"/>
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_login"
-            style="@style/BUTTON_FILL"
-            android:layout_marginTop="@dimen/_35sdp"
-            android:text="@string/login_btn"/>
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_login"
+                    style="@style/BUTTON_FILL"
+                    android:layout_marginTop="@dimen/_35sdp"
+                    android:text="@string/login_btn"/>
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_signup"
-            style="@style/BUTTON_OUTLINED"
-            android:layout_marginTop="@dimen/_20sdp"
-            android:layout_marginBottom="@dimen/_10sdp"
-            android:text="@string/register_title"/>
-
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_signup"
+                    style="@style/BUTTON_OUTLINED"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginBottom="80dp"
+                    android:text="@string/register_title"/>
+            </LinearLayout>
+        </ScrollView>
     </LinearLayout>
-</ScrollView>
+</LinearLayout>

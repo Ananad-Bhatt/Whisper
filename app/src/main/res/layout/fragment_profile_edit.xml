@@ -1,36 +1,40 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="?primary"
+    android:orientation="vertical"
+    android:gravity="center"
     tools:context="fragments.ProfileEditFragment">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/edit_profile"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:layout_marginTop="@dimen/_40sdp"
+        android:textSize="@dimen/_25ssp" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_marginTop="@dimen/_50sdp"
-        android:gravity="center">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/edit_profile"
-            android:textAllCaps="true"
-            android:textSize="@dimen/_30ssp"
-            style="@style/TEXT"/>
+        android:background="@drawable/tool_back">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="35dp">
+            android:layout_marginTop="@dimen/_20sdp">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/img_edit_profile_user_image"
-            android:layout_width="@dimen/_160sdp"
-            android:layout_height="@dimen/_160sdp"
-            android:layout_centerInParent="true"
-            android:src="@drawable/ic_launcher_background"/>
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/img_edit_profile_user_image"
+                android:layout_width="@dimen/_140sdp"
+                android:layout_height="@dimen/_140sdp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/ic_launcher_background" />
 
             <ImageView
                 android:id="@+id/img_btn_edit_profile_camera"
@@ -90,4 +94,4 @@
 
     </LinearLayout>
 
-</ScrollView>
+</LinearLayout>

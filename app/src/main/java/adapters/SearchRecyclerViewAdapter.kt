@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -34,6 +36,7 @@ class SearchRecyclerViewAdapter(private val context:Context,private val searchRe
         holder.userName.text = searchResults[position].userName
 
         holder.container.setOnClickListener {
+
             val i = Intent(context, UserProfileActivity::class.java)
             GlobalStaticAdapter.userName2 = holder.userName.text.toString()
             GlobalStaticAdapter.uid2 = searchResults[position].userUid
@@ -50,6 +53,6 @@ class SearchRecyclerViewAdapter(private val context:Context,private val searchRe
     class SearchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val userImg: ImageView = itemView.findViewById(R.id.img_search_act)
         val userName:TextView = itemView.findViewById(R.id.tv_search_act)
-        val container:CardView = itemView.findViewById(R.id.cv_search_act)
+        val container:LinearLayout = itemView.findViewById(R.id.ll_main_search_rv)
     }
 }
