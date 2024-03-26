@@ -17,6 +17,10 @@
         <item name="android:background">@color/secondary</item>
     </style>
 
+    <style name="ProgressBarStyle">
+        <item name="colorAccent">@color/primary_custom</item>
+    </style>
+
     <style name="BUTTON_FILL">
         <item name="android:layout_height">@dimen/_45sdp</item>
         <item name="android:layout_width">@dimen/_250sdp</item>

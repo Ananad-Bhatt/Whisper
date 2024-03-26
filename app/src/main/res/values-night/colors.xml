@@ -11,6 +11,7 @@
 
     <!--    Login and registration screen-->
 
+    <color name="primary_custom">#20308C</color>
     <color name="primary">#FFF</color>
     <color name="secondary">#000</color>
     <color name="btn_fill_text">#000</color>

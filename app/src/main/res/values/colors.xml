@@ -10,8 +10,9 @@
     <color name="black">#000</color>
 
 <!--    Login and registration screen-->
-    <color name="primary">#20308C</color>
-    <color name="secondary">#B9D4FD</color>
+    <color name="primary_custom">#20308C</color>
+    <color name="primary">#FFF</color>
+    <color name="secondary">#FFF</color>
     <color name="btn_fill_text">#FFF</color>
     <color name="btn_outlined_text">#000</color>
 
