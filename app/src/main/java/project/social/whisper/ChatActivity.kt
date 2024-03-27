@@ -868,8 +868,63 @@ class ChatActivity : BaseActivity() {
 
             chatAdapter.notifyItemInserted(chats.size)
             b.rvChatAct.scrollToPosition(chatAdapter.itemCount - 1)
+
+            //keepReceivingData()
         }
     }
+
+//    private fun keepReceivingData() {
+//
+//        DatabaseAdapter.chatTable.child(senderRoom).addValueEventListener(object: ValueEventListener{
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                if(snapshot.exists())
+//                {
+//                    for(s in snapshot.children)
+//                    {
+//                        val data = s.getValue(ChatModel::class.java)!!
+////                        if (data.MESSAGE?.contains("https://firebasestorage.googleapis.com")!!) {
+////
+////                            Log.d("IMG_ERROR","INSIDE IF : ${chats.size}")
+////
+////                            val uri = DatabaseAdapter.downloadImageAndConvertToUri(applicationContext, data.MESSAGE!!, (Date().time).toString())
+////
+////                            val decryptedUri = DatabaseAdapter.decryptImage(uri, sharedSecret, applicationContext)
+////
+////                            data.MESSAGE = decryptedUri.toString()
+////
+////                            Log.d("IMG_ERROR", "1")
+////
+////                            chats.add(data)
+////
+////                            Log.d("IMG_ERROR","Chat size : ${chats.size}")
+////                            Log.d("IMG_ERROR", "2")
+////
+////                        } else {
+//                            data.MESSAGE =
+//                                DatabaseAdapter.decryptMessage(data.MESSAGE!!, sharedSecret)
+//
+//                            Log.d("IMG_ERROR", "3")
+//
+//                            chats.add(data)
+//
+//                            Log.d("IMG_ERROR","Chat size : ${chats.size}")
+//                        //}
+//
+//
+//                        chats.add(data)
+//
+//                        chatAdapter.notifyItemInserted(chats.size)
+//                        b.rvChatAct.scrollToPosition(chatAdapter.itemCount - 1)
+//                    }
+//                }
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//
+//            }
+//
+//        })
+//    }
 
     private fun isVisible(){
 

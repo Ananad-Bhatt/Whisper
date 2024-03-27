@@ -7,17 +7,24 @@ import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import android.view.ContextMenu
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.PopupMenu
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.getValue
 import models.ChatModel
 import project.social.whisper.ImageViewActivity
 import project.social.whisper.R
@@ -123,6 +130,121 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
                     Log.d("IMG_ERROR", "WTH${m.MESSAGE}")
                     h.senderMessage.text = m.MESSAGE
                     h.senderTime.text = f.format(d)
+
+                    h.senderMainView.setOnLongClickListener {
+                        val p = PopupMenu(context, h.senderMainView)
+
+                        p.inflate(R.menu.chat_context_menu)
+                        p.show()
+
+                        p.setOnMenuItemClickListener {
+
+                            when(it.itemId)
+                            {
+                                R.id.copy_context_menu -> {
+                                    val clipboardManager = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                                    val clip = ClipData.newPlainText("chat", m.MESSAGE)
+                                    clipboardManager.setPrimaryClip(clip)
+                                }
+
+                                R.id.del_chat_context_menu -> {
+
+                                    val sender = GlobalStaticAdapter.key+GlobalStaticAdapter.key2
+                                    val receiver = GlobalStaticAdapter.key2+GlobalStaticAdapter.key
+
+                                    DatabaseAdapter.chatTable.child(sender)
+                                        .addListenerForSingleValueEvent(object: ValueEventListener{
+                                            override fun onDataChange(snapshot: DataSnapshot) {
+                                                if(snapshot.exists())
+                                                {
+                                                    for(s in snapshot.children)
+                                                    {
+                                                        val t = s.child("TIMESTAMP")
+                                                            .getValue(Long::class.java)!!
+
+                                                        Log.d("DEL_ERROR", m.TIMESTAMP.toString())
+                                                        Log.d("DEL_ERROR", t.toString())
+                                                        if(t == m.TIMESTAMP)
+                                                        {
+                                                            Log.d("DEL_ERROR", "Hello1 ${s.key!!}")
+                                                            DatabaseAdapter.chatRooms
+                                                                .child(sender)
+                                                                .child(s.key!!)
+                                                                .removeValue()
+                                                            Log.d("DEL_ERROR", "Hello2")
+                                                            chats.removeAt(h.adapterPosition)
+                                                            notifyItemRemoved(h.adapterPosition)
+
+                                                            return
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            override fun onCancelled(error: DatabaseError) {
+
+                                            }
+
+                                        })
+
+                                    DatabaseAdapter.chatTable.child(receiver)
+                                        .addListenerForSingleValueEvent(object: ValueEventListener{
+                                            override fun onDataChange(snapshot: DataSnapshot) {
+                                                if(snapshot.exists())
+                                                {
+                                                    for(s in snapshot.children)
+                                                    {
+                                                        val t = s.child("TIMESTAMP")
+                                                            .getValue(Long::class.java)!!
+
+                                                        if(t == m.TIMESTAMP)
+                                                        {
+                                                            DatabaseAdapter.chatRooms
+                                                                .child(receiver)
+                                                                .child(s.key!!)
+                                                                .removeValue()
+
+                                                            return
+
+//                                                            chats.removeAt(h.adapterPosition)
+//                                                            notifyItemRemoved(h.adapterPosition)
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            override fun onCancelled(error: DatabaseError) {
+
+                                            }
+
+                                        })
+                                }
+
+                                R.id.del_all_chat_context_menu -> {
+                                    val sender = GlobalStaticAdapter.key+GlobalStaticAdapter.key2
+                                    val receiver = GlobalStaticAdapter.key2+GlobalStaticAdapter.key
+
+                                    try {
+                                        DatabaseAdapter.chatRooms.child(sender).removeValue()
+                                    }catch(_:Exception){}
+
+                                    try {
+                                        DatabaseAdapter.chatRooms.child(receiver).removeValue()
+                                    }catch(_:Exception){}
+
+                                    DatabaseAdapter.chatTable.child(sender).removeValue()
+                                    DatabaseAdapter.chatTable.child(receiver).removeValue()
+
+                                    notifyItemRangeChanged(0,0)
+                                }
+                            }
+
+                            true
+                        }
+
+                        true
+                    }
+
                 }
             }
 

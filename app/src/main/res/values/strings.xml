@@ -119,4 +119,10 @@
 <!--    Alias-->
     <string name="alias_title">Give Alias for notification</string>
     <string name="remove_alias">Remove</string>
+
+<!--    Chat context menu-->
+    <string name="copy">Copy</string>
+    <string name="delete_chat">Delete Chat</string>
+    <string name="delete_all">Delete all chats</string>
+
 </resources>
