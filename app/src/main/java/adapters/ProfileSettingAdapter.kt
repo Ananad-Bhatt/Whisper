@@ -13,6 +13,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import fragments.CustomizationFragment
 import fragments.ManageAccountsFragment
 import fragments.ManageChannelFragment
 import fragments.ProfileSettingAccountFragment
@@ -52,6 +53,12 @@ class ProfileSettingAdapter(val context: FragmentActivity, private val items: Li
 
                 "Manage Channels" -> {
                     ft1.replace(R.id.main_container, ManageChannelFragment())
+                    ft1.addToBackStack(null)
+                    ft1.commit()
+                }
+
+                "Customization" -> {
+                    ft1.replace(R.id.main_container, CustomizationFragment())
                     ft1.addToBackStack(null)
                     ft1.commit()
                 }

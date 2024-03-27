@@ -43,6 +43,7 @@ class ProfileSettingFragment : Fragment() {
             settings.add(ProfileSettingModel("Account",R.drawable.profile2))
             settings.add(ProfileSettingModel("Manage Accounts",R.drawable.manage_account))
             settings.add(ProfileSettingModel("Manage Channels",R.drawable.profile))
+            settings.add(ProfileSettingModel("Customization", R.drawable.profile))
             settings.add(ProfileSettingModel("Log Out",R.drawable.logout))
 
             b.rvProfileSettingFragment.adapter = ProfileSettingAdapter(requireActivity(),settings)

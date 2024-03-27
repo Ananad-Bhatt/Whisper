@@ -100,4 +100,8 @@
     <string name="title_activity_maps">MapsActivity</string>
     <string name="share_location">Share Location</string>
 
+<!--    Customize theme-->
+    <string name="customize_title">Customize Theme</string>
+    <string name="customize_title2">Select Color</string>
+
 </resources>
