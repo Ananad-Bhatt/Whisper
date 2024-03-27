@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import project.social.whisper.R
+import project.social.whisper.databinding.FragmentCustomizationBinding
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -22,6 +23,8 @@ class CustomizationFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    private lateinit var b:FragmentCustomizationBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -33,9 +36,15 @@ class CustomizationFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_customization, container, false)
+        b = FragmentCustomizationBinding.inflate(inflater, container, false)
+
+
+
+
+
+        return b.root
     }
 
     companion object {

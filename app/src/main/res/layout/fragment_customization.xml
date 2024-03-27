@@ -39,20 +39,161 @@
                     android:layout_height="wrap_content"
                     android:text="@string/customize_title2"
                     android:textAllCaps="true"
+                    android:textStyle="bold"
                     android:textColor="?primary"
                     android:layout_marginTop="@dimen/_40sdp"
                     android:textSize="@dimen/_20ssp"/>
 
 
-                <RadioGroup
-                    android:id="@+id/rg_color_cust_frag"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_20sdp">
+                    android:padding="10dp"
+                    android:gravity="center"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginHorizontal="@dimen/_20sdp">
+
+                    <LinearLayout
+                        android:id="@+id/primary1_color"
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_marginEnd="@dimen/_20sdp"
+                        android:background="@drawable/radio_back_color_selected"
+                        android:backgroundTint="@color/primary1"/>
+
+                    <LinearLayout
+                        android:id="@+id/primary2_color"
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_marginEnd="@dimen/_20sdp"
+                        android:background="@drawable/radio_back_color_selected"
+                        android:backgroundTint="@color/primary2"/>
+
+                    <LinearLayout
+                        android:id="@+id/primary3_color"
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_marginEnd="@dimen/_20sdp"
+                        android:background="@drawable/radio_back_color_selected"
+                        android:backgroundTint="@color/primary3"/>
+
+                    <LinearLayout
+                        android:id="@+id/primary4_color"
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_marginEnd="@dimen/_20sdp"
+                        android:background="@drawable/radio_back_color_selected"
+                        android:backgroundTint="@color/primary4"/>
+
+                    <LinearLayout
+                        android:id="@+id/primary5_color"
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:background="@drawable/radio_back_color_selected"
+                        android:backgroundTint="@color/primary5"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:gravity="center"
+                    android:layout_marginHorizontal="@dimen/_20sdp">
+
+                    <LinearLayout
+                        android:id="@+id/primary6_color"
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_marginEnd="@dimen/_20sdp"
+                        android:background="@drawable/radio_back_color_selected"
+                        android:backgroundTint="@color/primary6"/>
+
+                    <LinearLayout
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_marginEnd="@dimen/_20sdp"
+                        android:background="@drawable/radio_back_color_selected"
+                        android:backgroundTint="@color/primary1"/>
+
+                    <LinearLayout
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_marginEnd="@dimen/_20sdp"
+                        android:background="@drawable/radio_back_color_selected"
+                        android:backgroundTint="@color/primary1"/>
+
+                    <LinearLayout
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_marginEnd="@dimen/_20sdp"
+                        android:background="@drawable/radio_back_color_selected"
+                        android:backgroundTint="@color/primary1"/>
+
+                    <LinearLayout
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:background="@drawable/radio_back_color_selected"
+                        android:backgroundTint="@color/primary1"/>
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/customize_title3"
+                    android:textAllCaps="true"
+                    android:textStyle="bold"
+                    android:textColor="?primary"
+                    android:layout_marginTop="@dimen/_40sdp"
+                    android:textSize="@dimen/_20ssp"/>
 
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:gravity="center"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginHorizontal="@dimen/_20sdp">
 
-                </RadioGroup>
+                    <LinearLayout
+                        android:id="@+id/white_color"
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_marginEnd="@dimen/_20sdp"
+                        android:background="@drawable/radio_back_color_selected"
+                        android:backgroundTint="#DCDCDC"/>
+
+                    <LinearLayout
+                        android:id="@+id/black_color"
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_marginEnd="@dimen/_20sdp"
+                        android:background="@drawable/radio_back_color_selected"
+                        android:backgroundTint="#151515"/>
+
+                    <LinearLayout
+                        android:id="@+id/system_default_color"
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_marginEnd="@dimen/_20sdp"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="@dimen/_25sdp"
+                            android:layout_height="@dimen/_12sdp"
+                            android:background="#DCDCDC"/>
+
+                        <LinearLayout
+                            android:layout_width="@dimen/_25sdp"
+                            android:layout_height="@dimen/_12sdp"
+                            android:background="#151515"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
 
 
             </LinearLayout>

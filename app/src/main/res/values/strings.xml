@@ -102,6 +102,7 @@
 
 <!--    Customize theme-->
     <string name="customize_title">Customize Theme</string>
-    <string name="customize_title2">Select Color</string>
+    <string name="customize_title2">Select Primary Color</string>
+    <string name="customize_title3">Select Theme</string>
 
 </resources>
