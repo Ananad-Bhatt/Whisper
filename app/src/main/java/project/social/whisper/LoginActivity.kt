@@ -36,6 +36,10 @@ class LoginActivity : BaseActivity() {
 
         auth = FirebaseAuth.getInstance()
 
+        b.btnMobileLogin.setOnClickListener {
+            startActivity(Intent(this, MobileVerificationActivity::class.java))
+        }
+
         //Google
         b.btnLogGoogle.setOnClickListener {
             gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

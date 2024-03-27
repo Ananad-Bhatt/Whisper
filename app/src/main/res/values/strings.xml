@@ -15,6 +15,17 @@
     <string name="another_option">Or</string>
     <string name="new_account">Don\'t have account?</string>
 
+    <!--    Login with mobile-->
+    <string name="mobile_login">Login with Mobile Number</string>
+    <string name="verify_mobile">Verify Mobile Number</string>
+    <string name="verify_mobile_desc">You\'r mobile number is safe with us, But we\'re recommending you to use email</string>
+    <string name="mobile">Mobile Number</string>
+    <string name="send_otp">Send OTP</string>
+    <string name="verify_otp">Verify OTP</string>
+
+    <!--    Register with mobile-->
+    <string name="mobile_register">Sign up with Mobile Number</string>
+
     <!--    New User/ Registration -->
     <string name="register_title">Sign Up</string>
     <string name="register_desc">Your date is safe with us</string>
@@ -100,7 +111,7 @@
     <string name="title_activity_maps">MapsActivity</string>
     <string name="share_location">Share Location</string>
 
-<!--    Customize theme-->
+    <!--    Customize theme-->
     <string name="customize_title">Customize Theme</string>
     <string name="customize_title2">Select Primary Color</string>
     <string name="customize_title3">Select Theme</string>

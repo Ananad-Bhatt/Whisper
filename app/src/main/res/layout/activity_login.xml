@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             style="@style/TEXT"
             android:layout_width="wrap_content"
-            android:textSize="@dimen/_16ssp"
+            android:textSize="@dimen/_14ssp"
             android:text="@string/register_title"
             android:drawablePadding="@dimen/_10sdp"
             android:gravity="center"
@@ -32,12 +32,35 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:padding="@dimen/_10sdp"
+        android:layout_marginEnd="-20dp"
+        android:background="@drawable/tool_back_card">
+
+        <TextView
+            android:id="@+id/btn_mobile_login"
+            android:layout_height="wrap_content"
+            style="@style/TEXT"
+            android:layout_width="wrap_content"
+            android:textSize="@dimen/_14ssp"
+            android:text="@string/mobile_login"
+            android:drawablePadding="@dimen/_10sdp"
+            android:gravity="center"
+            android:layout_marginHorizontal="@dimen/_20sdp"
+            app:drawableEndCompat="@drawable/arrow_right"/>
+
+    </LinearLayout>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/login_title"
         android:textColor="@color/white"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="@dimen/_40sdp"
         android:textAlignment="center"
         android:textStyle="bold"
         android:textSize="@dimen/_30ssp"/>
@@ -54,7 +77,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_marginTop="@dimen/_70sdp"
+        android:layout_marginTop="@dimen/_40sdp"
         android:background="@drawable/tool_back"
         android:layout_gravity="center">
 

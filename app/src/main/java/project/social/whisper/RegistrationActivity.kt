@@ -39,6 +39,10 @@ class RegistrationActivity : BaseActivity() {
 
         auth = FirebaseAuth.getInstance()
 
+        b.btnMobileLogin.setOnClickListener {
+            startActivity(Intent(this, MobileVerificationActivity::class.java))
+        }
+
         b.btnRegLogin.setOnClickListener {
             val login = Intent(this, LoginActivity::class.java)
             startActivity(login)
