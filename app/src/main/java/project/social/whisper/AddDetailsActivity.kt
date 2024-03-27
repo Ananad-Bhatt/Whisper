@@ -22,7 +22,7 @@ import com.google.firebase.ktx.Firebase
 import project.social.whisper.databinding.ActivityAddDetailsBinding
 import services.NotificationService
 
-class AddDetailsActivity : AppCompatActivity() {
+class AddDetailsActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -196,5 +196,15 @@ class AddDetailsActivity : AppCompatActivity() {
                 availabilityTextView.visibility = View.VISIBLE
             }
         })
+    }
+
+    override fun getSelectedTheme(): String {
+        val sharedPreferences = getSharedPreferences("app_theme", MODE_PRIVATE)
+        return sharedPreferences.getString("theme", "primary1")?: "primary1"
+    }
+
+    override fun getWhiteOrBlackTheme(): String {
+        val sharedPreferences = getSharedPreferences("app_theme_wb", MODE_PRIVATE)
+        return sharedPreferences.getString("theme_wb", "system")?: "system"
     }
 }

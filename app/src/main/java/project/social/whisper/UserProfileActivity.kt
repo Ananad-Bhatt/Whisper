@@ -14,7 +14,7 @@ import com.google.firebase.database.ValueEventListener
 import models.HomeModel
 import project.social.whisper.databinding.ActivityUserProfileBinding
 
-class UserProfileActivity : AppCompatActivity() {
+class UserProfileActivity : BaseActivity() {
 
     private lateinit var b:ActivityUserProfileBinding
 
@@ -69,5 +69,15 @@ class UserProfileActivity : AppCompatActivity() {
 
         })
 
+    }
+
+    override fun getSelectedTheme(): String {
+        val sharedPreferences = getSharedPreferences("app_theme", MODE_PRIVATE)
+        return sharedPreferences.getString("theme", "primary1")?: "primary1"
+    }
+
+    override fun getWhiteOrBlackTheme(): String {
+        val sharedPreferences = getSharedPreferences("app_theme_wb", MODE_PRIVATE)
+        return sharedPreferences.getString("theme_wb", "system")?: "system"
     }
 }

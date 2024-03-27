@@ -7,7 +7,7 @@ import com.github.chrisbanes.photoview.PhotoViewAttacher
 import project.social.whisper.databinding.ActivityImageViewBinding
 
 
-class ImageViewActivity : AppCompatActivity() {
+class ImageViewActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -18,5 +18,14 @@ class ImageViewActivity : AppCompatActivity() {
         
         Glide.with(this).load(img).into(b.main)
 
+    }
+    override fun getSelectedTheme(): String {
+        val sharedPreferences = getSharedPreferences("app_theme", MODE_PRIVATE)
+        return sharedPreferences.getString("theme", "primary1")?: "primary1"
+    }
+
+    override fun getWhiteOrBlackTheme(): String {
+        val sharedPreferences = getSharedPreferences("app_theme_wb", MODE_PRIVATE)
+        return sharedPreferences.getString("theme_wb", "system")?: "system"
     }
 }

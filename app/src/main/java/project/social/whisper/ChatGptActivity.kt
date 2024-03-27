@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import project.social.whisper.databinding.ActivityChatGptBinding
 
-class ChatGptActivity : AppCompatActivity() {
+class ChatGptActivity : BaseActivity() {
 
     private val client = OkHttpClient()
 
@@ -57,5 +57,15 @@ class ChatGptActivity : AppCompatActivity() {
 
             b.edtChatActMessage.text.clear()
         }
+    }
+
+    override fun getSelectedTheme(): String {
+        val sharedPreferences = getSharedPreferences("app_theme", MODE_PRIVATE)
+        return sharedPreferences.getString("theme", "primary1")?: "primary1"
+    }
+
+    override fun getWhiteOrBlackTheme(): String {
+        val sharedPreferences = getSharedPreferences("app_theme_wb", MODE_PRIVATE)
+        return sharedPreferences.getString("theme_wb", "system")?: "system"
     }
 }

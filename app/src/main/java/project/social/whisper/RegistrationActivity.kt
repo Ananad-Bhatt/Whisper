@@ -19,7 +19,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import project.social.whisper.databinding.ActivityRegistrationBinding
 
-class RegistrationActivity : AppCompatActivity() {
+class RegistrationActivity : BaseActivity() {
 
     //Google
     private lateinit var auth: FirebaseAuth
@@ -277,5 +277,15 @@ class RegistrationActivity : AppCompatActivity() {
             }
 
         })
+    }
+
+    override fun getSelectedTheme(): String {
+        val sharedPreferences = getSharedPreferences("app_theme", MODE_PRIVATE)
+        return sharedPreferences.getString("theme", "primary1")?: "primary1"
+    }
+
+    override fun getWhiteOrBlackTheme(): String {
+        val sharedPreferences = getSharedPreferences("app_theme_wb", MODE_PRIVATE)
+        return sharedPreferences.getString("theme_wb", "system")?: "system"
     }
 }

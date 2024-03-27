@@ -56,7 +56,7 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 
-class ChatActivity : AppCompatActivity() {
+class ChatActivity : BaseActivity() {
 
     private lateinit var b:ActivityChatBinding
 
@@ -1080,6 +1080,16 @@ class ChatActivity : AppCompatActivity() {
             userId,
             callInvitationConfig
         )
+    }
+
+    override fun getSelectedTheme(): String {
+        val sharedPreferences = getSharedPreferences("app_theme", MODE_PRIVATE)
+        return sharedPreferences.getString("theme", "primary1")?: "primary1"
+    }
+
+    override fun getWhiteOrBlackTheme(): String {
+        val sharedPreferences = getSharedPreferences("app_theme_wb", MODE_PRIVATE)
+        return sharedPreferences.getString("theme_wb", "system")?: "system"
     }
 }
 
