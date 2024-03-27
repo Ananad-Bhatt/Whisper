@@ -17,12 +17,12 @@ abstract class BaseActivity : AppCompatActivity() {
 
         // Set the theme based on the user's selection
         when (getSelectedTheme()) {
-            "red" -> setTheme(R.style.Theme_red)
-            "purple" -> setTheme(R.style.Base_Theme_Whisper)
-            "green" -> setTheme(R.style.Theme_green)
-            "navy_blue" -> setTheme(R.style.Theme_navy_blue)
-            "orange" -> setTheme(R.style.Theme_orange)
-            "yellow" -> setTheme(R.style.Theme_yellow)
+            "primary1" -> setTheme(R.style.Base_Theme_Whisper)
+            "primary2" -> setTheme(R.style.Theme_red)
+            "primary3" -> setTheme(R.style.Theme_green)
+            "primary4" -> setTheme(R.style.Theme_navy_blue)
+            "primary5" -> setTheme(R.style.Theme_orange)
+            "primary6" -> setTheme(R.style.Theme_yellow)
         }
     }
 

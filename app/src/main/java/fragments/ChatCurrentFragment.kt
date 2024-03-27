@@ -133,23 +133,35 @@ class ChatCurrentFragment : Fragment() {
                     .addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(snapshot: DataSnapshot) {
                             if (snapshot.exists()) {
+                                if(isAdded) {
+                                    val userName =
+                                        snapshot.child("USER_NAME").getValue(String::class.java)!!
 
-                                val userName =
-                                    snapshot.child("USER_NAME").getValue(String::class.java)!!
+                                    val imgUrl =
+                                        snapshot.child("IMAGE").getValue(String::class.java)
+                                            ?: getString(R.string.image_not_found)
 
-                                val imgUrl = snapshot.child("IMAGE").getValue(String::class.java)
-                                    ?: getString(R.string.image_not_found)
+                                    val fcm =
+                                        snapshot.child("FCM_TOKEN").getValue(String::class.java)
+                                            ?: ""
 
-                                val fcm = snapshot.child("FCM_TOKEN").getValue(String::class.java)?:""
-
-                                users.add(ChatRecyclerModel(userName, imgUrl, k.lastMessage, k.key, k.uid, fcm))
-                                Log.d("IDK","ADDED")
-                                if(users.size == usersKey.size)
-                                {
-                                    if(isAdded) {
-                                        val adapter =
-                                            ChatRecyclerViewAdapter(requireContext(), users)
-                                        b.chatCurrentFragRecyclerView.adapter = adapter
+                                    users.add(
+                                        ChatRecyclerModel(
+                                            userName,
+                                            imgUrl,
+                                            k.lastMessage,
+                                            k.key,
+                                            k.uid,
+                                            fcm
+                                        )
+                                    )
+                                    Log.d("IDK", "ADDED")
+                                    if (users.size == usersKey.size) {
+                                        if (isAdded) {
+                                            val adapter =
+                                                ChatRecyclerViewAdapter(requireContext(), users)
+                                            b.chatCurrentFragRecyclerView.adapter = adapter
+                                        }
                                     }
                                 }
 

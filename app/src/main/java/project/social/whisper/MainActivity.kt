@@ -8,7 +8,7 @@ import fragments.ProfileFragment
 import fragments.ReelFragment
 import project.social.whisper.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -55,5 +55,10 @@ class MainActivity : AppCompatActivity() {
             }
             true
         }
+    }
+
+    override fun getSelectedTheme(): String {
+        val sharedPreferences = getSharedPreferences("app_theme", MODE_PRIVATE)
+        return sharedPreferences.getString("theme", "primary1")?: "primary1"
     }
 }
