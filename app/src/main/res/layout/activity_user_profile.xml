@@ -26,6 +26,13 @@
             android:textSize="@dimen/_26ssp"/>
 
         <ImageButton
+            android:id="@+id/img_btn_profile_alias"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/edit"
+            android:backgroundTint="#000000FF"/>
+
+        <ImageButton
             android:id="@+id/img_btn_profile_act_setting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

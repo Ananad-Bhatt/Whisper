@@ -57,7 +57,7 @@ class GlobalStaticAdapter {
         var lat = ""
         var long = ""
 
-        //Shared Secret key
-        var sharedSecret:ByteArray = byteArrayOf()
+        //Alias
+        var alias2 = ""
     }
 }

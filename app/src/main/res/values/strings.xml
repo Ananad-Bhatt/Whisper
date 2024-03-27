@@ -116,4 +116,7 @@
     <string name="customize_title2">Select Primary Color</string>
     <string name="customize_title3">Select Theme</string>
 
+<!--    Alias-->
+    <string name="alias_title">Give Alias for notification</string>
+    <string name="remove_alias">Remove</string>
 </resources>

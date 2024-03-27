@@ -183,19 +183,20 @@ class DatabaseAdapter {
 
         private fun generateSecretKeyFromEmail(email: String, chatRoom: String) : SecretKey
         {
+            Log.d("KEY_ERROR", email)
             val staticSalt = "wqughv fed7^&@!(*vhjQW1254537/AFDMNQgewf;wf;g u gyGFYEGIDBSIAFWAG JIQW87R2378RGBF7jbf sd/54f7da7wa bjfgw iqyfgwdyhaf0912834=576 baHFGBHG%^%^q#&GGFGGUw $chatRoom".toByteArray() // Choose a static salt
             val iterations = 10000 // Number of iterations for key stretching
             val keyLength = 256 // Length of the derived key in bits
 
             // Use email address as input to the KDF
             val input = email.toCharArray()
-
+            Log.d("KEY_ERROR", input.toString())
             try {
                 val skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
                 val spec = PBEKeySpec(input, staticSalt, iterations, keyLength)
                 return skf.generateSecret(spec)
             }catch(e:Exception) {
-                e.printStackTrace()
+                Log.d("KEY_ERROR", e.toString())
             }
             return "" as SecretKey
         }

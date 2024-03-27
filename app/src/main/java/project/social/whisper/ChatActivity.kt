@@ -28,6 +28,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.disklrucache.DiskLruCache.Value
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -96,7 +97,7 @@ class ChatActivity : BaseActivity() {
     private var publicKeyForShared = ""
     private var privateKeyForShared = ""
 
-    val emailOrMob = (DatabaseAdapter.returnUser()?.email ?: DatabaseAdapter.returnUser()?.phoneNumber)!!
+    private lateinit var emailOrMob:String
 
     companion object {
         const val MY_PERMISSIONS_REQUEST_LOCATION = 1
@@ -121,6 +122,16 @@ class ChatActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        emailOrMob = DatabaseAdapter.returnUser()?.email!!
+
+        if(emailOrMob.isEmpty())
+        {
+            emailOrMob = DatabaseAdapter.returnUser()?.phoneNumber!!
+        }
+
+        Log.d("KEY_ERROR", "${emailOrMob}")
+        Log.d("KEY_ERROR", "${DatabaseAdapter.returnUser()?.email}")
+        Log.d("KEY_ERROR", "${DatabaseAdapter.returnUser()?.phoneNumber}")
         b = ActivityChatBinding.inflate(layoutInflater)
         setContentView(b.root)
 
@@ -292,6 +303,9 @@ class ChatActivity : BaseActivity() {
         senderRoom = senderKey + receiverKey
         receiverRoom = receiverKey + senderKey
 
+        findAlias()
+
+
         if(GlobalStaticAdapter.lat != "" && GlobalStaticAdapter.long != "")
         {
             sendingMessage("location:17861,${GlobalStaticAdapter.lat},${GlobalStaticAdapter.long}")
@@ -451,6 +465,35 @@ class ChatActivity : BaseActivity() {
             Toast.makeText(this,"Request declined!",Toast.LENGTH_LONG).show()
             b.llChatActMsgReq.visibility = View.GONE
         }
+    }
+
+    private fun findAlias() {
+        try {
+            DatabaseAdapter.chatRooms.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if(snapshot.exists()) {
+                        if (snapshot.hasChild(senderRoom)) {
+                            GlobalStaticAdapter.alias2 =
+                                snapshot.child(senderRoom).child("ALIAS_1")
+                                    .getValue(String::class.java)
+                                    ?: GlobalStaticAdapter.userName
+                        } else if (snapshot.hasChild(receiverRoom)) {
+                            GlobalStaticAdapter.alias2 =
+                                snapshot.child(receiverRoom).child("ALIAS_2")
+                                    .getValue(String::class.java)
+                                    ?: GlobalStaticAdapter.userName
+                        }
+                        else{
+                            GlobalStaticAdapter.alias2 = GlobalStaticAdapter.userName
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                }
+
+            })
+        }catch (_:Exception){}
     }
 
     private fun setVideoCall(targetUserID: String) {
@@ -664,7 +707,7 @@ class ChatActivity : BaseActivity() {
                                     NotificationService.sendNotification(
                                         "Image",
                                         fcmToken,
-                                        selfUserName
+                                        GlobalStaticAdapter.alias2
                                     )
                                 }
                             }
@@ -905,7 +948,7 @@ class ChatActivity : BaseActivity() {
                     privateKeyForShared = snapshot.child(senderRoom).child("KEY").getValue(String::class.java)!!
 
                     val num = DatabaseAdapter.decryptPrivateKey(privateKeyForShared, senderRoom, emailOrMob)
-
+                    Log.d("KEy_ERROR", num)
                     sharedSecret = BigInteger(publicKeyForShared)
                         .modPow(BigInteger(num), DatabaseAdapter.p)
                         .toString().toByteArray(StandardCharsets.ISO_8859_1).toHashSet().toByteArray()
@@ -939,7 +982,7 @@ class ChatActivity : BaseActivity() {
 
             runBlocking {
                 launch(Dispatchers.IO) {
-                    NotificationService.sendNotification(msg, fcmToken, selfUserName)
+                    NotificationService.sendNotification(msg, fcmToken, GlobalStaticAdapter.alias2)
                 }
             }
 
