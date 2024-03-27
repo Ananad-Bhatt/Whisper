@@ -2,6 +2,7 @@ package project.social.whisper
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 
 abstract class BaseActivity : AppCompatActivity() {
 
@@ -24,7 +25,17 @@ abstract class BaseActivity : AppCompatActivity() {
             "primary5" -> setTheme(R.style.Theme_orange)
             "primary6" -> setTheme(R.style.Theme_yellow)
         }
+
+        when(getWhiteOrBlackTheme())
+        {
+            "light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            "dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            "system" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        }
+
     }
 
     abstract fun getSelectedTheme(): String
+
+    abstract fun getWhiteOrBlackTheme(): String
 }

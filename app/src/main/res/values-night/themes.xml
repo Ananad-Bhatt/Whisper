@@ -3,7 +3,7 @@
 
     <attr name="primary" format="reference|color" />
 
-    <style name="Base.Theme.Whisper" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.Whisper" parent="Theme.Material3.Dark.NoActionBar">
         <!-- Customize your dark theme here. -->
         <item name="primary">@color/primary1</item>
         <item name="android:statusBarColor" >?primary</item>
@@ -13,7 +13,7 @@
     <style name="Theme.Whisper" parent="Base.Theme.Whisper" />
 
     <!--    Red theme-->
-    <style name="Theme.red" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Theme.red" parent="Theme.Material3.Dark.NoActionBar">
         <!-- Customize your light theme here. -->
         <item name="primary">@color/primary2</item>
         <item name="android:statusBarColor" >?primary</item>
@@ -21,7 +21,7 @@
     </style>
 
     <!--    Green theme-->
-    <style name="Theme.green" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Theme.green" parent="Theme.Material3.Dark.NoActionBar">
         <!-- Customize your light theme here. -->
         <item name="primary">@color/primary3</item>
         <item name="android:statusBarColor" >?primary</item>
@@ -29,7 +29,7 @@
     </style>
 
     <!--    navy_blue theme-->
-    <style name="Theme.navy_blue" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Theme.navy_blue" parent="Theme.Material3.Dark.NoActionBar">
         <!-- Customize your light theme here. -->
         <item name="primary">@color/primary4</item>
         <item name="android:statusBarColor" >?primary</item>
@@ -37,7 +37,7 @@
     </style>
 
     <!--    orange theme-->
-    <style name="Theme.orange" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Theme.orange" parent="Theme.Material3.Dark.NoActionBar">
         <!-- Customize your light theme here. -->
         <item name="primary">@color/primary5</item>
         <item name="android:statusBarColor" >?primary</item>
@@ -45,7 +45,7 @@
     </style>
 
     <!--    yellow theme-->
-    <style name="Theme.yellow" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Theme.yellow" parent="Theme.Material3.Dark.NoActionBar">
         <!-- Customize your light theme here. -->
         <item name="primary">@color/primary6</item>
         <item name="android:statusBarColor" >?primary</item>

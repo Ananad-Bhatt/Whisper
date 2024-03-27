@@ -38,6 +38,10 @@ class CustomizationFragment : Fragment() {
             val sharedPreferences =
                 requireActivity().getSharedPreferences("app_theme", AppCompatActivity.MODE_PRIVATE)
 
+            val sharedPreferences2 = requireActivity().getSharedPreferences("app_theme_wb",
+                AppCompatActivity.MODE_PRIVATE
+            )
+
             b.primary1Color.setOnClickListener {
                 sharedPreferences.edit().apply {
                     putString("theme","primary1")
@@ -67,6 +71,25 @@ class CustomizationFragment : Fragment() {
             b.primary6Color.setOnClickListener {
                 sharedPreferences.edit().apply {
                     putString("theme","primary6")
+                }.apply()
+            }
+
+            b.whiteColor.setOnClickListener {
+                sharedPreferences2.edit().apply{
+                    putString("theme_wb", "light")
+                }.apply()
+            }
+
+            b.blackColor.setOnClickListener {
+                sharedPreferences2.edit().apply{
+                    putString("theme_wb", "dark")
+                }.apply()
+
+            }
+
+            b.systemDefaultColor.setOnClickListener {
+                sharedPreferences2.edit().apply{
+                    putString("theme_wb", "system")
                 }.apply()
             }
         }
