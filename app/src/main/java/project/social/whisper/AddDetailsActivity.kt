@@ -73,7 +73,7 @@ class AddDetailsActivity : BaseActivity() {
                 }
 
                 val user = DatabaseAdapter.returnUser()!!
-                if(user.isEmailVerified) {
+                if(user.isEmailVerified || user.phoneNumber != null) {
 
                     try {
 

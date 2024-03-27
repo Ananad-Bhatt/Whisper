@@ -54,10 +54,6 @@ class DatabaseAdapter {
         var chatImage = FirebaseStorage.getInstance().getReference("CHAT_IMAGES")
         var postImage = FirebaseStorage.getInstance().getReference("POST_IMAGES")
 
-        //Global variables
-        var contactName = ""
-        var contactNumber = ""
-
         //Encryption Key
         private lateinit var encryptionKey:ByteArray
 

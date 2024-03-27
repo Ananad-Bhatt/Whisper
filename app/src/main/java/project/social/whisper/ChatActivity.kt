@@ -96,6 +96,8 @@ class ChatActivity : BaseActivity() {
     private var publicKeyForShared = ""
     private var privateKeyForShared = ""
 
+    val emailOrMob = (DatabaseAdapter.returnUser()?.email ?: DatabaseAdapter.returnUser()?.phoneNumber)!!
+
     companion object {
         const val MY_PERMISSIONS_REQUEST_LOCATION = 1
     }
@@ -237,7 +239,7 @@ class ChatActivity : BaseActivity() {
                             publicKeyForShared = snapshot.child(receiverRoom).child("PUBLIC_KEY").getValue(String::class.java)!!
                             privateKeyForShared = snapshot.child(senderRoom).child("KEY").getValue(String::class.java)!!
 
-                            val num = DatabaseAdapter.decryptPrivateKey(privateKeyForShared, senderRoom, DatabaseAdapter.returnUser()?.email!!)
+                            val num = DatabaseAdapter.decryptPrivateKey(privateKeyForShared, senderRoom, emailOrMob)
 
                             sharedSecret = BigInteger(publicKeyForShared)
                                 .modPow(BigInteger(num), DatabaseAdapter.p)
@@ -303,7 +305,7 @@ class ChatActivity : BaseActivity() {
 
                 if(!snapshot.child(senderRoom).exists()) {
                     DatabaseAdapter.generateEncryptionKey(
-                        DatabaseAdapter.returnUser()?.email!!,
+                        emailOrMob,
                         DatabaseAdapter.generateRandomKey(),
                         senderRoom
                     )
@@ -342,7 +344,7 @@ class ChatActivity : BaseActivity() {
                 if(publicKeyForShared!="")
                 {
 
-                    val num = DatabaseAdapter.decryptPrivateKey(privateKeyForShared, senderRoom, DatabaseAdapter.returnUser()?.email!!)
+                    val num = DatabaseAdapter.decryptPrivateKey(privateKeyForShared, senderRoom, emailOrMob)
 
                     sharedSecret = BigInteger(publicKeyForShared)
                         .modPow(BigInteger(num), DatabaseAdapter.p)
@@ -902,7 +904,7 @@ class ChatActivity : BaseActivity() {
                     publicKeyForShared = snapshot.child(receiverRoom).child("PUBLIC_KEY").getValue(String::class.java)!!
                     privateKeyForShared = snapshot.child(senderRoom).child("KEY").getValue(String::class.java)!!
 
-                    val num = DatabaseAdapter.decryptPrivateKey(privateKeyForShared, senderRoom, DatabaseAdapter.returnUser()?.email!!)
+                    val num = DatabaseAdapter.decryptPrivateKey(privateKeyForShared, senderRoom, emailOrMob)
 
                     sharedSecret = BigInteger(publicKeyForShared)
                         .modPow(BigInteger(num), DatabaseAdapter.p)

@@ -142,7 +142,6 @@ class MobileVerificationActivity : BaseActivity() {
                     val uid = DatabaseAdapter.returnUser()?.uid!!
                     val key = DatabaseAdapter.userDetailsTable.child(uid).push().key!!
 
-                    GlobalStaticAdapter.key = key
                     GlobalStaticAdapter.uid = uid
 
                     DatabaseAdapter.usersTable.child(uid).child("EMAIL")

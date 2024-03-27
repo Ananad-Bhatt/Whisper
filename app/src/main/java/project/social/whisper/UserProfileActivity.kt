@@ -6,6 +6,7 @@ import adapters.HomeRecyclerViewAdapter
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.google.firebase.database.DataSnapshot
@@ -43,9 +44,12 @@ class UserProfileActivity : BaseActivity() {
             .child(GlobalStaticAdapter.key)
             .addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                Log.d("DB_ERROR", GlobalStaticAdapter.uid)
                 if(snapshot.exists())
                 {
+                    Log.d("DB_ERROR", GlobalStaticAdapter.key)
                      for(sn in snapshot.children) {
+                         Log.d("DB_ERROR", "WTF")
                          val title = sn.child("USERNAME").getValue(String::class.java)!!
 
                          val image = sn.child("IMAGE").getValue(String::class.java)
