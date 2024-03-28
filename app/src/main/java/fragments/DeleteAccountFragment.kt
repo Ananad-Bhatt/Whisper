@@ -207,6 +207,9 @@ class DeleteAccountFragment : Fragment() {
 
             })
 
+            DatabaseAdapter.usersTable.child(GlobalStaticAdapter.uid)
+                .removeValue()
+
             DatabaseAdapter.blockTable.child(GlobalStaticAdapter.key)
                 .removeValue()
 

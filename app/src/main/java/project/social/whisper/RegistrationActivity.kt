@@ -49,16 +49,20 @@ class RegistrationActivity : BaseActivity() {
         }
 
         //Google
+        var flag = true
         b.btnRegGoogle.setOnClickListener {
 
-            gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build()
+            if(flag) {
+                flag = false
+                gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(getString(R.string.default_web_client_id))
+                    .requestEmail()
+                    .build()
 
-            gClient = GoogleSignIn.getClient(this, gso)
-            val signInIntent = gClient.signInIntent
-            startActivityForResult(signInIntent, RC_SIGN_IN)
+                gClient = GoogleSignIn.getClient(this, gso)
+                val signInIntent = gClient.signInIntent
+                startActivityForResult(signInIntent, RC_SIGN_IN)
+            }
 
         }
 

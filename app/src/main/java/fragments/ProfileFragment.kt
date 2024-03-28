@@ -91,7 +91,7 @@ class ProfileFragment : Fragment() {
     private fun getFollowerCount() {
 
         try{
-            DatabaseAdapter.followerTable.child(GlobalStaticAdapter.key2)
+            DatabaseAdapter.followerTable.child(GlobalStaticAdapter.key)
                 .addListenerForSingleValueEvent(object:ValueEventListener{
                     override fun onDataChange(snapshot: DataSnapshot) {
                         if(snapshot.exists())
