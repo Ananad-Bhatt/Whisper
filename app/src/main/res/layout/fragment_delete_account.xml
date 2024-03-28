@@ -83,6 +83,18 @@
                     android:text="@string/delete_acc"
                     android:layout_marginTop="@dimen/_20sdp"/>
 
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_google_del_acc_del"
+                    style="@style/BUTTON_FILL"
+                    android:text="@string/delete_acc_google"
+                    android:layout_marginTop="@dimen/_20sdp"/>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_mobile_del_acc_del"
+                    style="@style/BUTTON_FILL"
+                    android:text="@string/delete_acc_mobile"
+                    android:layout_marginTop="@dimen/_20sdp"/>
+
             </LinearLayout>
         </ScrollView>
 

@@ -106,108 +106,99 @@ class ProfileSettingAccountFragment : Fragment() {
     }
 
     private fun deleteEverything() {
+        if(isAdded) {
+            DatabaseAdapter.userDetailsTable.child(GlobalStaticAdapter.uid)
+                .child(GlobalStaticAdapter.key)
+                .removeValue()
+                .addOnCompleteListener {
+                    Toast.makeText(
+                        requireContext(), "Account Deleted successfully",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
 
-        DatabaseAdapter.userDetailsTable.child(GlobalStaticAdapter.uid)
-            .child(GlobalStaticAdapter.key)
-            .removeValue()
-            .addOnCompleteListener {
-                Toast.makeText(
-                    requireContext(), "Account Deleted successfully",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
+            DatabaseAdapter.userDetailsTable.child(GlobalStaticAdapter.uid)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        for (s in snapshot.children) {
+                            DatabaseAdapter.userDetailsTable
+                                .child(GlobalStaticAdapter.uid)
+                                .child(s.key!!)
+                                .child("IS_OPENED")
+                                .setValue(true)
+                        }
+                    }
 
-        DatabaseAdapter.userDetailsTable.child(GlobalStaticAdapter.uid)
-            .addListenerForSingleValueEvent(object:ValueEventListener{
+                    override fun onCancelled(error: DatabaseError) {
+                    }
+                })
+
+            DatabaseAdapter.postTable.child(GlobalStaticAdapter.uid)
+                .child(GlobalStaticAdapter.key)
+                .removeValue()
+
+            DatabaseAdapter.chatRooms.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    for(s in snapshot.children)
-                    {
-                        DatabaseAdapter.userDetailsTable
-                            .child(GlobalStaticAdapter.uid)
-                            .child(s.key!!)
-                            .child("IS_OPENED")
-                            .setValue(true)
+                    if (snapshot.exists()) {
+                        for (s in snapshot.children) {
+                            if (s.key!!.contains(GlobalStaticAdapter.key)) {
+                                DatabaseAdapter.chatRooms.child(s.key!!)
+                                    .removeValue()
+                                return
+                            }
+                        }
                     }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
+
                 }
+
             })
 
-        DatabaseAdapter.postTable.child(GlobalStaticAdapter.uid)
-            .child(GlobalStaticAdapter.key)
-            .removeValue()
-
-        DatabaseAdapter.chatRooms.addListenerForSingleValueEvent(object: ValueEventListener{
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if(snapshot.exists())
-                {
-                    for(s in snapshot.children)
-                    {
-                        if(s.key!!.contains(GlobalStaticAdapter.key))
-                        {
-                            DatabaseAdapter.chatRooms.child(s.key!!)
-                                .removeValue()
-                            return
+            DatabaseAdapter.chatTable.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        for (s in snapshot.children) {
+                            if (s.key!!.contains(GlobalStaticAdapter.key)) {
+                                DatabaseAdapter.chatTable.child(s.key!!)
+                                    .removeValue()
+                            }
                         }
                     }
                 }
-            }
 
-            override fun onCancelled(error: DatabaseError) {
+                override fun onCancelled(error: DatabaseError) {
 
-            }
+                }
 
-        })
+            })
 
-        DatabaseAdapter.chatTable.addListenerForSingleValueEvent(object: ValueEventListener{
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if(snapshot.exists())
-                {
-                    for(s in snapshot.children)
-                    {
-                        if(s.key!!.contains(GlobalStaticAdapter.key))
-                        {
-                            DatabaseAdapter.chatTable.child(s.key!!)
-                                .removeValue()
+            DatabaseAdapter.keysTable.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        for (s in snapshot.children) {
+                            if (s.key!!.contains(GlobalStaticAdapter.key)) {
+                                DatabaseAdapter.keysTable.child(s.key!!)
+                                    .removeValue()
+                            }
                         }
                     }
                 }
-            }
 
-            override fun onCancelled(error: DatabaseError) {
+                override fun onCancelled(error: DatabaseError) {
 
-            }
-
-        })
-
-        DatabaseAdapter.keysTable.addListenerForSingleValueEvent(object: ValueEventListener{
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if(snapshot.exists())
-                {
-                    for(s in snapshot.children)
-                    {
-                        if(s.key!!.contains(GlobalStaticAdapter.key))
-                        {
-                            DatabaseAdapter.keysTable.child(s.key!!)
-                                .removeValue()
-                        }
-                    }
                 }
-            }
 
-            override fun onCancelled(error: DatabaseError) {
+            })
 
-            }
+            DatabaseAdapter.blockTable.child(GlobalStaticAdapter.key)
+                .removeValue()
 
-        })
-
-        DatabaseAdapter.blockTable.child(GlobalStaticAdapter.key)
-            .removeValue()
-
-        val i = Intent(requireActivity(), StartUpActivity::class.java)
-        requireActivity().startActivity(i)
-        requireActivity().finishAffinity()
+            val i = Intent(requireActivity(), StartUpActivity::class.java)
+            requireActivity().startActivity(i)
+            requireActivity().finishAffinity()
+        }
     }
 
     inner class SpinnerStateChangeListener : OnItemSelectedListener{

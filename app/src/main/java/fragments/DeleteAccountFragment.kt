@@ -10,6 +10,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.google.firebase.auth.EmailAuthProvider
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -41,6 +43,47 @@ class DeleteAccountFragment : Fragment() {
         val b = FragmentDeleteAccountBinding.inflate(inflater, container, false)
 
         if(isAdded) {
+
+            b.btnGoogleDelAccDel.setOnClickListener {
+
+                val user = DatabaseAdapter.returnUser()!!
+                user.delete().addOnCompleteListener {
+                    Toast.makeText(
+                        requireActivity(),
+                        "Account is deleted",
+                        Toast.LENGTH_LONG
+                    )
+                        .show()
+
+                    deleteEverything()
+
+                    val i = Intent(requireActivity(), StartUpActivity::class.java)
+                    requireActivity().startActivity(i)
+                    requireActivity().finishAffinity()
+                }
+
+            }
+
+            b.btnMobileDelAccDel.setOnClickListener {
+                val user = DatabaseAdapter.returnUser()!!
+
+                user.delete().addOnCompleteListener {
+                    Toast.makeText(
+                        requireActivity(),
+                        "Account is deleted",
+                        Toast.LENGTH_LONG
+                    )
+                        .show()
+
+                    deleteEverything()
+
+                    val i = Intent(requireActivity(), StartUpActivity::class.java)
+                    requireActivity().startActivity(i)
+                    requireActivity().finishAffinity()
+                }
+
+            }
+
             b.btnDelAccDel.setOnClickListener {
                 if (b.edtEmailDelAcc.text.trim().toString().isNotEmpty()
                     && b.edtPassDelAcc.text.trim().toString().isNotEmpty()
@@ -95,90 +138,82 @@ class DeleteAccountFragment : Fragment() {
     }
 
     private fun deleteEverything() {
+        if(isAdded) {
+            DatabaseAdapter.userDetailsTable.child(GlobalStaticAdapter.uid)
+                .removeValue()
+                .addOnCompleteListener {
+                    Toast.makeText(
+                        requireContext(), "Account Deleted successfully",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
 
-        DatabaseAdapter.userDetailsTable.child(GlobalStaticAdapter.uid)
-            .removeValue()
-            .addOnCompleteListener {
-                Toast.makeText(
-                    requireContext(), "Account Deleted successfully",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
+            DatabaseAdapter.postTable.child(GlobalStaticAdapter.uid)
+                .child(GlobalStaticAdapter.key)
+                .removeValue()
 
-        DatabaseAdapter.postTable.child(GlobalStaticAdapter.uid)
-            .child(GlobalStaticAdapter.key)
-            .removeValue()
-
-        DatabaseAdapter.chatRooms.addListenerForSingleValueEvent(object: ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if(snapshot.exists())
-                {
-                    for(s in snapshot.children)
-                    {
-                        if(s.key!!.contains(GlobalStaticAdapter.key))
-                        {
-                            DatabaseAdapter.chatRooms.child(s.key!!)
-                                .removeValue()
-                            return
+            DatabaseAdapter.chatRooms.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        for (s in snapshot.children) {
+                            if (s.key!!.contains(GlobalStaticAdapter.key)) {
+                                DatabaseAdapter.chatRooms.child(s.key!!)
+                                    .removeValue()
+                                return
+                            }
                         }
                     }
                 }
-            }
 
-            override fun onCancelled(error: DatabaseError) {
+                override fun onCancelled(error: DatabaseError) {
 
-            }
+                }
 
-        })
+            })
 
-        DatabaseAdapter.chatTable.addListenerForSingleValueEvent(object: ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if(snapshot.exists())
-                {
-                    for(s in snapshot.children)
-                    {
-                        if(s.key!!.contains(GlobalStaticAdapter.key))
-                        {
-                            DatabaseAdapter.chatTable.child(s.key!!)
-                                .removeValue()
+            DatabaseAdapter.chatTable.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        for (s in snapshot.children) {
+                            if (s.key!!.contains(GlobalStaticAdapter.key)) {
+                                DatabaseAdapter.chatTable.child(s.key!!)
+                                    .removeValue()
+                            }
                         }
                     }
                 }
-            }
 
-            override fun onCancelled(error: DatabaseError) {
+                override fun onCancelled(error: DatabaseError) {
 
-            }
+                }
 
-        })
+            })
 
-        DatabaseAdapter.keysTable.addListenerForSingleValueEvent(object: ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if(snapshot.exists())
-                {
-                    for(s in snapshot.children)
-                    {
-                        if(s.key!!.contains(GlobalStaticAdapter.key))
-                        {
-                            DatabaseAdapter.keysTable.child(s.key!!)
-                                .removeValue()
+            DatabaseAdapter.keysTable.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        for (s in snapshot.children) {
+                            if (s.key!!.contains(GlobalStaticAdapter.key)) {
+                                DatabaseAdapter.keysTable.child(s.key!!)
+                                    .removeValue()
+                            }
                         }
                     }
                 }
-            }
 
-            override fun onCancelled(error: DatabaseError) {
+                override fun onCancelled(error: DatabaseError) {
 
-            }
+                }
 
-        })
+            })
 
-        DatabaseAdapter.blockTable.child(GlobalStaticAdapter.key)
-            .removeValue()
+            DatabaseAdapter.blockTable.child(GlobalStaticAdapter.key)
+                .removeValue()
 
-        val i = Intent(requireActivity(), StartUpActivity::class.java)
-        requireActivity().startActivity(i)
-        requireActivity().finishAffinity()
+            val i = Intent(requireActivity(), StartUpActivity::class.java)
+            requireActivity().startActivity(i)
+            requireActivity().finishAffinity()
+        }
     }
 
     companion object {

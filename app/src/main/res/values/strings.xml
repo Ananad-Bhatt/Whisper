@@ -135,5 +135,7 @@
     <string name="delete_acc_title">Re Authenticate</string>
     <string name="delete_acc_desc">Re authenticate yourself in order to delete your account, as this is your last account</string>
     <string name="delete_all_acc">Delete all accounts</string>
+    <string name="delete_acc_google">Google account</string>
+    <string name="delete_acc_mobile">Mobile Account\n</string>
 
 </resources>
