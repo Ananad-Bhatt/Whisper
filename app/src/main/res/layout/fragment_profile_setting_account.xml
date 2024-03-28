@@ -44,6 +44,12 @@
 
         </LinearLayout>
 
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_del_acc_profile_setting"
+            style="@style/BUTTON_FILL"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:text="@string/delete_acc"/>
+
     </LinearLayout>
 
 </ScrollView>

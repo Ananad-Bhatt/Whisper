@@ -116,19 +116,22 @@
     <string name="customize_title2">Select Primary Color</string>
     <string name="customize_title3">Select Theme</string>
 
-<!--    Alias-->
+    <!--    Alias-->
     <string name="alias_title">Give Alias for notification</string>
     <string name="remove_alias">Remove</string>
 
-<!--    Chat context menu-->
+    <!--    Chat context menu-->
     <string name="copy">Copy</string>
     <string name="delete_from_me">Delete from me</string>
     <string name="delete_from_eve">Delete from Everyone</string>
     <string name="delete_all">Delete all chats</string>
 
-<!--    block accout-->
+    <!--    block accout-->
     <string name="block_title">Do you wanted to block this account?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="delete_acc">Delete account\n</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

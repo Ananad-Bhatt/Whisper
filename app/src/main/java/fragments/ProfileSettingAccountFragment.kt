@@ -48,6 +48,10 @@ class ProfileSettingAccountFragment : Fragment() {
             "NOT VISIBLE" -> b.spProfileAccountSetting.setSelection(2)
         }
 
+        b.btnDelAccProfileSetting.setOnClickListener {
+
+        }
+
         try {
             if(isAdded) {
                 val ad = ArrayAdapter(
