@@ -1021,6 +1021,9 @@ class ChatActivity : BaseActivity() {
     }
 
     private fun receivingData() {
+
+        var previousDataSnapshot: DataSnapshot? = null
+
         try {
             DatabaseAdapter.chatTable.child(receiverRoom)
                 .addValueEventListener(object : ValueEventListener {
@@ -1035,9 +1038,14 @@ class ChatActivity : BaseActivity() {
                                 chatsTemp.add(data)
                             }
 
-                            lifecycleScope.launch {
-                                Log.d("IMG_ERROR", "called")
-                                populateRecyclerView()
+                            if(previousDataSnapshot == null
+                                || snapshot.childrenCount > previousDataSnapshot!!.childrenCount) {
+                                lifecycleScope.launch {
+                                    Log.d("IMG_ERROR", "called")
+                                    populateRecyclerView()
+                                }
+
+                                previousDataSnapshot = snapshot
                             }
 
                             Log.d("IMG_ERROR", "0.1")

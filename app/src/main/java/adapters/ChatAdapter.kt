@@ -16,6 +16,7 @@ import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.RelativeLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
@@ -152,7 +153,7 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
                                     val sender = GlobalStaticAdapter.key+GlobalStaticAdapter.key2
                                     val receiver = GlobalStaticAdapter.key2+GlobalStaticAdapter.key
 
-                                    DatabaseAdapter.chatTable.child(sender)
+                                    DatabaseAdapter.chatTable.child(receiver)
                                         .addListenerForSingleValueEvent(object: ValueEventListener{
                                             override fun onDataChange(snapshot: DataSnapshot) {
                                                 if(snapshot.exists())
@@ -167,10 +168,13 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
                                                         if(t == m.TIMESTAMP)
                                                         {
                                                             Log.d("DEL_ERROR", "Hello1 ${s.key!!}")
-                                                            DatabaseAdapter.chatRooms
-                                                                .child(sender)
+                                                            DatabaseAdapter.chatTable
+                                                                .child(receiver)
                                                                 .child(s.key!!)
-                                                                .removeValue()
+                                                                .removeValue().addOnCompleteListener {
+                                                                    Toast.makeText(context,
+                                                                        "Chat deleted", Toast.LENGTH_LONG).show()
+                                                                }
                                                             Log.d("DEL_ERROR", "Hello2")
                                                             chats.removeAt(h.adapterPosition)
                                                             notifyItemRemoved(h.adapterPosition)
@@ -187,7 +191,7 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
 
                                         })
 
-                                    DatabaseAdapter.chatTable.child(receiver)
+                                    DatabaseAdapter.chatTable.child(sender)
                                         .addListenerForSingleValueEvent(object: ValueEventListener{
                                             override fun onDataChange(snapshot: DataSnapshot) {
                                                 if(snapshot.exists())
@@ -199,8 +203,8 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
 
                                                         if(t == m.TIMESTAMP)
                                                         {
-                                                            DatabaseAdapter.chatRooms
-                                                                .child(receiver)
+                                                            DatabaseAdapter.chatTable
+                                                                .child(sender)
                                                                 .child(s.key!!)
                                                                 .removeValue()
 
@@ -221,18 +225,9 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
                                 }
 
                                 R.id.del_all_chat_context_menu -> {
-                                    val sender = GlobalStaticAdapter.key+GlobalStaticAdapter.key2
                                     val receiver = GlobalStaticAdapter.key2+GlobalStaticAdapter.key
 
-                                    try {
-                                        DatabaseAdapter.chatRooms.child(sender).removeValue()
-                                    }catch(_:Exception){}
-
-                                    try {
-                                        DatabaseAdapter.chatRooms.child(receiver).removeValue()
-                                    }catch(_:Exception){}
-
-                                    DatabaseAdapter.chatTable.child(sender).removeValue()
+                                    //DatabaseAdapter.chatTable.child(sender).removeValue()
                                     DatabaseAdapter.chatTable.child(receiver).removeValue()
 
                                     notifyItemRangeChanged(0,0)

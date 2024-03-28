@@ -1,5 +1,6 @@
 package project.social.whisper
 
+import adapters.DatabaseAdapter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import fragments.ChatFragment
@@ -16,6 +17,10 @@ class MainActivity : BaseActivity() {
         val b = ActivityMainBinding.inflate(layoutInflater)
         val view = b.root
         setContentView(view)
+
+//        DatabaseAdapter.chatTable.child("-NtrIvBSa2C_WL4zUbN2-Nu-5PwNXGS7kTRJNbCr")
+//            .child("-Nu2fuGKmaTHT5RKW5t0")
+//            .removeValue()
 
 //        To display fragment
         val fm1 = supportFragmentManager
