@@ -537,7 +537,7 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
     class SenderImageChatHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val senderImgMessage = itemView.findViewById<ImageView>(R.id.iv_sender_image_chat)!!
         val senderImgTime = itemView.findViewById<TextView>(R.id.tv_sender_image_chat_time)!!
-        val senderImgMainView = itemView.findViewById<ConstraintLayout>(R.id.cl_sender_image_layout)!!
+        val senderImgMainView = itemView.findViewById<RelativeLayout>(R.id.ll_sender_image_chat)!!
     }
 
     class ReceiverChatHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -549,7 +549,7 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
     class ReceiverImageChatHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val receiverImgMessage = itemView.findViewById<ImageView>(R.id.iv_receiver_image_chat)!!
         val receiverImgTime = itemView.findViewById<TextView>(R.id.tv_receiver_image_chat_time)!!
-        val receiverImgMainView = itemView.findViewById<ConstraintLayout>(R.id.cl_receiver_image_layout)!!
+        val receiverImgMainView = itemView.findViewById<RelativeLayout>(R.id.rl_receiver_image_layout)!!
     }
 
     class SenderContactHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

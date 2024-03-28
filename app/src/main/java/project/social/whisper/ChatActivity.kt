@@ -715,7 +715,7 @@ class ChatActivity : BaseActivity() {
 //                            lifecycleScope.launch {
 //                                receiveLastMessage()
 //                                populateRecyclerView()
-//                                isRequesting(img.toString())
+                                isRequesting(img.toString())
 //                            }
                         }catch(e:Exception)
                         {
