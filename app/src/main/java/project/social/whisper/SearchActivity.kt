@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
@@ -52,7 +53,7 @@ class SearchActivity : BaseActivity() {
 //                SearchRecyclerViewAdapter(this@SearchActivity, searchResults)
 //            b.searchActRv.adapter = resultAdapter
             if(text.toString().trim().isNotEmpty()) {
-
+                b.searchActRv.visibility = View.VISIBLE
                 searchJob?.cancel() // Cancel the previous search job if any
 
                 searchJob = lifecycleScope.launch {
@@ -73,9 +74,7 @@ class SearchActivity : BaseActivity() {
             else
             {
                 searchResults.clear()
-                resultAdapter =
-                    SearchRecyclerViewAdapter(this@SearchActivity, searchResults)
-                b.searchActRv.adapter = resultAdapter
+                b.searchActRv.visibility = View.GONE
             }
 
         }
