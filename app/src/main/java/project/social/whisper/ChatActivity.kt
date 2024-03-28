@@ -712,11 +712,11 @@ class ChatActivity : BaseActivity() {
                                 }
                             }
 
-                            lifecycleScope.launch {
-                                receiveLastMessage()
-                                populateRecyclerView()
-                                isRequesting(img.toString())
-                            }
+//                            lifecycleScope.launch {
+//                                receiveLastMessage()
+//                                populateRecyclerView()
+//                                isRequesting(img.toString())
+//                            }
                         }catch(e:Exception)
                         {
                             Log.d("DB_ERROR",e.toString())
@@ -823,7 +823,6 @@ class ChatActivity : BaseActivity() {
                 Log.d("IMG_ERROR","0.2")
                 isVisible()
                 Log.d("IMG_ERROR","0.3")
-                populateRecyclerView()
 
                 Log.d("IMG_ERROR","0.4")
                 // The next task will only be executed after receivingData() is completed
@@ -836,40 +835,98 @@ class ChatActivity : BaseActivity() {
 
     private suspend fun populateRecyclerView() {
 
-        for(data in chatsTemp) {
-            Log.d("IMG_ERROR","0")
-            if (data.MESSAGE?.contains("https://firebasestorage.googleapis.com")!!) {
+        if(chats.size == 0) {
 
-                Log.d("IMG_ERROR","INSIDE IF : ${chats.size}")
+            for (data in chatsTemp) {
+                Log.d("IMG_ERROR", "0")
+                if (data.MESSAGE?.contains("https://firebasestorage.googleapis.com")!!) {
 
-                val uri = DatabaseAdapter.downloadImageAndConvertToUri(applicationContext, data.MESSAGE!!, (Date().time).toString())
+                    Log.d("IMG_ERROR", "INSIDE IF : ${chats.size}")
 
-                val decryptedUri = DatabaseAdapter.decryptImage(uri, sharedSecret, applicationContext)
+                    val uri = DatabaseAdapter.downloadImageAndConvertToUri(
+                        applicationContext,
+                        data.MESSAGE!!,
+                        (Date().time).toString()
+                    )
 
-                data.MESSAGE = decryptedUri.toString()
+                    val decryptedUri =
+                        DatabaseAdapter.decryptImage(uri, sharedSecret, applicationContext)
+
+                    data.MESSAGE = decryptedUri.toString()
+
+                    Log.d("IMG_ERROR", "1")
+
+                    chats.add(data)
+
+                    Log.d("IMG_ERROR", "Chat size : ${chats.size}")
+                    Log.d("IMG_ERROR", "2")
+
+
+                } else {
+
+                    data.MESSAGE =
+                        DatabaseAdapter.decryptMessage(data.MESSAGE!!, sharedSecret)
+
+                    Log.d("IMG_ERROR", "3")
+                    Log.d("IMG_ERROR", data.MESSAGE.toString())
+
+                    chats.add(data)
+
+                    Log.d("IMG_ERROR", "Chat size : ${chats.size}")
+
+                }
+
+                chatAdapter.notifyItemInserted(chats.size)
+                b.rvChatAct.scrollToPosition(chatAdapter.itemCount - 1)
+
+                //keepReceivingData()
+            }
+        }
+        else
+        {
+            Log.d("IMG_ERROR", "0")
+            if (chatsTemp[chatsTemp.size-1].MESSAGE?.contains("https://firebasestorage.googleapis.com")!!) {
+
+                Log.d("IMG_ERROR", "INSIDE IF : ${chats.size}")
+
+                val uri = DatabaseAdapter.downloadImageAndConvertToUri(
+                    applicationContext,
+                    chatsTemp[chatsTemp.size-1].MESSAGE!!,
+                    (Date().time).toString()
+                )
+
+                val decryptedUri =
+                    DatabaseAdapter.decryptImage(uri, sharedSecret, applicationContext)
+
+                chatsTemp[chatsTemp.size-1].MESSAGE = decryptedUri.toString()
 
                 Log.d("IMG_ERROR", "1")
 
-                chats.add(data)
+                chats.add(chatsTemp[chatsTemp.size-1])
 
-                Log.d("IMG_ERROR","Chat size : ${chats.size}")
+                Log.d("IMG_ERROR", "Chat size : ${chats.size}")
                 Log.d("IMG_ERROR", "2")
 
+
             } else {
-                data.MESSAGE =
-                    DatabaseAdapter.decryptMessage(data.MESSAGE!!, sharedSecret)
+
+                chatsTemp[chatsTemp.size-1].MESSAGE =
+                    DatabaseAdapter.decryptMessage(chatsTemp[chatsTemp.size-1].MESSAGE!!, sharedSecret)
 
                 Log.d("IMG_ERROR", "3")
+                Log.d("IMG_ERROR", chatsTemp[chatsTemp.size-1].MESSAGE.toString())
 
-                chats.add(data)
+                chats.add(chatsTemp[chatsTemp.size-1])
 
-                Log.d("IMG_ERROR","Chat size : ${chats.size}")
+                Log.d("IMG_ERROR", "Chat size : ${chats.size}")
+
             }
 
             chatAdapter.notifyItemInserted(chats.size)
             b.rvChatAct.scrollToPosition(chatAdapter.itemCount - 1)
 
             //keepReceivingData()
+
         }
     }
 
@@ -963,29 +1020,34 @@ class ChatActivity : BaseActivity() {
         }
     }
 
-    private suspend fun receivingData() = withContext(Dispatchers.IO) {
-        val snapshot = suspendCoroutine { continuation ->
-            DatabaseAdapter.chatTable.child(receiverRoom).addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    continuation.resume(snapshot)
-                }
+    private fun receivingData() {
+        try {
+            DatabaseAdapter.chatTable.child(receiverRoom)
+                .addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        chatsTemp.clear()
 
-                override fun onCancelled(error: DatabaseError) {
-                    continuation.resumeWithException(Exception(error.toException()))
-                }
-            })
-        }
+                        if (snapshot.exists()) {
+                            Log.d("IMG_ERROR", "0.0")
+                            for (s in snapshot.children) {
+                                Log.d("IMG_ERROR", "000")
+                                val data: ChatModel = s.getValue(ChatModel::class.java)!!
+                                chatsTemp.add(data)
+                            }
 
-        chatsTemp.clear()
+                            lifecycleScope.launch {
+                                Log.d("IMG_ERROR", "called")
+                                populateRecyclerView()
+                            }
 
-        if (snapshot.exists()) {
-            Log.d("IMG_ERROR","0.0")
-            for (s in snapshot.children) {
-                val data: ChatModel = s.getValue(ChatModel::class.java)!!
-                chatsTemp.add(data)
-            }
-            Log.d("IMG_ERROR","0.1")
-        }
+                            Log.d("IMG_ERROR", "0.1")
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                    }
+                })
+        }catch(_:Exception){}
     }
 
     private fun sendData() {
@@ -1035,17 +1097,40 @@ class ChatActivity : BaseActivity() {
             DatabaseAdapter.chatTable.child(senderRoom).push().setValue(chatMap)
             DatabaseAdapter.chatTable.child(receiverRoom).push().setValue(chatMap)
 
-            runBlocking {
-                launch(Dispatchers.IO) {
-                    NotificationService.sendNotification(msg, fcmToken, GlobalStaticAdapter.alias2)
+            if(msg.contains("contact:184641"))
+            {
+                runBlocking {
+                    launch(Dispatchers.IO) {
+                        NotificationService.sendNotification("Shared a contact", fcmToken, GlobalStaticAdapter.alias2)
+                    }
                 }
             }
 
-            lifecycleScope.launch {
-                receiveLastMessage()
-                populateRecyclerView()
-                isRequesting(encMsg)
+            else if(msg.contains("location:17861"))
+            {
+                runBlocking {
+                    launch(Dispatchers.IO) {
+                        NotificationService.sendNotification("Shared a location", fcmToken, GlobalStaticAdapter.alias2)
+                    }
+                }
             }
+
+            else
+            {
+                runBlocking {
+                    launch(Dispatchers.IO) {
+                        NotificationService.sendNotification("Shared a contact", fcmToken, GlobalStaticAdapter.alias2)
+                    }
+                }
+            }
+
+
+
+            //lifecycleScope.launch {
+                //receiveLastMessage()
+                //populateRecyclerView()
+                isRequesting(encMsg)
+            //}
         } catch (e: Exception) {
             Log.d("DB_ERROR", e.toString())
         }
