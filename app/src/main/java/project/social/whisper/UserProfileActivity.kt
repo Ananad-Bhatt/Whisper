@@ -36,6 +36,45 @@ class UserProfileActivity : BaseActivity() {
         Glide.with(applicationContext).load(GlobalStaticAdapter.imageUrl2).into(b.imgProfileActUserImage)
         b.txtProfileActAbout.text = GlobalStaticAdapter.about2
 
+        getPostCount()
+        getFollowerCount()
+        getFollowingCount()
+        checkFollow()
+
+        b.btnProfileActFollow.setOnClickListener {
+
+            if(b.btnProfileActFollow.text.toString().lowercase() == "unfollow")
+            {
+                b.btnProfileActFollow.text = "Follow"
+                b.btnProfileActFollow.background = getDrawable(R.drawable.btn_back_fill)
+
+                DatabaseAdapter.followingTable.child(GlobalStaticAdapter.key)
+                    .child(GlobalStaticAdapter.key2)
+                    .removeValue()
+
+                DatabaseAdapter.followerTable.child(GlobalStaticAdapter.key2)
+                    .child(GlobalStaticAdapter.key2)
+                    .removeValue()
+
+            }
+            else
+            {
+                b.btnProfileActFollow.text = "UnFollow"
+                b.btnProfileActFollow.background = getDrawable(R.drawable.btn_back_outlined)
+
+                DatabaseAdapter.followingTable.child(GlobalStaticAdapter.key)
+                    .child(GlobalStaticAdapter.key2)
+                    .child("FOLLOWING")
+                    .setValue(true)
+
+                DatabaseAdapter.followerTable.child(GlobalStaticAdapter.key2)
+                    .child(GlobalStaticAdapter.key2)
+                    .child("FOLLOWER")
+                    .setValue(true)
+
+            }
+        }
+
         b.btnProfileActMessage.setOnClickListener {
             val i = Intent(this, ChatActivity::class.java)
             startActivity(i)
@@ -234,6 +273,89 @@ class UserProfileActivity : BaseActivity() {
 //
 //        })
 
+    }
+
+    private fun getFollowingCount() {
+        try{
+            DatabaseAdapter.followingTable.child(GlobalStaticAdapter.key2)
+                .addListenerForSingleValueEvent(object:ValueEventListener{
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if(snapshot.exists())
+                        {
+                            val follower = snapshot.childrenCount
+
+                            b.txtProfileActNoOfFollowers.text = follower.toString()
+
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                    }
+
+                })
+
+        }catch (_:Exception){}
+    }
+
+    private fun getFollowerCount() {
+
+        try{
+            DatabaseAdapter.followerTable.child(GlobalStaticAdapter.key2)
+                .addListenerForSingleValueEvent(object:ValueEventListener{
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if(snapshot.exists())
+                        {
+                            val follower = snapshot.childrenCount
+
+                            b.txtProfileActNoOfFollowers.text = follower.toString()
+
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                    }
+
+                })
+
+        }catch (_:Exception){}
+
+    }
+
+    private fun getPostCount() {
+        try{
+            DatabaseAdapter.postTable.child(GlobalStaticAdapter.uid2)
+                .child(GlobalStaticAdapter.key2)
+                .addListenerForSingleValueEvent(object: ValueEventListener{
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if(snapshot.exists()){
+                            val post = snapshot.childrenCount
+
+                            b.txtProfileActNoOfPosts.text = post.toString()
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                    }
+                })
+
+        }catch(_:Exception){}
+    }
+
+    private fun checkFollow() {
+        DatabaseAdapter.followingTable.child(GlobalStaticAdapter.key)
+            .child(GlobalStaticAdapter.key2)
+            .addListenerForSingleValueEvent(object: ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if(snapshot.exists())
+                    {
+                        b.btnProfileActFollow.text = "UnFollow"
+                        b.btnProfileActFollow.background = getDrawable(R.drawable.btn_back_outlined)
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                }
+            })
     }
 
     override fun getSelectedTheme(): String {

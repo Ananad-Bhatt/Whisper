@@ -1,5 +1,6 @@
 package fragments
 
+import adapters.DatabaseAdapter
 import adapters.GlobalStaticAdapter
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,6 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import project.social.whisper.R
 import project.social.whisper.databinding.FragmentProfileBinding
 
@@ -39,6 +43,10 @@ class ProfileFragment : Fragment() {
         b.txtProfileUserName.text = GlobalStaticAdapter.userName
         b.txtProfileAbout.text = GlobalStaticAdapter.about
 
+        getPostCount()
+        getFollowerCount()
+        getFollowingCount()
+
         b.imgBtnProfileEdit.setOnClickListener {
             val fm1 = requireActivity().supportFragmentManager
             val ft1 = fm1.beginTransaction()
@@ -56,6 +64,72 @@ class ProfileFragment : Fragment() {
         }
 
         return b.root
+    }
+
+    private fun getFollowingCount() {
+        try{
+            DatabaseAdapter.followingTable.child(GlobalStaticAdapter.key)
+                .addListenerForSingleValueEvent(object:ValueEventListener{
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if(snapshot.exists())
+                        {
+                            val follower = snapshot.childrenCount
+
+                            b.txtProfileNoOfFollowing.text = follower.toString()
+
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                    }
+
+                })
+
+        }catch (_:Exception){}
+    }
+
+    private fun getFollowerCount() {
+
+        try{
+            DatabaseAdapter.followerTable.child(GlobalStaticAdapter.key2)
+                .addListenerForSingleValueEvent(object:ValueEventListener{
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if(snapshot.exists())
+                        {
+                            val follower = snapshot.childrenCount
+
+                            b.txtProfileNoOfFollowers.text = follower.toString()
+
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                    }
+
+                })
+
+        }catch (_:Exception){}
+
+    }
+
+    private fun getPostCount() {
+        try{
+            DatabaseAdapter.postTable.child(GlobalStaticAdapter.uid)
+                .child(GlobalStaticAdapter.key)
+                .addListenerForSingleValueEvent(object: ValueEventListener{
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if(snapshot.exists()){
+                            val post = snapshot.childrenCount
+
+                            b.txtProfileNoOfPosts.text = post.toString()
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                    }
+                })
+
+        }catch(_:Exception){}
     }
 
     companion object {
