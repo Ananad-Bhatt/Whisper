@@ -1,6 +1,7 @@
 package fragments
 
 import adapters.DatabaseAdapter
+import adapters.GlobalStaticAdapter
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -9,6 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.google.firebase.auth.EmailAuthProvider
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import project.social.whisper.ForgotPasswordActivity
 import project.social.whisper.R
 import project.social.whisper.StartUpActivity
@@ -58,6 +62,8 @@ class DeleteAccountFragment : Fragment() {
                                 )
                                     .show()
 
+                                deleteEverything()
+
                                 val i = Intent(requireActivity(), StartUpActivity::class.java)
                                 requireActivity().startActivity(i)
                                 requireActivity().finishAffinity()
@@ -86,6 +92,83 @@ class DeleteAccountFragment : Fragment() {
 
 
         return b.root
+    }
+
+    private fun deleteEverything() {
+        DatabaseAdapter.postTable.child(GlobalStaticAdapter.uid)
+            .child(GlobalStaticAdapter.key)
+            .removeValue()
+
+        DatabaseAdapter.chatRooms.addListenerForSingleValueEvent(object: ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if(snapshot.exists())
+                {
+                    for(s in snapshot.children)
+                    {
+                        if(s.key!!.contains(GlobalStaticAdapter.key))
+                        {
+                            DatabaseAdapter.chatRooms.child(s.key!!)
+                                .removeValue()
+                            return
+                        }
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
+
+        DatabaseAdapter.chatTable.addListenerForSingleValueEvent(object: ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if(snapshot.exists())
+                {
+                    for(s in snapshot.children)
+                    {
+                        if(s.key!!.contains(GlobalStaticAdapter.key))
+                        {
+                            DatabaseAdapter.chatTable.child(s.key!!)
+                                .removeValue()
+                        }
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
+
+        DatabaseAdapter.keysTable.addListenerForSingleValueEvent(object: ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if(snapshot.exists())
+                {
+                    for(s in snapshot.children)
+                    {
+                        if(s.key!!.contains(GlobalStaticAdapter.key))
+                        {
+                            DatabaseAdapter.keysTable.child(s.key!!)
+                                .removeValue()
+                        }
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
+
+        DatabaseAdapter.blockTable.child(GlobalStaticAdapter.key)
+            .removeValue()
+
+        val i = Intent(requireActivity(), StartUpActivity::class.java)
+        requireActivity().startActivity(i)
+        requireActivity().finishAffinity()
     }
 
     companion object {
