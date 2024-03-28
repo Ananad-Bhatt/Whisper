@@ -95,6 +95,16 @@ class DeleteAccountFragment : Fragment() {
     }
 
     private fun deleteEverything() {
+
+        DatabaseAdapter.userDetailsTable.child(GlobalStaticAdapter.uid)
+            .removeValue()
+            .addOnCompleteListener {
+                Toast.makeText(
+                    requireContext(), "Account Deleted successfully",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+
         DatabaseAdapter.postTable.child(GlobalStaticAdapter.uid)
             .child(GlobalStaticAdapter.key)
             .removeValue()

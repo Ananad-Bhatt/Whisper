@@ -57,15 +57,6 @@ class ProfileSettingAccountFragment : Fragment() {
         if(isAdded) {
 
             b.btnDelAccProfileSetting.setOnClickListener {
-                DatabaseAdapter.userDetailsTable.child(GlobalStaticAdapter.uid)
-                    .child(GlobalStaticAdapter.key)
-                    .removeValue()
-                    .addOnCompleteListener {
-                        Toast.makeText(
-                            requireContext(), "Account Deleted successfully",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
 
                 DatabaseAdapter.userDetailsTable.child(GlobalStaticAdapter.uid)
                     .addListenerForSingleValueEvent(object : ValueEventListener{
@@ -115,6 +106,34 @@ class ProfileSettingAccountFragment : Fragment() {
     }
 
     private fun deleteEverything() {
+
+        DatabaseAdapter.userDetailsTable.child(GlobalStaticAdapter.uid)
+            .child(GlobalStaticAdapter.key)
+            .removeValue()
+            .addOnCompleteListener {
+                Toast.makeText(
+                    requireContext(), "Account Deleted successfully",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+
+        DatabaseAdapter.userDetailsTable.child(GlobalStaticAdapter.uid)
+            .addListenerForSingleValueEvent(object:ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    for(s in snapshot.children)
+                    {
+                        DatabaseAdapter.userDetailsTable
+                            .child(GlobalStaticAdapter.uid)
+                            .child(s.key!!)
+                            .child("IS_OPENED")
+                            .setValue(true)
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                }
+            })
+
         DatabaseAdapter.postTable.child(GlobalStaticAdapter.uid)
             .child(GlobalStaticAdapter.key)
             .removeValue()
