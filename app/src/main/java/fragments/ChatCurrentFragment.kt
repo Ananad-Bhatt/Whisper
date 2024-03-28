@@ -11,15 +11,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import kotlinx.coroutines.launch
 import models.ChatRecyclerModel
 import models.ChatUserModel
 import project.social.whisper.ChatGptActivity
 import project.social.whisper.R
 import project.social.whisper.databinding.FragmentChatCurrentBinding
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -64,80 +69,111 @@ class ChatCurrentFragment : Fragment() {
 
         b.chatCurrentFragRecyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL ,false)
 
-        fetchingData()
+        lifecycleScope.launch {
+            fetchingData()
+            fetchingDetails()
+        }
 
         return b.root
     }
 
-    private fun fetchingData() {
+    private suspend fun fetchingData() {
         var isSender: Boolean
         var count = 0
 
         try {
-            DatabaseAdapter.chatRooms.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    Log.d("IDK","onDataChange")
-                    if (snapshot.exists()) {
-                        for(s in snapshot.children)
+            val snapshot = suspendCoroutine { continuation ->
+                DatabaseAdapter.chatRooms.addListenerForSingleValueEvent(object :
+                    ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        continuation.resume(snapshot)
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        continuation.resumeWithException(Exception(error.toException()))
+                    }
+                })
+            }
+
+            Log.d("IDK","onDataChange")
+            if (snapshot.exists()) {
+                for(s in snapshot.children)
+                {
+                    val key = s.key!!
+
+                    if (key.contains(senderKey)) {
+
+                        val user1 = s.child("USER_1").getValue(String::class.java)!!
+                        val user1Uid = s.child("USER_1_UID").getValue(String::class.java)!!
+
+                        val user2 = s.child("USER_2").getValue(String::class.java)!!
+                        val user2Uid = s.child("USER_2_UID").getValue(String::class.java)!!
+
+                        val isAccepted = s.child("IS_ACCEPTED").getValue(Boolean::class.java)!!
+                        val lastMessage = s.child("LAST_MESSAGE").getValue(String::class.java)?:"HI"
+
+                        isSender = user1 == senderKey
+
+                        if(isSender)
                         {
-                            val key = s.key!!
+                            val snapshot1 = suspendCoroutine { continuation ->
+                                DatabaseAdapter.blockTable.child(user2).child(user1)
+                                    .addListenerForSingleValueEvent(object : ValueEventListener {
+                                        override fun onDataChange(snapshot1: DataSnapshot) {
+                                            continuation.resume(snapshot1)
+                                        }
 
-                            if (key.contains(senderKey)) {
+                                        override fun onCancelled(error: DatabaseError) {
+                                            continuation.resumeWithException(Exception(error.toException()))
+                                        }
 
-                                val user1 = s.child("USER_1").getValue(String::class.java)!!
-                                val user1Uid = s.child("USER_1_UID").getValue(String::class.java)!!
+                                    })
+                            }
 
-                                val user2 = s.child("USER_2").getValue(String::class.java)!!
-                                val user2Uid = s.child("USER_2_UID").getValue(String::class.java)!!
-
-                                val isAccepted = s.child("IS_ACCEPTED").getValue(Boolean::class.java)!!
-                                val lastMessage = s.child("LAST_MESSAGE").getValue(String::class.java)?:"HI"
-
-                                isSender = user1 == senderKey
-
-                                if(isSender)
-                                {
-                                    DatabaseAdapter.blockTable.child(user2).child(user1)
-                                        .addListenerForSingleValueEvent(object: ValueEventListener{
-                                            override fun onDataChange(snapshot: DataSnapshot) {
-                                                if(!snapshot.exists())
-                                                    usersKey.add(ChatUserModel(user2Uid,user2,lastMessage))
+                            if (!snapshot1.exists()) {
+                                Log.d("BLOCK_ERROR", "Hello")
+                                usersKey.add(
+                                    ChatUserModel(
+                                        user2Uid,
+                                        user2,
+                                        lastMessage
+                                    )
+                                )
+                            }
+                        }
+                        else{
+                            if(isAccepted)
+                            {
+                                val snapshot2 = suspendCoroutine { continuation ->
+                                    DatabaseAdapter.blockTable.child(user1).child(user2)
+                                    .addListenerForSingleValueEvent(object: ValueEventListener{
+                                            override fun onDataChange(snapshot2: DataSnapshot) {
+                                                continuation.resume(snapshot2)
                                             }
 
                                             override fun onCancelled(error: DatabaseError) {
+                                                continuation.resumeWithException(Exception(error.toException()))
                                             }
-
-                                        })
+                                    })
                                 }
-                                else{
-                                    if(isAccepted)
-                                    {
-                                        DatabaseAdapter.blockTable.child(user1).child(user2)
-                                            .addListenerForSingleValueEvent(object: ValueEventListener{
-                                                override fun onDataChange(snapshot: DataSnapshot) {
-                                                    if(!snapshot.exists())
-                                                        usersKey.add(ChatUserModel(user1Uid,user1,lastMessage))
-                                                }
-
-                                                override fun onCancelled(error: DatabaseError) {
-                                                }
-                                            })
-                                    }
+                                if(!snapshot2.exists()) {
+                                    Log.d("BLOCK_ERROR", "Hello2")
+                                    usersKey.add(
+                                        ChatUserModel(
+                                            user1Uid,
+                                            user1,
+                                            lastMessage
+                                        )
+                                    )
                                 }
                             }
-                            count++
                         }
-
-                        fetchingDetails()
-
                     }
+                    count++
                 }
+            }
 
-                override fun onCancelled(error: DatabaseError) {
-                    Log.d("DB_ERROR",error.toString())
-                }
-            })
-        }catch (e:Exception)
+        } catch (e:Exception)
         {
             Log.d("DB_ERROR",e.toString())
         }

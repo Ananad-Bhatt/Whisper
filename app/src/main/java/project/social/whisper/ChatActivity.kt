@@ -1127,7 +1127,7 @@ class ChatActivity : BaseActivity() {
             {
                 runBlocking {
                     launch(Dispatchers.IO) {
-                        NotificationService.sendNotification("Shared a contact", fcmToken, GlobalStaticAdapter.alias2)
+                        NotificationService.sendNotification(msg, fcmToken, GlobalStaticAdapter.alias2)
                     }
                 }
             }
