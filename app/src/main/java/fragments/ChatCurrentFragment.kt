@@ -97,12 +97,31 @@ class ChatCurrentFragment : Fragment() {
 
                                 if(isSender)
                                 {
-                                    usersKey.add(ChatUserModel(user2Uid,user2,lastMessage))
+                                    DatabaseAdapter.blockTable.child(user2).child(user1)
+                                        .addListenerForSingleValueEvent(object: ValueEventListener{
+                                            override fun onDataChange(snapshot: DataSnapshot) {
+                                                if(!snapshot.exists())
+                                                    usersKey.add(ChatUserModel(user2Uid,user2,lastMessage))
+                                            }
+
+                                            override fun onCancelled(error: DatabaseError) {
+                                            }
+
+                                        })
                                 }
                                 else{
                                     if(isAccepted)
                                     {
-                                        usersKey.add(ChatUserModel(user1Uid,user1,lastMessage))
+                                        DatabaseAdapter.blockTable.child(user1).child(user2)
+                                            .addListenerForSingleValueEvent(object: ValueEventListener{
+                                                override fun onDataChange(snapshot: DataSnapshot) {
+                                                    if(!snapshot.exists())
+                                                        usersKey.add(ChatUserModel(user1Uid,user1,lastMessage))
+                                                }
+
+                                                override fun onCancelled(error: DatabaseError) {
+                                                }
+                                            })
                                     }
                                 }
                             }

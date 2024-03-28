@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import androidx.core.widget.addTextChangedListener
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.database.DataSnapshot
@@ -42,19 +43,22 @@ class SearchActivity : BaseActivity() {
 
         b.searchActRv.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL ,false)
 
-        b.toolbarSearch.addTextChangedListener {
+        b.toolbarSearch.doOnTextChanged { text, start, before, count ->
 
             //Finding users
             Log.d("DB_ERROR", b.toolbarSearch.text.toString())
             searchResults.clear()
-            if(b.toolbarSearch.text.toString() != "") {
+//            resultAdapter =
+//                SearchRecyclerViewAdapter(this@SearchActivity, searchResults)
+//            b.searchActRv.adapter = resultAdapter
+            if(text.toString().trim().isNotEmpty()) {
 
                 searchJob?.cancel() // Cancel the previous search job if any
 
                 searchJob = lifecycleScope.launch {
                     delay(300)
 
-                    findUser(b.toolbarSearch.text.toString(), object : OnSearchCompleteListener {
+                    findUser(text.toString(), object : OnSearchCompleteListener {
 
                         override fun onSearchComplete(results: List<SearchModel>) {
                             Log.d("DB_ERROR", results.size.toString())
@@ -66,12 +70,23 @@ class SearchActivity : BaseActivity() {
                     })
                 }
             }
+            else
+            {
+                searchResults.clear()
+                resultAdapter =
+                    SearchRecyclerViewAdapter(this@SearchActivity, searchResults)
+                b.searchActRv.adapter = resultAdapter
+            }
+
         }
 
     }
     private fun findUser(query: String, listener: OnSearchCompleteListener) {
         searchResults.clear()
         Log.d("DB_ERROR", searchResults.size.toString())
+
+        var isBlocked = false
+
         try {
             DatabaseAdapter.userDetailsTable.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -102,38 +117,58 @@ class SearchActivity : BaseActivity() {
                                             continue
                                         }
 
-                                        val userName: String =
-                                            i.child("USER_NAME").getValue(String::class.java)!!
+                                        DatabaseAdapter.blockTable
+                                            .child(key).child(GlobalStaticAdapter.key)
+                                            .addListenerForSingleValueEvent(object: ValueEventListener{
+                                                override fun onDataChange(snapshot1: DataSnapshot) {
+                                                    if(!snapshot1.exists())
+                                                    {
+                                                        Log.d("BLOCK_ERROR", "Hello")
+                                                        val userName: String =
+                                                            i.child("USER_NAME").getValue(String::class.java)!!
 
-                                        val image: String =
-                                            i.child("IMAGE").getValue(String::class.java)
-                                                ?: getString(R.string.image_not_found)
+                                                        Log.d("BLOCK_ERROR", "$userName")
 
-                                        //FCM token
-                                        val fcm = i.child("FCM_TOKEN").getValue(String::class.java)
-                                            ?: ""
+                                                        val image: String =
+                                                            i.child("IMAGE").getValue(String::class.java)
+                                                                ?: getString(R.string.image_not_found)
 
-                                        val about = i.child("ABOUT").getValue(String::class.java)
-                                            ?: ""
+                                                        //FCM token
+                                                        val fcm = i.child("FCM_TOKEN").getValue(String::class.java)
+                                                            ?: ""
 
-                                        if ((userName.lowercase()).contains(query.lowercase())) {
-                                            searchResults.add(
-                                                SearchModel(
-                                                    userName,
-                                                    image,
-                                                    uid,
-                                                    key,
-                                                    about,
-                                                    fcm
-                                                )
-                                            )
-                                        }
+                                                        val about = i.child("ABOUT").getValue(String::class.java)
+                                                            ?: ""
+                                                        Log.d("BLOCK_ERROR", "Hello2")
+                                                        if ((userName.lowercase()).contains(query.lowercase())) {
+                                                            Log.d("BLOCK_ERROR", "Yes")
+                                                            searchResults.add(
+                                                                SearchModel(
+                                                                    userName,
+                                                                    image,
+                                                                    uid,
+                                                                    key,
+                                                                    about,
+                                                                    fcm
+                                                                )
+                                                            )
+
+                                                            Log.d("BLOCK_ERROR", "Size ${searchResults.size}")
+                                                            listener.onSearchComplete(searchResults)
+                                                        }
+                                                    }
+                                                }
+
+                                                override fun onCancelled(error: DatabaseError) {
+
+                                                }
+
+                                            })
                                     }
                                 }
                             }
                         }
                     }
-                    listener.onSearchComplete(searchResults)
                 }
 
                 override fun onCancelled(error: DatabaseError) {

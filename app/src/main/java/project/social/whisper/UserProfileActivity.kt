@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
@@ -38,6 +39,76 @@ class UserProfileActivity : BaseActivity() {
         b.btnProfileActMessage.setOnClickListener {
             val i = Intent(this, ChatActivity::class.java)
             startActivity(i)
+        }
+
+        b.imgBtnProfileActSetting.setOnClickListener {
+            val d = Dialog(this)
+            d.setContentView(R.layout.user_profile_setting_alert)
+            d.setCancelable(false)
+
+            val btnNo = d.findViewById<Button>(R.id.btn_no_block_acc)
+            val btnYes = d.findViewById<Button>(R.id.btn_yes_block_acc)
+            val tv = d.findViewById<TextView>(R.id.tv_block_alert)
+
+            DatabaseAdapter.blockTable.child(GlobalStaticAdapter.key)
+                .addListenerForSingleValueEvent(object: ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if(snapshot.exists())
+                    {
+                        for(s in snapshot.children)
+                        {
+                            val k = s.key!!
+
+                            if(k == GlobalStaticAdapter.key2)
+                            {
+                                tv.text = "Do you wanted to unblock this user?"
+                                return
+                            }
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                }
+            })
+
+            btnNo.setOnClickListener {
+                d.dismiss()
+            }
+
+            btnYes.setOnClickListener {
+
+                if(tv.text.toString().contains("Do you wanted to unblock this user?"))
+                {
+                    DatabaseAdapter.blockTable.child(GlobalStaticAdapter.key)
+                        .child(GlobalStaticAdapter.key2)
+                        .removeValue()
+                        .addOnCompleteListener {
+                            Toast.makeText(this, "User unblocked", Toast.LENGTH_LONG)
+                                .show()
+                        }.addOnFailureListener {
+                            Toast.makeText(this, "Something went wrong", Toast.LENGTH_LONG)
+                                .show()
+                        }
+                }
+                else {
+
+                    DatabaseAdapter.blockTable.child(GlobalStaticAdapter.key)
+                        .child(GlobalStaticAdapter.key2)
+                        .child("IS_BLOCKED")
+                        .setValue(true)
+                        .addOnCompleteListener {
+                            Toast.makeText(this, "User blocked", Toast.LENGTH_LONG)
+                                .show()
+                        }.addOnFailureListener {
+                            Toast.makeText(this, "Something went wrong", Toast.LENGTH_LONG)
+                                .show()
+                        }
+                }
+                d.dismiss()
+            }
+
+            d.show()
         }
 
         b.imgBtnProfileAlias.setOnClickListener {
