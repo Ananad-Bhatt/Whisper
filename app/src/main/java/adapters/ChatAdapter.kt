@@ -26,6 +26,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.getValue
+import com.google.firebase.storage.FirebaseStorage
 import models.ChatModel
 import project.social.whisper.ImageViewActivity
 import project.social.whisper.R
@@ -105,6 +106,50 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
             SenderChatHolder::class.java -> {
                 val h = holder as SenderChatHolder
 
+                h.senderMainView.setOnLongClickListener {
+                    val p = PopupMenu(context, h.senderMainView)
+
+                    p.inflate(R.menu.chat_context_menu)
+                    p.show()
+
+                    p.setOnMenuItemClickListener {
+
+                        when(it.itemId)
+                        {
+                            R.id.copy_context_menu -> {
+                                val clipboardManager = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                                val clip = ClipData.newPlainText("chat", m.MESSAGE)
+                                clipboardManager.setPrimaryClip(clip)
+                            }
+
+                            R.id.del_chat_context_menu -> {
+                                delFromMe(m)
+                                chats.removeAt(h.adapterPosition)
+                                notifyItemRemoved(h.adapterPosition)
+                            }
+
+                            R.id.del_chat_eve_context_menu -> {
+                                delFromEveryone(m)
+                                chats.removeAt(h.adapterPosition)
+                                notifyItemRemoved(h.adapterPosition)
+                            }
+
+                            R.id.del_all_chat_context_menu -> {
+                                val receiver = GlobalStaticAdapter.key2+GlobalStaticAdapter.key
+
+                                //DatabaseAdapter.chatTable.child(sender).removeValue()
+                                DatabaseAdapter.chatTable.child(receiver).removeValue()
+
+                                chats.removeAll(chats.toSet())
+                                notifyItemRangeChanged(0,0)
+                            }
+                        }
+                        true
+                    }
+
+                    true
+                }
+
                 if(m.MESSAGE?.contains("location:17861")!!)
                 {
                     h.senderTime.text = f.format(d)
@@ -131,120 +176,55 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
                     Log.d("IMG_ERROR", "WTH${m.MESSAGE}")
                     h.senderMessage.text = m.MESSAGE
                     h.senderTime.text = f.format(d)
-
-                    h.senderMainView.setOnLongClickListener {
-                        val p = PopupMenu(context, h.senderMainView)
-
-                        p.inflate(R.menu.chat_context_menu)
-                        p.show()
-
-                        p.setOnMenuItemClickListener {
-
-                            when(it.itemId)
-                            {
-                                R.id.copy_context_menu -> {
-                                    val clipboardManager = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-                                    val clip = ClipData.newPlainText("chat", m.MESSAGE)
-                                    clipboardManager.setPrimaryClip(clip)
-                                }
-
-                                R.id.del_chat_context_menu -> {
-
-                                    val sender = GlobalStaticAdapter.key+GlobalStaticAdapter.key2
-                                    val receiver = GlobalStaticAdapter.key2+GlobalStaticAdapter.key
-
-                                    DatabaseAdapter.chatTable.child(receiver)
-                                        .addListenerForSingleValueEvent(object: ValueEventListener{
-                                            override fun onDataChange(snapshot: DataSnapshot) {
-                                                if(snapshot.exists())
-                                                {
-                                                    for(s in snapshot.children)
-                                                    {
-                                                        val t = s.child("TIMESTAMP")
-                                                            .getValue(Long::class.java)!!
-
-                                                        Log.d("DEL_ERROR", m.TIMESTAMP.toString())
-                                                        Log.d("DEL_ERROR", t.toString())
-                                                        if(t == m.TIMESTAMP)
-                                                        {
-                                                            Log.d("DEL_ERROR", "Hello1 ${s.key!!}")
-                                                            DatabaseAdapter.chatTable
-                                                                .child(receiver)
-                                                                .child(s.key!!)
-                                                                .removeValue().addOnCompleteListener {
-                                                                    Toast.makeText(context,
-                                                                        "Chat deleted", Toast.LENGTH_LONG).show()
-                                                                }
-                                                            Log.d("DEL_ERROR", "Hello2")
-                                                            chats.removeAt(h.adapterPosition)
-                                                            notifyItemRemoved(h.adapterPosition)
-
-                                                            return
-                                                        }
-                                                    }
-                                                }
-                                            }
-
-                                            override fun onCancelled(error: DatabaseError) {
-
-                                            }
-
-                                        })
-
-                                    DatabaseAdapter.chatTable.child(sender)
-                                        .addListenerForSingleValueEvent(object: ValueEventListener{
-                                            override fun onDataChange(snapshot: DataSnapshot) {
-                                                if(snapshot.exists())
-                                                {
-                                                    for(s in snapshot.children)
-                                                    {
-                                                        val t = s.child("TIMESTAMP")
-                                                            .getValue(Long::class.java)!!
-
-                                                        if(t == m.TIMESTAMP)
-                                                        {
-                                                            DatabaseAdapter.chatTable
-                                                                .child(sender)
-                                                                .child(s.key!!)
-                                                                .removeValue()
-
-                                                            return
-
-//                                                            chats.removeAt(h.adapterPosition)
-//                                                            notifyItemRemoved(h.adapterPosition)
-                                                        }
-                                                    }
-                                                }
-                                            }
-
-                                            override fun onCancelled(error: DatabaseError) {
-
-                                            }
-
-                                        })
-                                }
-
-                                R.id.del_all_chat_context_menu -> {
-                                    val receiver = GlobalStaticAdapter.key2+GlobalStaticAdapter.key
-
-                                    //DatabaseAdapter.chatTable.child(sender).removeValue()
-                                    DatabaseAdapter.chatTable.child(receiver).removeValue()
-
-                                    notifyItemRangeChanged(0,0)
-                                }
-                            }
-
-                            true
-                        }
-
-                        true
-                    }
-
                 }
             }
 
             ReceiverChatHolder::class.java -> {
                 val h = holder as ReceiverChatHolder
+
+                h.receiverMainView.setOnLongClickListener {
+                    val p = PopupMenu(context, h.receiverMainView)
+
+                    p.inflate(R.menu.chat_context_menu)
+                    p.show()
+
+                    p.setOnMenuItemClickListener {
+
+                        when(it.itemId)
+                        {
+                            R.id.copy_context_menu -> {
+                                val clipboardManager = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                                val clip = ClipData.newPlainText("chat", m.MESSAGE)
+                                clipboardManager.setPrimaryClip(clip)
+                            }
+
+                            R.id.del_chat_context_menu -> {
+                                delFromMe(m)
+                                chats.removeAt(h.adapterPosition)
+                                notifyItemRemoved(h.adapterPosition)
+                            }
+
+                            R.id.del_chat_eve_context_menu -> {
+                                Toast.makeText(context,
+                                    "Cannot delete received message",
+                                    Toast.LENGTH_LONG).show()
+                            }
+
+                            R.id.del_all_chat_context_menu -> {
+                                val receiver = GlobalStaticAdapter.key2+GlobalStaticAdapter.key
+
+                                //DatabaseAdapter.chatTable.child(sender).removeValue()
+                                DatabaseAdapter.chatTable.child(receiver).removeValue()
+
+                                chats.removeAll(chats.toSet())
+                                notifyItemRangeChanged(0,0)
+                            }
+                        }
+                        true
+                    }
+
+                    true
+                }
 
                 if(m.MESSAGE?.contains("location:17861")!!)
                 {
@@ -280,6 +260,50 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
                 Glide.with(context).load(Uri.parse(m.MESSAGE)).into(h.senderImgMessage)
                 h.senderImgTime.text = f.format(d)
 
+                h.senderImgMainView.setOnLongClickListener {
+                    val p = PopupMenu(context, h.senderImgMainView)
+
+                    p.inflate(R.menu.chat_context_menu)
+                    p.show()
+
+                    p.setOnMenuItemClickListener {
+
+                        when(it.itemId)
+                        {
+                            R.id.copy_context_menu -> {
+                                Toast.makeText(context,
+                                    "Image cannot be copied",
+                                    Toast.LENGTH_LONG).show()
+                            }
+
+                            R.id.del_chat_context_menu -> {
+                                delFromMe(m)
+                                chats.removeAt(h.adapterPosition)
+                                notifyItemRemoved(h.adapterPosition)
+                            }
+
+                            R.id.del_all_chat_context_menu -> {
+                                delFromEveryone(m)
+                                chats.removeAt(h.adapterPosition)
+                                notifyItemRemoved(h.adapterPosition)
+                            }
+
+                            R.id.del_all_chat_context_menu -> {
+                                val receiver = GlobalStaticAdapter.key2+GlobalStaticAdapter.key
+
+                                //DatabaseAdapter.chatTable.child(sender).removeValue()
+                                DatabaseAdapter.chatTable.child(receiver).removeValue()
+
+                                chats.removeAll(chats.toSet())
+                                notifyItemRangeChanged(0,0)
+                            }
+                        }
+                        true
+                    }
+
+                    true
+                }
+
                 h.senderImgMessage.setOnClickListener {
                     val i = Intent(context, ImageViewActivity::class.java)
                     i.putExtra("img",m.MESSAGE)
@@ -293,6 +317,50 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
                 val h = holder as ReceiverImageChatHolder
                 Glide.with(context).load(m.MESSAGE).into(h.receiverImgMessage)
                 h.receiverImgTime.text = f.format(d)
+
+                h.receiverImgMainView.setOnLongClickListener {
+                    val p = PopupMenu(context, h.receiverImgMainView)
+
+                    p.inflate(R.menu.chat_context_menu)
+                    p.show()
+
+                    p.setOnMenuItemClickListener {
+
+                        when(it.itemId)
+                        {
+                            R.id.copy_context_menu -> {
+                                Toast.makeText(context,
+                                    "Image cannot be copied",
+                                    Toast.LENGTH_LONG).show()
+                            }
+
+                            R.id.del_chat_context_menu -> {
+                                delFromMe(m)
+                                chats.removeAt(h.adapterPosition)
+                                notifyItemRemoved(h.adapterPosition)
+                            }
+
+                            R.id.del_all_chat_context_menu -> {
+                                delFromEveryone(m)
+                                chats.removeAt(h.adapterPosition)
+                                notifyItemRemoved(h.adapterPosition)
+                            }
+
+                            R.id.del_all_chat_context_menu -> {
+                                val receiver = GlobalStaticAdapter.key2+GlobalStaticAdapter.key
+
+                                //DatabaseAdapter.chatTable.child(sender).removeValue()
+                                DatabaseAdapter.chatTable.child(receiver).removeValue()
+
+                                chats.removeAll(chats.toSet())
+                                notifyItemRangeChanged(0,0)
+                            }
+                        }
+                        true
+                    }
+
+                    true
+                }
 
                 h.receiverImgMessage.setOnClickListener {
                     val i = Intent(context, ImageViewActivity::class.java)
@@ -312,6 +380,50 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
 
                 h.number.text = "Click Here to copy number"
 
+                h.senderContactMain.setOnLongClickListener {
+                    val p = PopupMenu(context, h.senderContactMain)
+
+                    p.inflate(R.menu.chat_context_menu)
+                    p.show()
+
+                    p.setOnMenuItemClickListener {
+
+                        when(it.itemId)
+                        {
+                            R.id.copy_context_menu -> {
+                                val clipboardManager = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                                val clip = ClipData.newPlainText("contact number", c[2])
+                                clipboardManager.setPrimaryClip(clip)
+                            }
+
+                            R.id.del_chat_context_menu -> {
+                                delFromMe(m)
+                                chats.removeAt(h.adapterPosition)
+                                notifyItemRemoved(h.adapterPosition)
+                            }
+
+                            R.id.del_chat_eve_context_menu -> {
+                                delFromEveryone(m)
+                                chats.removeAt(h.adapterPosition)
+                                notifyItemRemoved(h.adapterPosition)
+                            }
+
+                            R.id.del_all_chat_context_menu -> {
+                                val receiver = GlobalStaticAdapter.key2+GlobalStaticAdapter.key
+
+                                //DatabaseAdapter.chatTable.child(sender).removeValue()
+                                DatabaseAdapter.chatTable.child(receiver).removeValue()
+
+                                chats.removeAll(chats.toSet())
+                                notifyItemRangeChanged(0,0)
+                            }
+                        }
+                        true
+                    }
+
+                    true
+                }
+
                 h.copyNumber.setOnClickListener {
 
                     val clipboardManager = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
@@ -330,6 +442,50 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
                 val c = m.MESSAGE?.split(",")!!
 
                 h.contactName.text = c[1]
+
+                h.receiverContactMain.setOnLongClickListener {
+                    val p = PopupMenu(context, h.receiverContactMain)
+
+                    p.inflate(R.menu.chat_context_menu)
+                    p.show()
+
+                    p.setOnMenuItemClickListener {
+
+                        when(it.itemId)
+                        {
+                            R.id.copy_context_menu -> {
+                                val clipboardManager = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                                val clip = ClipData.newPlainText("contact number", c[2])
+                                clipboardManager.setPrimaryClip(clip)
+                            }
+
+                            R.id.del_chat_context_menu -> {
+                                delFromMe(m)
+                                chats.removeAt(h.adapterPosition)
+                                notifyItemRemoved(h.adapterPosition)
+                            }
+
+                            R.id.del_chat_eve_context_menu -> {
+                                delFromEveryone(m)
+                                chats.removeAt(h.adapterPosition)
+                                notifyItemRemoved(h.adapterPosition)
+                            }
+
+                            R.id.del_all_chat_context_menu -> {
+                                val receiver = GlobalStaticAdapter.key2+GlobalStaticAdapter.key
+
+                                //DatabaseAdapter.chatTable.child(sender).removeValue()
+                                DatabaseAdapter.chatTable.child(receiver).removeValue()
+
+                                chats.removeAll(chats.toSet())
+                                notifyItemRangeChanged(0,0)
+                            }
+                        }
+                        true
+                    }
+
+                    true
+                }
 
                 h.number.text = "Click Here to copy number"
 
@@ -381,7 +537,7 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
     class SenderImageChatHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val senderImgMessage = itemView.findViewById<ImageView>(R.id.iv_sender_image_chat)!!
         val senderImgTime = itemView.findViewById<TextView>(R.id.tv_sender_image_chat_time)!!
-        //val senderImgMainView = itemView.findViewById<RelativeLayout>(R.id.rl_sender_image_layout)!!
+        val senderImgMainView = itemView.findViewById<ConstraintLayout>(R.id.cl_sender_image_layout)!!
     }
 
     class ReceiverChatHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -393,7 +549,7 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
     class ReceiverImageChatHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val receiverImgMessage = itemView.findViewById<ImageView>(R.id.iv_receiver_image_chat)!!
         val receiverImgTime = itemView.findViewById<TextView>(R.id.tv_receiver_image_chat_time)!!
-        //val receiverImgMainView = itemView.findViewById<RelativeLayout>(R.id.rl_receiver_image_layout)!!
+        val receiverImgMainView = itemView.findViewById<ConstraintLayout>(R.id.cl_receiver_image_layout)!!
     }
 
     class SenderContactHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -401,6 +557,7 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
         val copyNumber = itemView.findViewById<LinearLayout>(R.id.ll_sender_contact)!!
         val number = itemView.findViewById<TextView>(R.id.tv_sender_contact_number_chat)!!
         val time = itemView.findViewById<TextView>(R.id.tv_sender_contact_time)!!
+        val senderContactMain = itemView.findViewById<LinearLayout>(R.id.ll_sender_contact_layout)!!
     }
 
     class ReceiverContactHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -408,5 +565,145 @@ class ChatAdapter(private val context: Context, private val chats:ArrayList<Chat
         val copyNumber = itemView.findViewById<LinearLayout>(R.id.ll_receiver_contact)!!
         val number = itemView.findViewById<TextView>(R.id.tv_receiver_contact_number_chat)!!
         val time = itemView.findViewById<TextView>(R.id.tv_receiver_contact_time)!!
+        val receiverContactMain = itemView.findViewById<LinearLayout>(R.id.ll_receiver_contact_layout)!!
+    }
+
+    private fun delFromMe(m:ChatModel)
+    {
+        val receiver = GlobalStaticAdapter.key2+GlobalStaticAdapter.key
+
+        DatabaseAdapter.chatTable.child(receiver)
+            .addListenerForSingleValueEvent(object: ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if(snapshot.exists())
+                    {
+                        for(s in snapshot.children)
+                        {
+                            val t = s.child("TIMESTAMP")
+                                .getValue(Long::class.java)!!
+
+                            Log.d("DEL_ERROR", m.TIMESTAMP.toString())
+                            Log.d("DEL_ERROR", t.toString())
+                            if(t == m.TIMESTAMP)
+                            {
+                                Log.d("DEL_ERROR", "Hello1 ${s.key!!}")
+                                DatabaseAdapter.chatTable
+                                    .child(receiver)
+                                    .child(s.key!!)
+                                    .removeValue().addOnCompleteListener {
+                                        Toast.makeText(context,
+                                            "Chat deleted", Toast.LENGTH_LONG).show()
+                                    }
+                                Log.d("DEL_ERROR", "Hello2")
+
+                                return
+                            }
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                }
+            })
+    }
+
+    private fun delFromEveryone(m:ChatModel)
+    {
+        val sender = GlobalStaticAdapter.key+GlobalStaticAdapter.key2
+        val receiver = GlobalStaticAdapter.key2+GlobalStaticAdapter.key
+
+        DatabaseAdapter.chatTable.child(receiver)
+            .addListenerForSingleValueEvent(object: ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if(snapshot.exists())
+                    {
+                        for(s in snapshot.children)
+                        {
+                            val t = s.child("TIMESTAMP")
+                                .getValue(Long::class.java)!!
+
+                            var link = ""
+                            if(m.MESSAGE?.contains("project.social.whisper")!!) {
+                                link = s.child("MESSAGE")
+                                    .getValue(String::class.java)!!
+                            }
+
+                            Log.d("DEL_ERROR", m.TIMESTAMP.toString())
+                            Log.d("DEL_ERROR", t.toString())
+                            if(t == m.TIMESTAMP)
+                            {
+                                if(!isThirtyMinutesPassed(t)) {
+                                    Log.d("DEL_ERROR", "Hello1 ${s.key!!}")
+                                    DatabaseAdapter.chatTable
+                                        .child(receiver)
+                                        .child(s.key!!)
+                                        .removeValue().addOnCompleteListener {
+
+                                            if(m.MESSAGE?.contains("project.social.whisper")!!) {
+                                                FirebaseStorage.getInstance()
+                                                    .getReferenceFromUrl(link)
+                                                    .delete()
+                                            }
+
+                                        }
+                                    Log.d("DEL_ERROR", "Hello2")
+                                }
+                                else
+                                {
+                                    Toast.makeText(context,
+                                        "You cannot delete message from everyone after 30 minutes",
+                                        Toast.LENGTH_LONG).show()
+                                }
+
+                                return
+                            }
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+
+                }
+
+            })
+
+        DatabaseAdapter.chatTable.child(sender)
+            .addListenerForSingleValueEvent(object: ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if(snapshot.exists())
+                    {
+                        for(s in snapshot.children)
+                        {
+                            val t = s.child("TIMESTAMP")
+                                .getValue(Long::class.java)!!
+
+                            if(t == m.TIMESTAMP)
+                            {
+                                if(!isThirtyMinutesPassed(t)) {
+                                    DatabaseAdapter.chatTable
+                                        .child(sender)
+                                        .child(s.key!!)
+                                        .removeValue()
+                                }
+
+                                return
+
+                            }
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+
+                }
+
+            })
+    }
+
+    private fun isThirtyMinutesPassed(timestamp: Long): Boolean {
+        val currentTimeMillis = System.currentTimeMillis()
+        val thirtyMinutesInMillis = 30 * 60 * 1000 // 30 minutes in milliseconds
+
+        return currentTimeMillis - timestamp >= thirtyMinutesInMillis
     }
 }

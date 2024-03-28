@@ -7,7 +7,11 @@
 
     <item
         android:id="@+id/del_chat_context_menu"
-        android:title="@string/delete_chat"/>
+        android:title="@string/delete_from_me"/>
+
+    <item
+        android:id="@+id/del_chat_eve_context_menu"
+        android:title="@string/delete_from_eve"/>
 
     <item
         android:id="@+id/del_all_chat_context_menu"

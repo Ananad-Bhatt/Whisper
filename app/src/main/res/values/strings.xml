@@ -122,7 +122,8 @@
 
 <!--    Chat context menu-->
     <string name="copy">Copy</string>
-    <string name="delete_chat">Delete Chat</string>
+    <string name="delete_from_me">Delete from me</string>
+    <string name="delete_from_eve">Delete from Everyone</string>
     <string name="delete_all">Delete all chats</string>
 
 </resources>
