@@ -128,10 +128,12 @@
 
     <!--    block accout-->
     <string name="block_title">Do you wanted to block this account?</string>
+
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="delete_acc">Delete account\n</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="delete_acc_title">Re Authenticate</string>
+    <string name="delete_acc_desc">Re authenticate yourself in order to delete your account, as this is your last account</string>
+    <string name="delete_all_acc">Delete all accounts</string>
 
 </resources>

@@ -1,11 +1,18 @@
 package fragments
 
+import adapters.DatabaseAdapter
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import com.google.firebase.auth.EmailAuthProvider
+import project.social.whisper.ForgotPasswordActivity
 import project.social.whisper.R
+import project.social.whisper.StartUpActivity
+import project.social.whisper.databinding.FragmentDeleteAccountBinding
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -25,9 +32,60 @@ class DeleteAccountFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_delete_account, container, false)
+        val b = FragmentDeleteAccountBinding.inflate(inflater, container, false)
+
+        if(isAdded) {
+            b.btnDelAccDel.setOnClickListener {
+                if (b.edtEmailDelAcc.text.trim().toString().isNotEmpty()
+                    && b.edtPassDelAcc.text.trim().toString().isNotEmpty()
+                ) {
+                    val credentials = EmailAuthProvider.getCredential(
+                        b.edtEmailDelAcc.text.toString(),
+                        b.edtPassDelAcc.text.toString()
+                    )
+
+                    val user = DatabaseAdapter.returnUser()!!
+
+                    user.reauthenticate(credentials)
+                        .addOnCompleteListener {
+                            user.delete().addOnCompleteListener {
+                                Toast.makeText(
+                                    requireActivity(),
+                                    "Account is deleted",
+                                    Toast.LENGTH_LONG
+                                )
+                                    .show()
+
+                                val i = Intent(requireActivity(), StartUpActivity::class.java)
+                                requireActivity().startActivity(i)
+                                requireActivity().finishAffinity()
+                            }
+                        }.addOnFailureListener {
+                            Toast.makeText(
+                                requireActivity(),
+                                "Something went wrong",
+                                Toast.LENGTH_LONG
+                            )
+                                .show()
+                        }
+
+                } else {
+                    Toast.makeText(
+                        requireActivity(), "Enter email and password to continue", Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+
+            b.txtResetPassDelAcc.setOnClickListener {
+                val i = Intent(requireActivity(), ForgotPasswordActivity::class.java)
+                requireActivity().startActivity(i)
+            }
+        }
+
+
+        return b.root
     }
 
     companion object {
