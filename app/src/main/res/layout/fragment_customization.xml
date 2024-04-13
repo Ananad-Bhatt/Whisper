@@ -21,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_marginTop="@dimen/_50sdp"
+        android:layout_marginTop="@dimen/_40sdp"
         android:background="@drawable/tool_back">
 
         <ScrollView
@@ -59,7 +59,8 @@
                         android:layout_height="@dimen/_30sdp"
                         android:layout_marginEnd="@dimen/_20sdp"
                         android:background="@drawable/radio_back_color_selected"
-                        android:backgroundTint="@color/primary1"/>
+                        android:backgroundTint="@color/primary1"
+                        android:orientation="horizontal" />
 
                     <LinearLayout
                         android:id="@+id/primary2_color"
@@ -67,7 +68,8 @@
                         android:layout_height="@dimen/_30sdp"
                         android:layout_marginEnd="@dimen/_20sdp"
                         android:background="@drawable/radio_back_color_selected"
-                        android:backgroundTint="@color/primary2"/>
+                        android:backgroundTint="@color/primary2"
+                        android:orientation="horizontal" />
 
                     <LinearLayout
                         android:id="@+id/primary3_color"
@@ -75,7 +77,8 @@
                         android:layout_height="@dimen/_30sdp"
                         android:layout_marginEnd="@dimen/_20sdp"
                         android:background="@drawable/radio_back_color_selected"
-                        android:backgroundTint="@color/primary3"/>
+                        android:backgroundTint="@color/primary3"
+                        android:orientation="horizontal" />
 
                     <LinearLayout
                         android:id="@+id/primary4_color"
@@ -83,14 +86,16 @@
                         android:layout_height="@dimen/_30sdp"
                         android:layout_marginEnd="@dimen/_20sdp"
                         android:background="@drawable/radio_back_color_selected"
-                        android:backgroundTint="@color/primary4"/>
+                        android:backgroundTint="@color/primary4"
+                        android:orientation="horizontal" />
 
                     <LinearLayout
                         android:id="@+id/primary5_color"
                         android:layout_width="@dimen/_30sdp"
                         android:layout_height="@dimen/_30sdp"
                         android:background="@drawable/radio_back_color_selected"
-                        android:backgroundTint="@color/primary5"/>
+                        android:backgroundTint="@color/primary5"
+                        android:orientation="horizontal" />
 
                 </LinearLayout>
 
@@ -107,7 +112,8 @@
                         android:layout_height="@dimen/_30sdp"
                         android:layout_marginEnd="@dimen/_20sdp"
                         android:background="@drawable/radio_back_color_selected"
-                        android:backgroundTint="@color/primary6"/>
+                        android:backgroundTint="@color/primary6"
+                        android:orientation="horizontal" />
 
                     <LinearLayout
                         android:layout_width="@dimen/_30sdp"

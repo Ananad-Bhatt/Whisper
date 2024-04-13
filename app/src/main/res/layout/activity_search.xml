@@ -23,14 +23,14 @@
                 android:background="?primary">
 
                 <EditText
-                    style="@style/EDITTEXT"
                     android:id="@+id/toolbar_search"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_30sdp"
+                    android:layout_height="@dimen/_35sdp"
                     android:hint="@string/search"
                     android:padding="10dp"
+                    android:textSize="@dimen/_15ssp"
                     android:backgroundTint="@color/white"
-                    android:layout_marginEnd="20dp"
+                    android:layout_marginEnd="@dimen/_20sdp"
                     android:inputType="textFilter"
                     android:background="@drawable/edt_back"/>
 
@@ -42,7 +42,7 @@
             android:id="@+id/search_act_rv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
+            android:layout_marginTop="10dp"
             android:layout_below="@+id/search_act_app_bar" />
     </RelativeLayout>
 

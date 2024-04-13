@@ -8,11 +8,4 @@
         android:icon="@drawable/search"
         app:showAsAction="always"/>
 
-    <item
-        android:id="@+id/home_tool_add"
-        android:title="@string/create_post"
-        android:icon="@drawable/add"
-        app:showAsAction="ifRoom"/>
-
-
 </menu>

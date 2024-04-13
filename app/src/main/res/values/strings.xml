@@ -137,5 +137,6 @@
     <string name="delete_all_acc">Delete all accounts</string>
     <string name="delete_acc_google">Google account</string>
     <string name="delete_acc_mobile">Mobile Account\n</string>
+    <string name="post_desc">Add Post</string>
 
 </resources>

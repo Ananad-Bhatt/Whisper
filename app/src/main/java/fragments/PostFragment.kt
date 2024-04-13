@@ -76,6 +76,7 @@ class PostFragment : Fragment() {
                 val data = it.data
                 uri = data?.data!!
                 Glide.with(requireActivity()).load(uri).into(b.ivPostFrag)
+                b.btnPostFrag.isEnabled = true
             } else {
                 if(isAdded) {
                     Toast.makeText(requireContext(), "Image selection canceled", Toast.LENGTH_SHORT)
@@ -89,7 +90,15 @@ class PostFragment : Fragment() {
         }
 
         b.btnPostFrag.setOnClickListener {
-            uploadImage(uri)
+            if(b.btnPostFrag.isEnabled) {
+                uploadImage(uri)
+            }else
+            {
+                if(isAdded) {
+                    Toast.makeText(requireActivity(), "Select image first", Toast.LENGTH_LONG)
+                        .show()
+                }
+            }
         }
 
         return b.root
