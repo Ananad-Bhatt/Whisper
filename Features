@@ -211,3 +211,7 @@ Progress bar for buttons, coz multiple click can cause creation of multiple acco
 LOGIN and REGISTRATION :
 	If login with Email and Password -> Verify email first
 	If login with email and pass and then try to login with google then provider will be changed, and if after that try to change password then again provider will be changed to email.
+
+
+
+

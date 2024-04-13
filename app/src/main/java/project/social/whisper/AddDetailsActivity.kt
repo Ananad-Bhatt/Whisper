@@ -70,6 +70,7 @@ class AddDetailsActivity : BaseActivity() {
                     DatabaseAdapter.userDetailsTable.child(GlobalStaticAdapter.uid)
                         .child(GlobalStaticAdapter.key)
                         .child("IS_OPENED").setValue(false)
+                    Log.d("LOGIN_ERROR", "Hi0")
                 }
 
                 val user = DatabaseAdapter.returnUser()!!
@@ -77,12 +78,15 @@ class AddDetailsActivity : BaseActivity() {
 
                     try {
 
+                        Log.d("LOGIN_ERROR", "Hi1")
+
                         GlobalStaticAdapter.key =
                             DatabaseAdapter.userDetailsTable.push().key!!
 
                         GlobalStaticAdapter.about = ""
 
                         NotificationService.generateToken()
+                        Log.d("LOGIN_ERROR", "Hi2")
 
                         DatabaseAdapter.userDetailsTable.child(GlobalStaticAdapter.uid)
                             .child(GlobalStaticAdapter.key)
@@ -95,6 +99,8 @@ class AddDetailsActivity : BaseActivity() {
                             .child(GlobalStaticAdapter.key)
                             .child("USER_NAME")
                             .setValue(b.edtDetUserName.text.toString().lowercase())
+
+                        Log.d("LOGIN_ERROR", "Hi3")
                     }catch(e:Exception)
                     {
                         Log.d("DB_ERROR",e.toString())
@@ -103,9 +109,13 @@ class AddDetailsActivity : BaseActivity() {
                     GlobalStaticAdapter.userName = b.edtDetUserName.text.toString().lowercase()
                     GlobalStaticAdapter.imageUrl = getString(R.string.image_not_found)
 
+                    Log.d("LOGIN_ERROR", "Hi4")
+
                     DatabaseAdapter.usersTable.child(GlobalStaticAdapter.uid).child("EMAIL_VERIFIED").setValue(true)
                     val mainAct = Intent(this, MainActivity::class.java)
                     startActivity(mainAct)
+
+                    Log.d("LOGIN_ERROR", "Hi5")
                 }
                 else
                 {

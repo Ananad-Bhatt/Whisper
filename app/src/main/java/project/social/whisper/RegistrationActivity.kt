@@ -227,16 +227,8 @@ class RegistrationActivity : BaseActivity() {
                                 if(DatabaseAdapter.returnUser()!=null)
                                 {
                                     val uid = DatabaseAdapter.returnUser()?.uid!!
-                                    val key = DatabaseAdapter.userDetailsTable.child(uid).push().key!!
 
-                                    GlobalStaticAdapter.key = key
                                     GlobalStaticAdapter.uid = uid
-
-                                    DatabaseAdapter.usersTable.child(uid).child("EMAIL")
-                                        .setValue(DatabaseAdapter.returnUser()?.email?.lowercase())
-
-                                    DatabaseAdapter.usersTable.child(uid)
-                                        .child("EMAIL_VERIFIED").setValue(true)
 
                                     checkEmailExistWithGoogle(DatabaseAdapter.returnUser()?.email?.lowercase())
                                 }
@@ -274,6 +266,13 @@ class RegistrationActivity : BaseActivity() {
                             }
                         }
                     }
+
+                    DatabaseAdapter.usersTable.child(GlobalStaticAdapter.uid).child("EMAIL")
+                        .setValue(DatabaseAdapter.returnUser()?.email?.lowercase())
+
+                    DatabaseAdapter.usersTable.child(GlobalStaticAdapter.uid)
+                        .child("EMAIL_VERIFIED").setValue(true)
+
                     //Move to diff Activity
                     val i = Intent(applicationContext, AddDetailsActivity::class.java)
                     startActivity(i)
