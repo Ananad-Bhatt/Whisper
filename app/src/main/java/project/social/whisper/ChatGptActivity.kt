@@ -1,32 +1,37 @@
 package project.social.whisper
 
-import androidx.appcompat.app.AppCompatActivity
+import adapters.AIAdapter
+import adapters.ChatAdapter
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.ai.client.generativeai.GenerativeModel
 import kotlinx.coroutines.launch
+import models.ChatAIModel
+import models.ChatModel
 
 import okhttp3.OkHttpClient
 import project.social.whisper.databinding.ActivityChatGptBinding
+import java.util.Date
 
 class ChatGptActivity : BaseActivity() {
 
-    private val client = OkHttpClient()
-
     private lateinit var b: ActivityChatGptBinding
 
-    private var chats:ArrayList<String> = ArrayList()
-
-    private lateinit var a:ArrayAdapter<String>
-
+    private var chats:ArrayList<ChatAIModel> = ArrayList()
+    private val a = AIAdapter(this, chats)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         b = ActivityChatGptBinding.inflate(layoutInflater)
         setContentView(b.root)
 
-        a = ArrayAdapter(this, android.R.layout.simple_list_item_1, chats)
+        val manager = LinearLayoutManager(this)
+        manager.stackFromEnd = true
+
+        b.rvChatAct.layoutManager =manager
+
         b.rvChatAct.adapter = a
 
 
@@ -46,13 +51,15 @@ class ChatGptActivity : BaseActivity() {
         if(b.edtChatActMessage.text.toString().isNotEmpty()) {
             val msg = b.edtChatActMessage.text.toString()
 
-            chats.add(msg)
-            a.notifyDataSetChanged()
+            chats.add(ChatAIModel(msg, Date().time, false))
+            a.notifyItemInserted(chats.size)
+            b.rvChatAct.scrollToPosition(a.itemCount - 1)
 
             lifecycleScope.launch {
                 val response = generativeModel.generateContent(msg)
-                chats.add(response.text.toString())
-                a.notifyDataSetChanged()
+                chats.add(ChatAIModel(response.text.toString(), Date().time, true))
+                a.notifyItemInserted(chats.size)
+                b.rvChatAct.scrollToPosition(a.itemCount - 1)
             }
 
             b.edtChatActMessage.text.clear()

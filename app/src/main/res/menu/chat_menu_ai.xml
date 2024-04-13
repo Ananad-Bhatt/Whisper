@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/copy_context_menu"
+        android:title="@string/copy"/>
+
+    <item
+        android:id="@+id/del_chat_context_menu"
+        android:title="@string/delete_from_me"/>
+
+    <item
+        android:id="@+id/del_all_chat_context_menu"
+        android:title="@string/delete_all"/>
+</menu>

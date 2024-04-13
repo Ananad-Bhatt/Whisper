@@ -108,27 +108,36 @@
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_5sdp"
         android:minHeight="@dimen/_45sdp"
-        android:background="?primary">
+        android:orientation="horizontal">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:backgroundTint="?primary"
+            android:background="@drawable/edt_back"
             android:layout_weight="1">
 
             <EditText
                 android:id="@+id/edt_chat_act_message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/_4sdp"
-                android:textSize="@dimen/_14ssp"
+                android:layout_marginStart="@dimen/_4sdp"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:layout_marginBottom="@dimen/_4sdp"
+                android:paddingEnd="@dimen/_45sdp"
+                android:textColor="#FFF"
+                android:textColorHint="#C5C5C5"
                 android:background="@drawable/edt_back"
                 android:hint="@string/enter_message"
                 android:inputType="textMultiLine"
-                android:maxLines="15"
                 android:isScrollContainer="true"
-                android:padding="10dp" />
+                android:maxLines="15"
+                android:padding="10dp"
+                android:textSize="@dimen/_14ssp" />
 
             <ImageButton
                 android:id="@+id/ib_chat_act_attach"
