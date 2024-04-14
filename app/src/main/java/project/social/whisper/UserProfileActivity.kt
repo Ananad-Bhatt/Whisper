@@ -3,6 +3,7 @@ package project.social.whisper
 import adapters.DatabaseAdapter
 import adapters.GlobalStaticAdapter
 import adapters.HomeRecyclerViewAdapter
+import adapters.ProfileRecyclerViewAdapter
 import android.app.Dialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -23,6 +24,8 @@ import project.social.whisper.databinding.ActivityUserProfileBinding
 class UserProfileActivity : BaseActivity() {
 
     private lateinit var b:ActivityUserProfileBinding
+    val posts = ArrayList<HomeModel>()
+    private lateinit var adapter:ProfileRecyclerViewAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,11 +33,13 @@ class UserProfileActivity : BaseActivity() {
         b = ActivityUserProfileBinding.inflate(layoutInflater)
         setContentView(b.root)
 
-        val posts = ArrayList<HomeModel>()
-
         b.txtProfileActUserName.text = GlobalStaticAdapter.userName2
         Glide.with(applicationContext).load(GlobalStaticAdapter.imageUrl2).into(b.imgProfileActUserImage)
         b.txtProfileActAbout.text = GlobalStaticAdapter.about2
+
+        b.rvProfileActRecentPosts.layoutManager = GridLayoutManager(this, 2)
+        adapter = ProfileRecyclerViewAdapter(posts, applicationContext)
+        b.rvProfileActRecentPosts.adapter = adapter
 
         getPostCount()
         getFollowerCount()
@@ -237,10 +242,6 @@ class UserProfileActivity : BaseActivity() {
             }
         }
 
-        b.rvProfileActRecentPosts.layoutManager = GridLayoutManager(this, 2)
-        val adapter = HomeRecyclerViewAdapter(posts, applicationContext)
-        b.rvProfileActRecentPosts.adapter = adapter
-
 //        DatabaseAdapter.postTable.child(GlobalStaticAdapter.uid)
 //            .child(GlobalStaticAdapter.key)
 //            .addListenerForSingleValueEvent(object: ValueEventListener {
@@ -323,7 +324,7 @@ class UserProfileActivity : BaseActivity() {
 
     private fun getPostCount() {
         try{
-            DatabaseAdapter.postTable.child(GlobalStaticAdapter.uid2)
+            DatabaseAdapter.postTable
                 .child(GlobalStaticAdapter.key2)
                 .addListenerForSingleValueEvent(object: ValueEventListener{
                     override fun onDataChange(snapshot: DataSnapshot) {
@@ -331,6 +332,27 @@ class UserProfileActivity : BaseActivity() {
                             val post = snapshot.childrenCount
 
                             b.txtProfileActNoOfPosts.text = post.toString()
+
+                            for(s in snapshot.children)
+                            {
+                                val title = s.child("USERNAME").getValue(String::class.java)!!
+
+                                val image = s.child("IMAGE").getValue(String::class.java)
+                                    ?: getString(R.string.image_not_found)
+
+                                val cap = s.child("CAPTION").getValue(String::class.java)
+                                    ?: "Caption"
+
+                                val score =
+                                    s.child("SCORE").getValue(Int::class.java) ?: 0
+
+                                val userImage =
+                                    s.child("USER_IMAGE").getValue(String::class.java)
+                                        ?: getString(R.string.image_not_found)
+
+                                posts.add(HomeModel(title, userImage, cap, image, score))
+                                adapter.notifyItemInserted(posts.size)
+                            }
                         }
                     }
 

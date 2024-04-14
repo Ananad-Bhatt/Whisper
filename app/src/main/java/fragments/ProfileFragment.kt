@@ -2,15 +2,18 @@ package fragments
 
 import adapters.DatabaseAdapter
 import adapters.GlobalStaticAdapter
+import adapters.ProfileRecyclerViewAdapter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import models.HomeModel
 import project.social.whisper.R
 import project.social.whisper.databinding.FragmentProfileBinding
 
@@ -22,6 +25,8 @@ class ProfileFragment : Fragment() {
     private var param2: String? = null
 
     lateinit var b: FragmentProfileBinding
+    val posts = ArrayList<HomeModel>()
+    private lateinit var adapter: ProfileRecyclerViewAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +47,12 @@ class ProfileFragment : Fragment() {
         Glide.with(requireContext()).load(GlobalStaticAdapter.imageUrl).into(b.imgProfileUserImage)
         b.txtProfileUserName.text = GlobalStaticAdapter.userName
         b.txtProfileAbout.text = GlobalStaticAdapter.about
+
+        if(isAdded) {
+            b.rvProfileRecentPosts.layoutManager = GridLayoutManager(requireActivity(), 2)
+            adapter = ProfileRecyclerViewAdapter(posts, requireActivity())
+            b.rvProfileRecentPosts.adapter = adapter
+        }
 
         getPostCount()
         getFollowerCount()
@@ -114,7 +125,7 @@ class ProfileFragment : Fragment() {
 
     private fun getPostCount() {
         try{
-            DatabaseAdapter.postTable.child(GlobalStaticAdapter.uid)
+            DatabaseAdapter.postTable
                 .child(GlobalStaticAdapter.key)
                 .addListenerForSingleValueEvent(object: ValueEventListener{
                     override fun onDataChange(snapshot: DataSnapshot) {
@@ -122,6 +133,28 @@ class ProfileFragment : Fragment() {
                             val post = snapshot.childrenCount
 
                             b.txtProfileNoOfPosts.text = post.toString()
+
+                            for(s in snapshot.children)
+                            {
+                                val title = s.child("USERNAME").getValue(String::class.java)!!
+
+                                val image = s.child("IMAGE").getValue(String::class.java)
+                                    ?: getString(R.string.image_not_found)
+
+                                val cap = s.child("CAPTION").getValue(String::class.java)
+                                    ?: "Caption"
+
+                                val score =
+                                    s.child("SCORE").getValue(Int::class.java) ?: 0
+
+                                val userImage =
+                                    s.child("USER_IMAGE").getValue(String::class.java)
+                                        ?: getString(R.string.image_not_found)
+
+                                posts.add(HomeModel(title, userImage, cap, image, score))
+                                adapter.notifyItemInserted(posts.size)
+                            }
+
                         }
                     }
 
