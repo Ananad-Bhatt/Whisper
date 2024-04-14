@@ -83,6 +83,9 @@ class AddDetailsActivity : BaseActivity() {
                         GlobalStaticAdapter.key =
                             DatabaseAdapter.userDetailsTable.push().key!!
 
+                        DatabaseAdapter.keyUidTable.child(GlobalStaticAdapter.key)
+                            .setValue(GlobalStaticAdapter.uid)
+
                         GlobalStaticAdapter.about = ""
 
                         NotificationService.generateToken()

@@ -51,6 +51,7 @@ class DatabaseAdapter {
         var blockTable = Firebase.database.getReference("BLOCK")
         var followingTable = Firebase.database.getReference("FOLLOWING")
         var followerTable = Firebase.database.getReference("FOLLOWER")
+        var keyUidTable = Firebase.database.getReference("KEY_UID")
 
         //Storage
         var userImage = FirebaseStorage.getInstance().getReference("USER_IMAGES")
