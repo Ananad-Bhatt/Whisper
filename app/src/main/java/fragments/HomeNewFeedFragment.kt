@@ -1,6 +1,7 @@
 package fragments
 
 import adapters.DatabaseAdapter
+import adapters.GlobalStaticAdapter
 import adapters.HomeRecyclerViewAdapter
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -24,6 +25,8 @@ class HomeNewFeedFragment : Fragment() {
 
     private lateinit var adapter: HomeRecyclerViewAdapter
 
+    val posts = ArrayList<HomeModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -39,8 +42,6 @@ class HomeNewFeedFragment : Fragment() {
         // Inflate the layout for this fragment
         val b = FragmentHomeNewFeedBinding.inflate(inflater, container, false)
 
-        val posts = ArrayList<HomeModel>()
-
         b.rvHomeNewFeedFrag.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL ,false)
 
         if(isAdded) {
@@ -48,40 +49,33 @@ class HomeNewFeedFragment : Fragment() {
         }
         b.rvHomeNewFeedFrag.adapter = adapter
 
-        DatabaseAdapter.postTable.addListenerForSingleValueEvent(object: ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if(snapshot.exists())
-                {
-                    for(s in snapshot.children) {
-                        for(sw in s.children) {
-                            for(sn in sw.children) {
-                                val title = sn.child("USERNAME").getValue(String::class.java)!!
+        val followingList = ArrayList<String>()
 
-                                val image = sn.child("IMAGE").getValue(String::class.java)
-                                    ?: getString(R.string.image_not_found)
+        DatabaseAdapter.followingTable.child(GlobalStaticAdapter.key)
+            .addListenerForSingleValueEvent(object : ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if(snapshot.exists())
+                    {
+                        val count = snapshot.childrenCount
+                        for(s in snapshot.children)
+                        {
+                            followingList.add(s.key!!)
+                        }
 
-                                val cap = sn.child("CAPTION").getValue(String::class.java)
-                                    ?: "Caption"
-
-                                val score =
-                                    sn.child("SCORE").getValue(Int::class.java) ?: 0
-
-                                val userImage = sn.child("USER_IMAGE").getValue(String::class.java)
-                                    ?: getString(R.string.image_not_found)
-
-                                posts.add(HomeModel(title, userImage, cap, image, score))
-                                adapter.notifyItemInserted(posts.size)
-                            }
+                        if(followingList.size == count.toInt()) {
+                            fetchKeys(followingList)
                         }
                     }
+                    else
+                    {
+                        fetchKeys(followingList)
+                    }
                 }
-            }
 
-            override fun onCancelled(error: DatabaseError) {
+                override fun onCancelled(error: DatabaseError) {
+                }
 
-            }
-
-        })
+            })
 
 //        posts.add(HomeModel("Username",R.mipmap.ic_launcher,"caption",R.mipmap.ic_launcher,1))
 //        posts.add(HomeModel("Username",R.mipmap.ic_launcher,"caption",R.mipmap.ic_launcher,1))
@@ -99,6 +93,77 @@ class HomeNewFeedFragment : Fragment() {
 //        posts.add(HomeModel("Username",R.mipmap.ic_launcher,"caption",R.mipmap.ic_launcher,1))
 
         return b.root
+    }
+
+    private fun fetchKeys(followingList: ArrayList<String>) {
+        val pubAcc = ArrayList<String>()
+
+        DatabaseAdapter.userDetailsTable.addListenerForSingleValueEvent(object: ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if(snapshot.exists())
+                {
+                    for(s in snapshot.children)
+                    {
+                        for(sw in s.children)
+                        {
+                            //For faster response, taking only 100 posts
+                            if(pubAcc.size < 100) {
+                                if(!followingList.contains(sw.key!!)) {
+                                    val acType = sw.child("ACCOUNT_TYPE")
+                                        .getValue(String::class.java) ?: "PUBLIC"
+
+                                    if (acType == "PUBLIC") {
+                                        pubAcc.add(sw.key!!)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    fetchPosts(pubAcc)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+            }
+
+        })
+    }
+
+    private fun fetchPosts(pubAcc: ArrayList<String>) {
+        for(following in pubAcc) {
+
+            DatabaseAdapter.postTable.child(following).addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        for (sn in snapshot.children) {
+                            val title = sn.child("USERNAME").getValue(String::class.java)!!
+
+                            val image = sn.child("IMAGE").getValue(String::class.java)
+                                ?: getString(R.string.image_not_found)
+
+                            val cap = sn.child("CAPTION").getValue(String::class.java)
+                                ?: "Caption"
+
+                            val score =
+                                sn.child("SCORE").getValue(Int::class.java) ?: 0
+
+                            val userImage =
+                                sn.child("USER_IMAGE").getValue(String::class.java)
+                                    ?: getString(R.string.image_not_found)
+
+                            posts.add(HomeModel(title, userImage, cap, image, score))
+                            adapter.notifyItemInserted(posts.size)
+
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+
+                }
+
+            })
+        }
     }
 
     companion object {

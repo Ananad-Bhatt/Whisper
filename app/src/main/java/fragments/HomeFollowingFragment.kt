@@ -1,6 +1,7 @@
 package fragments
 
 import adapters.DatabaseAdapter
+import adapters.GlobalStaticAdapter
 import adapters.HomeRecyclerViewAdapter
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -24,6 +25,8 @@ class HomeFollowingFragment : Fragment() {
 
     private lateinit var adapter:HomeRecyclerViewAdapter
 
+    val posts = ArrayList<HomeModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -38,7 +41,6 @@ class HomeFollowingFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         val b = FragmentHomeFollowingBinding.inflate(inflater,container,false)
-        val posts = ArrayList<HomeModel>()
 
         b.homeFollowingFragRecyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL ,false)
 
@@ -47,40 +49,30 @@ class HomeFollowingFragment : Fragment() {
         }
         b.homeFollowingFragRecyclerView.adapter = adapter
 
-        DatabaseAdapter.postTable.addListenerForSingleValueEvent(object: ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if(snapshot.exists())
-                {
-                    for(s in snapshot.children) {
-                        for(sw in s.children) {
-                            for(sn in sw.children) {
-                                val title = sn.child("USERNAME").getValue(String::class.java)!!
+        val followingList = ArrayList<String>()
 
-                                val image = sn.child("IMAGE").getValue(String::class.java)
-                                    ?: getString(R.string.image_not_found)
-
-                                val cap = sn.child("CAPTION").getValue(String::class.java)
-                                    ?: "Caption"
-
-                                val score =
-                                    sn.child("SCORE").getValue(Int::class.java) ?: 0
-
-                                val userImage = sn.child("USER_IMAGE").getValue(String::class.java)
-                                    ?: getString(R.string.image_not_found)
-
-                                posts.add(HomeModel(title, userImage, cap, image, score))
-                                adapter.notifyItemInserted(posts.size)
-                            }
+        DatabaseAdapter.followingTable.child(GlobalStaticAdapter.key)
+            .addListenerForSingleValueEvent(object : ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if(snapshot.exists())
+                    {
+                        val count = snapshot.childrenCount
+                        for(s in snapshot.children)
+                        {
+                            followingList.add(s.key!!)
                         }
+
+                        if(followingList.size == count.toInt()) {
+                            fetchPosts(followingList)
+                        }
+
                     }
                 }
-            }
 
-            override fun onCancelled(error: DatabaseError) {
+                override fun onCancelled(error: DatabaseError) {
+                }
 
-            }
-
-        })
+            })
 //        posts.add(HomeModel("Username",R.mipmap.ic_launcher,"caption",R.mipmap.ic_launcher,1))
 //        posts.add(HomeModel("Username",R.mipmap.ic_launcher,"caption",R.mipmap.ic_launcher,1))
 //        posts.add(HomeModel("Username",R.mipmap.ic_launcher,"caption",R.mipmap.ic_launcher,1))
@@ -99,6 +91,43 @@ class HomeFollowingFragment : Fragment() {
         return b.root
     }
 
+    private fun fetchPosts(followingList: ArrayList<String>) {
+        for(following in followingList) {
+
+            DatabaseAdapter.postTable.child(following).addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        for (sn in snapshot.children) {
+                            val title = sn.child("USERNAME").getValue(String::class.java)!!
+
+                            val image = sn.child("IMAGE").getValue(String::class.java)
+                                ?: getString(R.string.image_not_found)
+
+                            val cap = sn.child("CAPTION").getValue(String::class.java)
+                                ?: "Caption"
+
+                            val score =
+                                sn.child("SCORE").getValue(Int::class.java) ?: 0
+
+                            val userImage =
+                                sn.child("USER_IMAGE").getValue(String::class.java)
+                                    ?: getString(R.string.image_not_found)
+
+                            posts.add(HomeModel(title, userImage, cap, image, score))
+                            adapter.notifyItemInserted(posts.size)
+
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+
+                }
+
+            })
+        }
+    }
+
     companion object {
         /**
          * Use this factory method to create a new instance of
@@ -108,7 +137,6 @@ class HomeFollowingFragment : Fragment() {
          * @param param2 Parameter 2.
          * @return A new instance of fragment HomeFollowingFragment.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             HomeFollowingFragment().apply {

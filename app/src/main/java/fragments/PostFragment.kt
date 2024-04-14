@@ -147,7 +147,6 @@ class PostFragment : Fragment() {
 
                         //Image link
                         DatabaseAdapter.postTable
-                            .child(GlobalStaticAdapter.uid)
                             .child(GlobalStaticAdapter.key)
                             .child(currTime)
                             .child("IMAGE")
@@ -155,7 +154,6 @@ class PostFragment : Fragment() {
 
                         //Score of Post
                         DatabaseAdapter.postTable
-                            .child(GlobalStaticAdapter.uid)
                             .child(GlobalStaticAdapter.key)
                             .child(currTime)
                             .child("SCORE")
@@ -163,7 +161,6 @@ class PostFragment : Fragment() {
 
                         //Storing username
                         DatabaseAdapter.postTable
-                            .child(GlobalStaticAdapter.uid)
                             .child(GlobalStaticAdapter.key)
                             .child(currTime)
                             .child("USERNAME")
@@ -171,7 +168,6 @@ class PostFragment : Fragment() {
 
                         //Storing image of user
                         DatabaseAdapter.postTable
-                            .child(GlobalStaticAdapter.uid)
                             .child(GlobalStaticAdapter.key)
                             .child(currTime)
                             .child("USER_IMAGE")
@@ -179,7 +175,6 @@ class PostFragment : Fragment() {
 
                         //Storing caption
                         DatabaseAdapter.postTable
-                            .child(GlobalStaticAdapter.uid)
                             .child(GlobalStaticAdapter.key)
                             .child(currTime)
                             .child("CAPTION")
