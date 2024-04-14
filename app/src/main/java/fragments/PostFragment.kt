@@ -18,6 +18,8 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
+import androidx.fragment.app.FragmentManager
 import com.bumptech.glide.Glide
 import com.github.dhaval2404.imagepicker.ImagePicker
 import project.social.whisper.R
@@ -75,8 +77,11 @@ class PostFragment : Fragment() {
             if (it.resultCode == Activity.RESULT_OK) {
                 val data = it.data
                 uri = data?.data!!
+
+                b.txtPostFrag.visibility = View.GONE
+                b.ivPostFrag.visibility = View.VISIBLE
+
                 Glide.with(requireActivity()).load(uri).into(b.ivPostFrag)
-                b.btnPostFrag.isEnabled = true
             } else {
                 if(isAdded) {
                     Toast.makeText(requireContext(), "Image selection canceled", Toast.LENGTH_SHORT)
@@ -85,20 +90,38 @@ class PostFragment : Fragment() {
             }
         }
 
-        b.ivPostFrag.setOnClickListener {
+        b.txtPostFrag.setOnClickListener {
             imgClick()
         }
 
         b.btnPostFrag.setOnClickListener {
-            if(b.btnPostFrag.isEnabled) {
+            if(b.ivPostFrag.isVisible && b.edtCapPostFrag.text.trim().toString().isNotEmpty()) {
+                b.progressPostFrag.visibility = View.VISIBLE
+
+                GlobalStaticAdapter.setViewAndChildrenEnabled(b.llRootPostFrag, false)
+
                 uploadImage(uri)
             }else
             {
-                if(isAdded) {
-                    Toast.makeText(requireActivity(), "Select image first", Toast.LENGTH_LONG)
+                if(b.edtCapPostFrag.text.trim().toString().isNotEmpty())
+                {
+                    if(isAdded) {
+                        Toast.makeText(requireActivity(), "Select image first", Toast.LENGTH_LONG)
+                            .show()
+                    }
+                }
+                else
+                {
+                    Toast.makeText(requireActivity(), "Enter caption", Toast.LENGTH_LONG)
                         .show()
                 }
+
             }
+        }
+
+        b.btnCancelPostFrag.setOnClickListener {
+            b.txtPostFrag.visibility = View.VISIBLE
+            b.ivPostFrag.visibility = View.GONE
         }
 
         return b.root
@@ -108,6 +131,8 @@ class PostFragment : Fragment() {
         try {
 
             val currTime = Date().time.toString()
+
+            val cap = b.edtCapPostFrag.text.toString()
 
             //Upload image into storage
             DatabaseAdapter.postImage.child(GlobalStaticAdapter.uid)
@@ -119,43 +144,61 @@ class PostFragment : Fragment() {
                     .child(GlobalStaticAdapter.key).child(currTime)
                     .downloadUrl.addOnSuccessListener { img ->
 
-                    //Image link
-                    DatabaseAdapter.postTable
-                        .child(GlobalStaticAdapter.uid)
-                        .child(GlobalStaticAdapter.key)
-                        .child(currTime)
-                        .child("IMAGE")
-                        .setValue(img.toString())
+                        //Image link
+                        DatabaseAdapter.postTable
+                            .child(GlobalStaticAdapter.uid)
+                            .child(GlobalStaticAdapter.key)
+                            .child(currTime)
+                            .child("IMAGE")
+                            .setValue(img.toString())
 
-                    //Score of Post
-                    DatabaseAdapter.postTable
-                        .child(GlobalStaticAdapter.uid)
-                        .child(GlobalStaticAdapter.key)
-                        .child(currTime)
-                        .child("SCORE")
-                        .setValue(0)
+                        //Score of Post
+                        DatabaseAdapter.postTable
+                            .child(GlobalStaticAdapter.uid)
+                            .child(GlobalStaticAdapter.key)
+                            .child(currTime)
+                            .child("SCORE")
+                            .setValue(0)
 
-                    //Storing username
-                    DatabaseAdapter.postTable
-                        .child(GlobalStaticAdapter.uid)
-                        .child(GlobalStaticAdapter.key)
-                        .child(currTime)
-                        .child("USERNAME")
-                        .setValue(GlobalStaticAdapter.userName)
+                        //Storing username
+                        DatabaseAdapter.postTable
+                            .child(GlobalStaticAdapter.uid)
+                            .child(GlobalStaticAdapter.key)
+                            .child(currTime)
+                            .child("USERNAME")
+                            .setValue(GlobalStaticAdapter.userName)
 
-                    //Storing image of user
-                    DatabaseAdapter.postTable
-                        .child(GlobalStaticAdapter.uid)
-                        .child(GlobalStaticAdapter.key)
-                        .child(currTime)
-                        .child("USER_IMAGE")
-                        .setValue(GlobalStaticAdapter.imageUrl)
+                        //Storing image of user
+                        DatabaseAdapter.postTable
+                            .child(GlobalStaticAdapter.uid)
+                            .child(GlobalStaticAdapter.key)
+                            .child(currTime)
+                            .child("USER_IMAGE")
+                            .setValue(GlobalStaticAdapter.imageUrl)
 
-                    //Move back to home page
-                    val fm = requireActivity().supportFragmentManager
-                    val ft = fm.beginTransaction()
-                    ft.replace(R.id.main_container, HomeFragment())
-                    ft.commit()
+                        //Storing caption
+                        DatabaseAdapter.postTable
+                            .child(GlobalStaticAdapter.uid)
+                            .child(GlobalStaticAdapter.key)
+                            .child(currTime)
+                            .child("CAPTION")
+                            .setValue(cap)
+
+                        GlobalStaticAdapter.setViewAndChildrenEnabled(b.llRootPostFrag, true)
+                        b.progressPostFrag.visibility = View.GONE
+
+                            if(isAdded) {
+                                Toast.makeText(
+                                    requireActivity(),
+                                    "Post uploaded successfully",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+
+                        val fm = requireActivity().supportFragmentManager
+                        val ft = fm.beginTransaction()
+                        ft.replace(R.id.main_container, HomeFragment())
+                        ft.commit()
                 }
             }
         }catch(e:Exception)

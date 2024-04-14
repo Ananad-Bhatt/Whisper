@@ -5,6 +5,7 @@
     android:orientation="vertical"
     android:gravity="top|center"
     android:background="?primary"
+    android:id="@+id/ll_root_post_frag"
     tools:context="fragments.PostFragment">
 
     <TextView
@@ -28,6 +29,7 @@
             android:layout_width="@dimen/_250sdp"
             android:layout_height="@dimen/_250sdp"
             android:layout_marginTop="@dimen/_40sdp"
+            android:background="@drawable/edt_back"
             android:scaleType="fitXY"
             android:visibility="gone"/>
 
@@ -42,6 +44,22 @@
             android:background="@drawable/edt_back"
             android:textColor="?primary"
             android:text="@string/post_desc"/>
+
+        <ProgressBar
+            android:id="@+id/progress_post_frag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+
+        <EditText
+            android:id="@+id/edt_cap_post_frag"
+            android:layout_width="@dimen/_250sdp"
+            style="@style/EDITTEXT"
+            android:layout_marginTop="@dimen/_30sdp"
+            android:hint="@string/caption"
+            android:maxLength="20"
+            android:background="@drawable/edt_back"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -65,7 +83,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/post"
-                android:enabled="false"
                 android:layout_marginStart="10dp"/>
 
         </LinearLayout>

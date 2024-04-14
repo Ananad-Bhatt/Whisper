@@ -14,8 +14,7 @@
             android:id="@+id/chat_frag_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:menu="@menu/home_frag_toolbar"
-            app:title="@string/app_name"
+            app:title="@string/chat_page"
             app:titleTextColor="@color/white"
             android:background="?primary"/>
     </com.google.android.material.appbar.AppBarLayout>

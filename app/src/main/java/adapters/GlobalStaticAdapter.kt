@@ -1,5 +1,7 @@
 package adapters
 
+import android.view.View
+import android.view.ViewGroup
 import project.social.whisper.R
 
 class GlobalStaticAdapter {
@@ -59,5 +61,17 @@ class GlobalStaticAdapter {
 
         //Alias
         var alias2 = ""
+
+        //Disable user clicking
+        fun setViewAndChildrenEnabled(view: View, enabled: Boolean) {
+            view.isEnabled = enabled
+            if (view is ViewGroup) {
+                for (i in 0 until view.childCount) {
+                    val child = view.getChildAt(i)
+                    setViewAndChildrenEnabled(child, enabled)
+                }
+            }
+        }
+
     }
 }

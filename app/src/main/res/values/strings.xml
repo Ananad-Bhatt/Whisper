@@ -139,5 +139,6 @@
     <string name="delete_acc_mobile">Mobile Account\n</string>
     <string name="post_desc">Add Post</string>
     <string name="whisper_ai">Whisper AI</string>
+    <string name="caption">Caption</string>
 
 </resources>
