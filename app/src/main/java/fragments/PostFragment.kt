@@ -22,6 +22,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import com.bumptech.glide.Glide
 import com.github.dhaval2404.imagepicker.ImagePicker
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import project.social.whisper.R
 import project.social.whisper.databinding.FragmentPostBinding
 import java.util.Date
@@ -199,6 +200,12 @@ class PostFragment : Fragment() {
                         val ft = fm.beginTransaction()
                         ft.replace(R.id.main_container, HomeFragment())
                         ft.commit()
+
+                        if(isAdded) {
+                            val bottomNavigationView =
+                                requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav_bar)
+                            bottomNavigationView.selectedItemId = R.id.bottom_nav_home
+                        }
                 }
             }
         }catch(e:Exception)

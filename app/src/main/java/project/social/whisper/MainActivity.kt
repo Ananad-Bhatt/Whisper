@@ -38,28 +38,24 @@ class MainActivity : BaseActivity() {
                     val fm = supportFragmentManager
                     val ft = fm.beginTransaction()
                     ft.replace(R.id.main_container, HomeFragment())
-                    ft.addToBackStack(null)
                     ft.commit()
                 }
                 R.id.bottom_nav_chat -> {
                     val fm = supportFragmentManager
                     val ft = fm.beginTransaction()
                     ft.replace(R.id.main_container, ChatFragment())
-                    ft.addToBackStack(null)
                     ft.commit()
                 }
                 R.id.bottom_nav_reel -> {
                     val fm = supportFragmentManager
                     val ft = fm.beginTransaction()
                     ft.replace(R.id.main_container, PostFragment())
-                    ft.addToBackStack(null)
                     ft.commit()
                 }
                 else -> {
                     val fm = supportFragmentManager
                     val ft = fm.beginTransaction()
                     ft.replace(R.id.main_container, ProfileFragment())
-                    ft.addToBackStack(null)
                     ft.commit()
                 }
             }
