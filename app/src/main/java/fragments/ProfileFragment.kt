@@ -49,7 +49,7 @@ class ProfileFragment : Fragment() {
         b.txtProfileAbout.text = GlobalStaticAdapter.about
 
         if(isAdded) {
-            b.rvProfileRecentPosts.layoutManager = GridLayoutManager(requireActivity(), 2)
+            b.rvProfileRecentPosts.layoutManager = GridLayoutManager(requireActivity(), 3)
             adapter = ProfileRecyclerViewAdapter(posts, requireActivity())
             b.rvProfileRecentPosts.adapter = adapter
         }
@@ -125,6 +125,7 @@ class ProfileFragment : Fragment() {
 
     private fun getPostCount() {
         try{
+            posts.clear()
             DatabaseAdapter.postTable
                 .child(GlobalStaticAdapter.key)
                 .addListenerForSingleValueEvent(object: ValueEventListener{

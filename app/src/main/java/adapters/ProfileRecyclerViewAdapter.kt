@@ -20,7 +20,7 @@ class ProfileRecyclerViewAdapter(private val postList:ArrayList<HomeModel>, priv
     }
 
     override fun onBindViewHolder(holder: ProfileViewHolder, position: Int) {
-        Glide.with(context).load(postList[position].img).into(holder.img)
+        Glide.with(context).load(postList[position].post).into(holder.img)
     }
 
     override fun getItemCount(): Int {

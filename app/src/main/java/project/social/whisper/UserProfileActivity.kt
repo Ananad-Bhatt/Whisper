@@ -37,7 +37,7 @@ class UserProfileActivity : BaseActivity() {
         Glide.with(applicationContext).load(GlobalStaticAdapter.imageUrl2).into(b.imgProfileActUserImage)
         b.txtProfileActAbout.text = GlobalStaticAdapter.about2
 
-        b.rvProfileActRecentPosts.layoutManager = GridLayoutManager(this, 2)
+        b.rvProfileActRecentPosts.layoutManager = GridLayoutManager(this, 3)
         adapter = ProfileRecyclerViewAdapter(posts, applicationContext)
         b.rvProfileActRecentPosts.adapter = adapter
 
