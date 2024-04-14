@@ -99,15 +99,6 @@ class HomeFragment : Fragment() {
                     startActivity(Intent(requireContext(), SearchActivity::class.java))
                 }
             }
-            else -> {
-                if(isAdded) {
-                    val fm = requireActivity().supportFragmentManager
-                    val ft = fm.beginTransaction()
-                    ft.replace(R.id.main_container, PostFragment())
-                    ft.addToBackStack(null)
-                    ft.commit()
-                }
-            }
         }
         return super.onOptionsItemSelected(item)
     }

@@ -30,6 +30,8 @@
                     android:paddingHorizontal="15dp"
                     android:paddingVertical="5dp"
                     android:textSize="@dimen/_12ssp"
+                    android:textColorHint="#3A3A3A"
+                    android:textColor="#000"
                     android:backgroundTint="@color/white"
                     android:layout_marginEnd="@dimen/_20sdp"
                     android:inputType="textFilter"

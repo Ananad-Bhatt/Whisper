@@ -284,7 +284,7 @@ class UserProfileActivity : BaseActivity() {
                         {
                             val follower = snapshot.childrenCount
 
-                            b.txtProfileActNoOfFollowers.text = follower.toString()
+                            b.txtProfileActNoOfFollowing.text = follower.toString()
 
                         }
                     }

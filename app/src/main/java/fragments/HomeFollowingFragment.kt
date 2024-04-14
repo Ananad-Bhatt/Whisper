@@ -59,13 +59,16 @@ class HomeFollowingFragment : Fragment() {
                                 val image = sn.child("IMAGE").getValue(String::class.java)
                                     ?: getString(R.string.image_not_found)
 
+                                val cap = sn.child("CAPTION").getValue(String::class.java)
+                                    ?: "Caption"
+
                                 val score =
                                     sn.child("SCORE").getValue(Int::class.java) ?: 0
 
                                 val userImage = sn.child("USER_IMAGE").getValue(String::class.java)
                                     ?: getString(R.string.image_not_found)
 
-                                posts.add(HomeModel(title, userImage, "Caption", image, score))
+                                posts.add(HomeModel(title, userImage, cap, image, score))
                                 adapter.notifyItemInserted(posts.size)
                             }
                         }
