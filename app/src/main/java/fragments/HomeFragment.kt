@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.tabs.TabLayoutMediator
+import project.social.whisper.NotificationActivity
 import project.social.whisper.R
 import project.social.whisper.SearchActivity
 import project.social.whisper.databinding.FragmentHomeBinding
@@ -98,6 +99,10 @@ class HomeFragment : Fragment() {
                 if(isAdded) {
                     startActivity(Intent(requireContext(), SearchActivity::class.java))
                 }
+            }
+
+            R.id.home_tool_notification -> {
+                startActivity(Intent(requireContext(), NotificationActivity::class.java))
             }
         }
         return super.onOptionsItemSelected(item)

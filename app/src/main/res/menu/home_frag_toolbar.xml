@@ -8,4 +8,10 @@
         android:icon="@drawable/search"
         app:showAsAction="always"/>
 
+    <item
+        android:id="@+id/home_tool_notification"
+        android:title="@string/search"
+        android:icon="@drawable/notification"
+        app:showAsAction="always"/>
+
 </menu>

@@ -23,7 +23,6 @@
                 android:id="@+id/iv_notification_request"
                 android:layout_width="@dimen/_30sdp"
                 android:layout_height="@dimen/_30sdp"
-                android:scaleType="fitXY"
                 android:src="@drawable/info"/>
 
             <TextView
@@ -44,7 +43,7 @@
             android:gravity="center">
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_reject_notification_req"
+                android:id="@+id/btn_accept_notification_req"
                 android:text="@string/accept"
                 android:textColor="?primary"
                 android:textSize="@dimen/_12ssp"
@@ -54,7 +53,7 @@
                 android:backgroundTint="#A2FFB1"/>
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_accept_notification_req"
+                android:id="@+id/btn_reject_notification_req"
                 android:background="@drawable/btn_back_fill"
                 android:text="@string/decline"
                 android:textColor="?primary"

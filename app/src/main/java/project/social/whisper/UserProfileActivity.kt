@@ -73,7 +73,7 @@ class UserProfileActivity : BaseActivity() {
                     .setValue(true)
 
                 DatabaseAdapter.followerTable.child(GlobalStaticAdapter.key2)
-                    .child(GlobalStaticAdapter.key2)
+                    .child(GlobalStaticAdapter.key)
                     .child("FOLLOWER")
                     .setValue(true)
 
