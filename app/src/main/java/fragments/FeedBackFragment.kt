@@ -2,14 +2,12 @@ package fragments
 
 import adapters.DatabaseAdapter
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import project.social.whisper.R
 import project.social.whisper.databinding.FragmentFeedbackBinding
 
 private const val ARG_PARAM1 = "param1"
@@ -60,26 +58,32 @@ class FeedBackFragment : Fragment() {
                     builder.setMessage("Are you sure want to continue with 0 rating?")
                     builder.setCancelable(false)
 
-                    builder.setNegativeButton("No", DialogInterface.OnClickListener { dialogInterface, i ->
+                    builder.setNegativeButton("No") { dialogInterface, _ ->
                         dialogInterface.dismiss()
-                    })
+                    }
 
-                    builder.setPositiveButton("Yes", DialogInterface.OnClickListener { dialogInterface, i ->
+                    builder.setPositiveButton("Yes") { dialogInterface, _ ->
 
                         val key = DatabaseAdapter.feedbackTable.push().key!!
 
                         try {
-                            DatabaseAdapter.feedbackTable.child(key).child("RATING").setValue(rating)
+                            DatabaseAdapter.feedbackTable.child(key).child("RATING")
+                                .setValue(rating)
                             DatabaseAdapter.feedbackTable.child(key).child("FEEDBACK")
                                 .setValue(b.edtFeedbackFeedFrag.text.toString())
 
-                            Toast.makeText(requireActivity(), "Thank you for your feedback!", Toast.LENGTH_LONG)
+                            Toast.makeText(
+                                requireActivity(),
+                                "Thank you for your feedback!",
+                                Toast.LENGTH_LONG
+                            )
                                 .show()
 
-                        }catch (_:Exception){}
+                        } catch (_: Exception) {
+                        }
 
                         dialogInterface.dismiss()
-                    })
+                    }
 
                     builder.create()
                     builder.show()
