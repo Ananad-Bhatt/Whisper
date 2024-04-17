@@ -140,5 +140,7 @@
     <string name="post_desc">Add Post</string>
     <string name="whisper_ai">Whisper AI</string>
     <string name="caption">Caption</string>
+    <string name="notifications">NOTIFICATIONS</string>
+    <string name="settings">SETTINGS</string>
 
 </resources>

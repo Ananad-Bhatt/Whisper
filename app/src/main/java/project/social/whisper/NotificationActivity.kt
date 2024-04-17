@@ -26,9 +26,5 @@ class NotificationActivity : AppCompatActivity() {
         notifications.add(NotificationModel((R.string.image_not_found).toString(), "Someone has down voted","123"))
         notifications.add(NotificationModel((R.string.image_not_found).toString(), "Someone has requested to follow","123"))
         adapter.notifyItemInserted(notifications.size)
-
-
-
-
     }
 }

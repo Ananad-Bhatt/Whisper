@@ -13,7 +13,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="NOTIFICATIONS"
+        android:text="@string/notifications"
         android:textSize="@dimen/_26ssp"
         android:textColor="@color/white"
         android:textAlignment="center"

@@ -15,7 +15,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import fragments.CustomizationFragment
 import fragments.ManageAccountsFragment
-import fragments.ManageChannelFragment
+import fragments.FeedBackFragment
 import fragments.ProfileSettingAccountFragment
 import models.ProfileSettingModel
 import project.social.whisper.R
@@ -51,8 +51,8 @@ class ProfileSettingAdapter(val context: FragmentActivity, private val items: Li
                     ft1.commit()
                 }
 
-                "Manage Channels" -> {
-                    ft1.replace(R.id.main_container, ManageChannelFragment())
+                "Feedback" -> {
+                    ft1.replace(R.id.main_container, FeedBackFragment())
                     ft1.addToBackStack(null)
                     ft1.commit()
                 }
