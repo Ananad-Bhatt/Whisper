@@ -57,6 +57,12 @@ class ProfileSettingAdapter(val context: FragmentActivity, private val items: Li
                     ft1.commit()
                 }
 
+                "Report Bug" -> {
+                    ft1.replace(R.id.main_container, FeedBackFragment())
+                    ft1.addToBackStack(null)
+                    ft1.commit()
+                }
+
                 "Customization" -> {
                     ft1.replace(R.id.main_container, CustomizationFragment())
                     ft1.addToBackStack(null)

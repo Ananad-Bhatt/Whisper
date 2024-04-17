@@ -142,5 +142,15 @@
     <string name="caption">Caption</string>
     <string name="notifications">NOTIFICATIONS</string>
     <string name="settings">SETTINGS</string>
+    <string name="feedback">Feedback</string>
+    <string name="feedback_desc">Enter your feedback here \n(It will be anonymous)</string>
+    <string name="submit">SUBMIT</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="report_bug">Report Bug</string>
+    <string name="bug_desc">Help us by Reporting bug</string>
+    <string name="bug_hint">Tell us about bug</string>
+    <string name="report_bug_mobile">Name of your mobile company</string>
+    <string name="report_bug_version">Android version, eg: 13</string>
 
 </resources>

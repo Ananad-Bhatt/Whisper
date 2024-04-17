@@ -2,14 +2,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="fragments.FeedBackFragment"
+    tools:context="fragments.ReportBugFragment"
     android:orientation="vertical"
     android:background="?primary">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/feedback"
+        android:text="@string/report_bug"
         android:textAllCaps="true"
         android:textSize="@dimen/_24ssp"
         android:layout_marginTop="@dimen/_40sdp"
@@ -34,16 +34,15 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/feedback_desc"
-                android:textSize="@dimen/_17ssp"
-                android:textAlignment="center"
-                android:textColor="?primary"/>
+                style="@style/TEXT"
+                android:text="@string/bug_desc"
+                android:textSize="@dimen/_17ssp" />
 
             <EditText
-                android:id="@+id/edt_feedback_feed_frag"
+                android:id="@+id/edt_bug_report_frag"
                 style="@style/EDITTEXT"
                 android:layout_marginTop="@dimen/_20sdp"
-                android:hint="@string/feedback"
+                android:hint="@string/bug_hint"
                 android:inputType="textMultiLine"
                 android:maxLength="500"
                 android:maxLines="10"
@@ -51,8 +50,26 @@
                 android:minLines="5"
                 android:isScrollContainer="true" />
 
+            <EditText
+                android:id="@+id/edt_bug_report_mobile_frag"
+                style="@style/EDITTEXT"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:hint="@string/report_bug_mobile"
+                android:inputType="text"
+                android:maxLength="20" />
+
+
+            <EditText
+                android:id="@+id/edt_bug_report_os_frag"
+                style="@style/EDITTEXT"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:hint="@string/report_bug_version"
+                android:inputType="number"
+                android:maxLength="5" />
+
+
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_submit_feedback"
+                android:id="@+id/btn_submit_bug"
                 style="@style/BUTTON_FILL"
                 android:text="@string/submit"
                 android:layout_marginTop="@dimen/_20sdp"/>

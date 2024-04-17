@@ -1,38 +1,42 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="fragments.ProfileSettingAccountFragment">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:orientation="vertical">
+    tools:context="fragments.ProfileSettingAccountFragment"
+    android:orientation="vertical"
+    android:background="?primary">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/TEXT"
             android:text="@string/account_setting"
             android:textAllCaps="true"
             android:textSize="@dimen/_24ssp"
+            android:layout_marginTop="@dimen/_40sdp"
+            android:textColor="@color/white"
             android:layout_gravity="center"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/_40sdp"
+        android:background="@drawable/tool_back"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginTop="25dp">
+            android:layout_marginHorizontal="@dimen/_20sdp"
+            android:layout_marginTop="@dimen/_50sdp">
 
             <TextView
+                style="@style/TEXT"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/account_type"
-                android:textSize="@dimen/_17ssp"
+                android:layout_gravity="center"
                 android:layout_weight="0.5"
-                android:layout_gravity="center"/>
+                android:text="@string/account_type"
+                android:textSize="@dimen/_17ssp" />
 
             <Spinner
                 android:id="@+id/sp_profile_account_setting"
@@ -40,16 +44,16 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/edt_back"
-                android:padding="5dp"/>
+                android:padding="5dp" />
 
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_del_acc_profile_setting"
             style="@style/BUTTON_FILL"
-            android:layout_marginTop="@dimen/_20sdp"
-            android:text="@string/delete_acc"/>
+            android:layout_marginTop="@dimen/_40sdp"
+            android:text="@string/delete_acc" />
 
     </LinearLayout>
 
-</ScrollView>
+</LinearLayout>
