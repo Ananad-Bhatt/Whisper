@@ -23,57 +23,62 @@
         android:orientation="vertical"
         android:background="@drawable/tool_back">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_50sdp"
-            android:layout_marginHorizontal="@dimen/_20sdp"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/feedback_desc"
-                android:textSize="@dimen/_17ssp"
-                style="@style/TEXT"
-                android:textAlignment="center" />
+                android:layout_marginTop="@dimen/_50sdp"
+                android:layout_marginHorizontal="@dimen/_20sdp"
+                android:gravity="center"
+                android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/edt_feedback_feed_frag"
-                style="@style/EDITTEXT"
-                android:layout_marginTop="@dimen/_20sdp"
-                android:hint="@string/feedback"
-                android:inputType="textMultiLine"
-                android:maxLength="500"
-                android:maxLines="10"
-                android:lines="5"
-                android:minLines="5"
-                android:isScrollContainer="true" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/feedback_desc"
+                    android:textSize="@dimen/_17ssp"
+                    style="@style/TEXT"
+                    android:textAlignment="center" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/feedback_rating"
-                android:textSize="@dimen/_17ssp"
-                android:layout_marginTop="@dimen/_40sdp"
-                style="@style/TEXT"
-                android:textAlignment="center" />
+                <EditText
+                    android:id="@+id/edt_feedback_feed_frag"
+                    style="@style/EDITTEXT"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_20sdp"
+                    android:hint="@string/feedback"
+                    android:inputType="textMultiLine"
+                    android:maxLength="500"
+                    android:maxLines="10"
+                    android:isScrollContainer="true" />
 
-            <RatingBar
-                android:id="@+id/rb_feedback_frag"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:progressTint="?primary"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/feedback_rating"
+                    android:textSize="@dimen/_17ssp"
+                    android:layout_marginTop="@dimen/_40sdp"
+                    style="@style/TEXT"
+                    android:textAlignment="center" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_submit_feedback"
-                style="@style/BUTTON_FILL"
-                android:text="@string/submit"
-                android:layout_marginTop="@dimen/_20sdp"/>
+                <RatingBar
+                    android:id="@+id/rb_feedback_frag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:progressTint="?primary"/>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_submit_feedback"
+                    style="@style/BUTTON_FILL"
+                    android:text="@string/submit"
+                    android:layout_marginTop="@dimen/_20sdp"/>
 
 
-        </LinearLayout>
+            </LinearLayout>
+
+        </ScrollView>
     </LinearLayout>
 </LinearLayout>
