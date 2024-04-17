@@ -33,14 +33,14 @@ class FeedBackFragment : Fragment() {
         val b = FragmentFeedbackBinding.inflate(inflater, container, false)
 
         b.btnSubmitFeedback.setOnClickListener {
-            val rating = b.rbFeedbackFrag.rating.toString()
+            val rating = b.rbFeedbackFrag.rating
             if(b.edtFeedbackFeedFrag.text.trim().toString().isNotEmpty()
-                && rating != "0")
+                && rating.toInt().toString() != "0")
             {
                 val key = DatabaseAdapter.feedbackTable.push().key!!
 
                 try {
-                    DatabaseAdapter.feedbackTable.child(key).child("RATING").setValue(rating)
+                    DatabaseAdapter.feedbackTable.child(key).child("RATING").setValue(rating.toString())
                     DatabaseAdapter.feedbackTable.child(key).child("FEEDBACK")
                         .setValue(b.edtFeedbackFeedFrag.text.toString())
 
@@ -50,7 +50,7 @@ class FeedBackFragment : Fragment() {
                 }catch (_:Exception){}
             }
 
-            else if(rating == "0")
+            else if(rating.toInt().toString() == "0")
             {
                 if(isAdded) {
                     val builder = AlertDialog.Builder(requireActivity())
@@ -68,7 +68,7 @@ class FeedBackFragment : Fragment() {
 
                         try {
                             DatabaseAdapter.feedbackTable.child(key).child("RATING")
-                                .setValue(rating)
+                                .setValue(rating.toString())
                             DatabaseAdapter.feedbackTable.child(key).child("FEEDBACK")
                                 .setValue(b.edtFeedbackFeedFrag.text.toString())
 
