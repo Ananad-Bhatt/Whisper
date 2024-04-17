@@ -23,58 +23,63 @@
         android:orientation="vertical"
         android:background="@drawable/tool_back">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_50sdp"
-            android:layout_marginHorizontal="@dimen/_20sdp"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/TEXT"
-                android:text="@string/bug_desc"
-                android:textSize="@dimen/_17ssp" />
+                android:layout_marginTop="@dimen/_50sdp"
+                android:layout_marginHorizontal="@dimen/_20sdp"
+                android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/edt_bug_report_frag"
-                style="@style/EDITTEXT"
-                android:layout_marginTop="@dimen/_20sdp"
-                android:hint="@string/bug_hint"
-                android:inputType="textMultiLine"
-                android:maxLength="500"
-                android:maxLines="10"
-                android:lines="5"
-                android:minLines="5"
-                android:isScrollContainer="true" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/TEXT"
+                    android:layout_gravity="center"
+                    android:text="@string/bug_desc"
+                    android:textSize="@dimen/_17ssp" />
 
-            <EditText
-                android:id="@+id/edt_bug_report_mobile_frag"
-                style="@style/EDITTEXT"
-                android:layout_marginTop="@dimen/_20sdp"
-                android:hint="@string/report_bug_mobile"
-                android:inputType="text"
-                android:maxLength="20" />
+                <EditText
+                    android:id="@+id/edt_bug_report_frag"
+                    style="@style/EDITTEXT"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_20sdp"
+                    android:hint="@string/bug_hint"
+                    android:inputType="textMultiLine"
+                    android:maxLength="500"
+                    android:maxLines="10"
+                    android:isScrollContainer="true" />
 
-
-            <EditText
-                android:id="@+id/edt_bug_report_os_frag"
-                style="@style/EDITTEXT"
-                android:layout_marginTop="@dimen/_20sdp"
-                android:hint="@string/report_bug_version"
-                android:inputType="number"
-                android:maxLength="5" />
+                <EditText
+                    android:id="@+id/edt_bug_report_mobile_frag"
+                    style="@style/EDITTEXT"
+                    android:layout_marginTop="@dimen/_20sdp"
+                    android:hint="@string/report_bug_mobile"
+                    android:inputType="text"
+                    android:maxLength="20" />
 
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_submit_bug"
-                style="@style/BUTTON_FILL"
-                android:text="@string/submit"
-                android:layout_marginTop="@dimen/_20sdp"/>
+                <EditText
+                    android:id="@+id/edt_bug_report_os_frag"
+                    style="@style/EDITTEXT"
+                    android:layout_marginTop="@dimen/_20sdp"
+                    android:hint="@string/report_bug_version"
+                    android:inputType="number"
+                    android:maxLength="5" />
 
 
-        </LinearLayout>
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_submit_bug"
+                    style="@style/BUTTON_FILL"
+                    android:text="@string/submit"
+                    android:layout_marginTop="@dimen/_20sdp"/>
+
+
+            </LinearLayout>
+
+        </ScrollView>
     </LinearLayout>
 </LinearLayout>
