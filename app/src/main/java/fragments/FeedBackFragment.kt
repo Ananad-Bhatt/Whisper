@@ -50,7 +50,8 @@ class FeedBackFragment : Fragment() {
                 }catch (_:Exception){}
             }
 
-            else if(rating.toInt().toString() == "0")
+            else if(rating.toInt().toString() == "0" &&
+                b.edtFeedbackFeedFrag.text.trim().toString().isNotEmpty())
             {
                 if(isAdded) {
                     val builder = AlertDialog.Builder(requireActivity())

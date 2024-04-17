@@ -51,6 +51,10 @@ class ReportBugFragment : Fragment() {
                     ref.child("BUG").setValue(b.edtBugReportFrag.text.toString())
                     ref.child("MOBILE").setValue(b.edtBugReportMobileFrag.text.toString())
                     ref.child("VERSION").setValue(b.edtBugReportOsFrag.text.toString())
+
+                    Toast.makeText(requireActivity(), "Thank you for your support, We will fix that as soon as possible", Toast.LENGTH_LONG)
+                        .show()
+
                 }catch (_:Exception){}
             }
             else{

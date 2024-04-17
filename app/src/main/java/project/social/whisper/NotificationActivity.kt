@@ -21,10 +21,10 @@ class NotificationActivity : AppCompatActivity() {
         b.rvNotificationAct.layoutManager = LinearLayoutManager(this)
         b.rvNotificationAct.adapter = adapter
 
-        notifications.add(NotificationModel((R.string.image_not_found).toString(), "Someone has requested to follow","123"))
-        notifications.add(NotificationModel((R.string.image_not_found).toString(), "Someone has up voted","123"))
-        notifications.add(NotificationModel((R.string.image_not_found).toString(), "Someone has down voted","123"))
-        notifications.add(NotificationModel((R.string.image_not_found).toString(), "Someone has requested to follow","123"))
+        notifications.add(NotificationModel(R.string.image_not_found, "Whisper_Dev has requested to follow","123"))
+        notifications.add(NotificationModel(R.drawable.info, "Someone has up voted","123"))
+        notifications.add(NotificationModel(R.drawable.info, "Someone has down voted","123"))
+        notifications.add(NotificationModel((R.string.image_not_found), "Whisper_Dev2 has requested to follow","123"))
         adapter.notifyItemInserted(notifications.size)
     }
 }

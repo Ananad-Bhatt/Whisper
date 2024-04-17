@@ -63,7 +63,7 @@ class NotificationAdapter(private val context: Context, private val notification
             RequestNotification::class.java -> {
                 val h = holder as RequestNotification
 
-                Glide.with(context).load(notify.image).into(h.img)
+                Glide.with(context).load(notify.image.toString()).into(h.img)
 
                 h.msg.text = notify.message
 
