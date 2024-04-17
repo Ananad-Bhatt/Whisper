@@ -3,9 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardUseCompatPadding="true"
     android:elevation="50dp"
     android:backgroundTint="?primary"
+    android:layout_marginBottom="@dimen/_10sdp"
     app:cardCornerRadius="20dp"
     android:layout_margin="5dp">
 
