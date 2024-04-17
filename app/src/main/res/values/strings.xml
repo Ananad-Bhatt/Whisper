@@ -152,5 +152,6 @@
     <string name="bug_hint">Tell us about bug</string>
     <string name="report_bug_mobile">Name of your mobile company</string>
     <string name="report_bug_version">Android version, eg: 13</string>
+    <string name="feedback_rating">Rate our app out of 5</string>
 
 </resources>
