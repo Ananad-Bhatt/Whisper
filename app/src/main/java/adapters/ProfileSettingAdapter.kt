@@ -17,6 +17,7 @@ import fragments.CustomizationFragment
 import fragments.ManageAccountsFragment
 import fragments.FeedBackFragment
 import fragments.ProfileSettingAccountFragment
+import fragments.ReportBugFragment
 import models.ProfileSettingModel
 import project.social.whisper.R
 import project.social.whisper.StartUpActivity
@@ -58,7 +59,7 @@ class ProfileSettingAdapter(val context: FragmentActivity, private val items: Li
                 }
 
                 "Report Bug" -> {
-                    ft1.replace(R.id.main_container, FeedBackFragment())
+                    ft1.replace(R.id.main_container, ReportBugFragment())
                     ft1.addToBackStack(null)
                     ft1.commit()
                 }
