@@ -3,6 +3,8 @@ package project.social.whisper
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import android.view.WindowManager.LayoutParams
+
 
 abstract class BaseActivity : AppCompatActivity() {
 
@@ -13,6 +15,13 @@ abstract class BaseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
     }
 
+
+    override fun onResume() {
+        super.onResume()
+
+        //To prevent Screen Shots
+        window.setFlags(LayoutParams.FLAG_SECURE, LayoutParams.FLAG_SECURE)
+    }
     private fun setAppTheme() {
         // Get the user's selected theme from shared preferences or some other storage
 
