@@ -10,6 +10,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.provider.ContactsContract
@@ -785,7 +786,17 @@ class ChatActivity : BaseActivity() {
     }
 
     private fun sendImage() {
+        requestStoragePermission()
 
+        if (hasStoragePermission()) {
+            openExplorer()
+        } else {
+            Toast.makeText(
+                applicationContext,
+                "Please give permission of storage",
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 
     override fun onDestroy() {
@@ -1252,6 +1263,59 @@ class ChatActivity : BaseActivity() {
             else -> {
                 // Ignore all other requests.
             }
+        }
+    }
+
+    private fun openExplorer() {
+
+        ImagePicker.with(this)
+            .galleryOnly()
+            .crop() //Crop image(Optional), Check Customization for more option
+            .compress(1024) //Final image size will be less than 1 MB(Optional)
+            .maxResultSize(
+                1080,
+                1080
+            ) //Final image resolution will be less than 1080 x 1080(Optional)
+            .createIntent { intent ->
+                imageCapture.launch(intent)
+            }
+    }
+
+    private fun requestStoragePermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val permission = ContextCompat.checkSelfPermission(
+                applicationContext, android.Manifest.permission.READ_MEDIA_IMAGES
+            )
+
+            if (permission != PackageManager.PERMISSION_GRANTED) {
+                permissionsResultCallback.launch(android.Manifest.permission.READ_MEDIA_IMAGES)
+            } else {
+                Toast.makeText(applicationContext, "IMG granted", Toast.LENGTH_LONG).show()
+            }
+        } else {
+            val permission = ContextCompat.checkSelfPermission(
+                applicationContext, android.Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+
+            if (permission != PackageManager.PERMISSION_GRANTED) {
+                permissionsResultCallback.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+            } else {
+                Toast.makeText(applicationContext, "STORAGE granted", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    private fun hasStoragePermission(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ContextCompat.checkSelfPermission(
+                applicationContext,
+                android.Manifest.permission.READ_MEDIA_IMAGES
+            ) == PackageManager.PERMISSION_GRANTED
+        } else {
+            ContextCompat.checkSelfPermission(
+                applicationContext,
+                android.Manifest.permission.READ_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
         }
     }
 
