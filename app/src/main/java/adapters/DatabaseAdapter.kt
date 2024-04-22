@@ -55,6 +55,7 @@ class DatabaseAdapter {
         var feedbackTable = Firebase.database.getReference("FEEDBACKS")
         var bugTable = Firebase.database.getReference("REPORTED_BUGS")
         var scoreTable = Firebase.database.getReference("SCORE")
+        var notificationTable = Firebase.database.getReference("NOTIFICATION")
 
         //Storage
         var userImage = FirebaseStorage.getInstance().getReference("USER_IMAGES")
