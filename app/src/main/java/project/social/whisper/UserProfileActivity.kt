@@ -34,7 +34,6 @@ class UserProfileActivity : BaseActivity() {
 
         b = ActivityUserProfileBinding.inflate(layoutInflater)
         setContentView(b.root)
-        b.profileActContainer.visibility = View.GONE
 
         b.txtProfileActUserName.text = GlobalStaticAdapter.userName2
         Glide.with(applicationContext).load(GlobalStaticAdapter.imageUrl2).into(b.imgProfileActUserImage)
@@ -51,36 +50,17 @@ class UserProfileActivity : BaseActivity() {
 
         b.linearProfileActFollowing.setOnClickListener {
             if(b.btnProfileActFollow.text.toString().lowercase() == "unfollow") {
-                b.profileActContainer.visibility = View.VISIBLE
-                val args = Bundle()
-                args.putBoolean("isFollower", false)
-
-                val frag = FollowingFragment()
-                frag.arguments = args
-
-                val fm1 = supportFragmentManager
-                val ft1 = fm1.beginTransaction()
-                ft1.replace(R.id.profile_act_container, frag)
-                ft1.addToBackStack(null)
-                ft1.commit()
+                val i = Intent(this, FollowingActivity::class.java)
+                i.putExtra("isFollower", false)
+                startActivity(i)
             }
         }
 
         b.linearProfileActFollowers.setOnClickListener {
             if(b.btnProfileActFollow.text.toString().lowercase() == "unfollow") {
-                b.profileActContainer.visibility = View.VISIBLE
-                val args = Bundle()
-                args.putBoolean("isFollower", true)
-                args.putBoolean("isFromAct", true)
-
-                val frag = FollowingFragment()
-                frag.arguments = args
-
-                val fm1 = supportFragmentManager
-                val ft1 = fm1.beginTransaction()
-                ft1.replace(R.id.profile_act_container, frag)
-                ft1.addToBackStack(null)
-                ft1.commit()
+                val i = Intent(this, FollowingActivity::class.java)
+                i.putExtra("isFollower", true)
+                startActivity(i)
             }
         }
 
