@@ -74,6 +74,12 @@ class ProfileFragment : Fragment() {
             ft1.commit()
         }
 
+        b.linearProfileFollowing.setOnClickListener {
+
+
+
+        }
+
         return b.root
     }
 
