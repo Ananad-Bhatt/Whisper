@@ -11,7 +11,7 @@
         android:textColor="@color/white"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/following"
+        android:text="@string/followings"
         android:layout_marginTop="@dimen/_20sdp"
         android:layout_gravity="center"
         android:textSize="@dimen/_26ssp"/>

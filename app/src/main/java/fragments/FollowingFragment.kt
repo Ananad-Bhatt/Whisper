@@ -60,10 +60,12 @@ class FollowingFragment : Fragment() {
             val args = arguments
             val isFollower = args?.getBoolean("isFollower")!!
 
-            dbPath = if(isFollower)
-                DatabaseAdapter.followerTable.child(GlobalStaticAdapter.key)
+            if(isFollower) {
+                dbPath = DatabaseAdapter.followerTable.child(GlobalStaticAdapter.key)
+                b.tvFollowFrag.text = "Followers"
+            }
             else
-                DatabaseAdapter.followingTable.child(GlobalStaticAdapter.key)
+                dbPath = DatabaseAdapter.followingTable.child(GlobalStaticAdapter.key)
 
             dbPath.addListenerForSingleValueEvent(object :ValueEventListener{
                     override fun onDataChange(snapshot: DataSnapshot) {
