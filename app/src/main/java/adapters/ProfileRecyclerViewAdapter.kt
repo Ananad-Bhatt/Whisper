@@ -1,6 +1,7 @@
 package adapters
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import models.HomeModel
+import project.social.whisper.IndividualPostActivity
 import project.social.whisper.R
 
 class ProfileRecyclerViewAdapter(private val postList:ArrayList<HomeModel>, private val context: Context) :
@@ -25,9 +27,11 @@ class ProfileRecyclerViewAdapter(private val postList:ArrayList<HomeModel>, priv
         val m = postList[position]
 
         holder.img.setOnClickListener {
-
+            val i = Intent(context, IndividualPostActivity::class.java)
+            i.putExtra("position", position)
+            i.putExtra("key", m.key)
+            context.startActivity(i)
         }
-
     }
 
     override fun getItemCount(): Int {
