@@ -24,6 +24,7 @@ import com.google.firebase.database.ValueEventListener
 import fragments.FollowingFragment
 import models.HomeModel
 import project.social.whisper.databinding.ActivityUserProfileBinding
+import services.NotificationService
 
 class UserProfileActivity : BaseActivity() {
 
@@ -329,6 +330,12 @@ class UserProfileActivity : BaseActivity() {
                     .child(GlobalStaticAdapter.key)
                     .child("FOLLOW_REQUEST").child("NOTIFICATION")
                     .setValue("${GlobalStaticAdapter.userName} has requested to follow you")
+
+                //Sending Notification
+                NotificationService
+                    .sendNotification("${GlobalStaticAdapter.userName} has requested to follow you",
+                        GlobalStaticAdapter.fcmToken2,
+                        GlobalStaticAdapter.userName)
 
             }
         }

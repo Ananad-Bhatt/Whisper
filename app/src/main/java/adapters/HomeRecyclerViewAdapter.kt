@@ -14,6 +14,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import models.HomeModel
 import project.social.whisper.R
+import services.NotificationService
 
 class HomeRecyclerViewAdapter (private val postList:ArrayList<HomeModel>, private val context:Context) :
     RecyclerView.Adapter<HomeRecyclerViewAdapter.HomeViewHolder>() {
@@ -34,8 +35,11 @@ class HomeRecyclerViewAdapter (private val postList:ArrayList<HomeModel>, privat
         var isUpClickable = true
         var isDownClickable = true
 
+        val key = if(GlobalStaticAdapter.key == postList[position].key) GlobalStaticAdapter.key2
+                        else GlobalStaticAdapter.key
+
         val dbPath = DatabaseAdapter.scoreTable.child(postList[position].key)
-            .child(postList[position].timeStamp).child(GlobalStaticAdapter.key)
+            .child(postList[position].timeStamp).child(key)
 
         dbPath.addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -79,6 +83,17 @@ class HomeRecyclerViewAdapter (private val postList:ArrayList<HomeModel>, privat
                     .child(postList[position].timeStamp).child("SCORE")
                     .setValue(score)
 
+                //Notification
+                val postKey = postList[position].key
+                val userName = postList[position].title
+                if(key != GlobalStaticAdapter.key) {
+                    DatabaseAdapter.notificationTable.child(postList[position].key)
+                        .child(key).child("UPVOTE").child("NOTIFICATION")
+                        .setValue(postList[position].timeStamp)
+
+                    sendNotificationToUser(postKey, userName)
+                }
+
                 dbPath.child("UPVOTED").setValue(true)
             }
         }
@@ -95,9 +110,52 @@ class HomeRecyclerViewAdapter (private val postList:ArrayList<HomeModel>, privat
                     .child(postList[position].timeStamp).child("SCORE")
                     .setValue(score)
 
+                //Notification
+                val postKey = postList[position].key
+                if(key != GlobalStaticAdapter.key) {
+                    DatabaseAdapter.notificationTable.child(postKey)
+                        .child(key).child("DOWNVOTE").child("NOTIFICATION")
+                        .setValue(postList[position].timeStamp)
+                }
+
                 dbPath.child("UPVOTED").setValue(false)
             }
         }
+    }
+
+    private fun sendNotificationToUser(postKey: String, userName: String) {
+        DatabaseAdapter.keyUidTable.child(postKey)
+            .addListenerForSingleValueEvent(object:ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if(snapshot.exists())
+                    {
+                        val uid = snapshot.getValue(String::class.java)!!
+
+                        //Sending notification
+                        DatabaseAdapter.userDetailsTable
+                            .child(uid).child(postKey)
+                            .addListenerForSingleValueEvent(object:ValueEventListener{
+                                override fun onDataChange(s: DataSnapshot) {
+                                    if(s.exists())
+                                    {
+                                        val fcm = s.child("FCM_TOKEN")
+                                            .getValue(String::class.java) ?: ""
+
+                                        NotificationService.sendNotification("$userName Has upvoted your post", fcm, userName)
+                                    }
+                                }
+
+                                override fun onCancelled(error: DatabaseError) {
+                                }
+
+                            })
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                }
+
+            })
     }
 
     class HomeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
