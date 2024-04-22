@@ -3,6 +3,7 @@ package fragments
 import adapters.DatabaseAdapter
 import adapters.GlobalStaticAdapter
 import adapters.ProfileRecyclerViewAdapter
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import models.HomeModel
 import project.social.whisper.R
+import project.social.whisper.ShowPostsActivity
 import project.social.whisper.databinding.FragmentProfileBinding
 
 private const val ARG_PARAM1 = "param1"
@@ -52,6 +54,22 @@ class ProfileFragment : Fragment() {
             b.rvProfileRecentPosts.layoutManager = GridLayoutManager(requireActivity(), 3)
             adapter = ProfileRecyclerViewAdapter(posts, requireActivity())
             b.rvProfileRecentPosts.adapter = adapter
+        }
+
+        b.tvSeeAllProfFrag.setOnClickListener {
+            if(isAdded) {
+                val i = Intent(requireActivity(), ShowPostsActivity::class.java)
+                i.putExtra("isFromAct", false)
+                startActivity(i)
+            }
+        }
+
+        b.linearProfilePosts.setOnClickListener {
+            if(isAdded) {
+                val i = Intent(requireActivity(), ShowPostsActivity::class.java)
+                i.putExtra("isFromAct", false)
+                startActivity(i)
+            }
         }
 
         getPostCount()

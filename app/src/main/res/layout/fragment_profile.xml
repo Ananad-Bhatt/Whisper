@@ -197,6 +197,7 @@
 
                 <TextView
                     style="@style/TEXT"
+                    android:id="@+id/tv_see_all_prof_frag"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/see_all"

@@ -41,14 +41,28 @@ class UserProfileActivity : BaseActivity() {
         Glide.with(applicationContext).load(GlobalStaticAdapter.imageUrl2).into(b.imgProfileActUserImage)
         b.txtProfileActAbout.text = GlobalStaticAdapter.about2
 
-        b.rvProfileActRecentPosts.layoutManager = GridLayoutManager(this, 3)
         adapter = ProfileRecyclerViewAdapter(posts, applicationContext)
-        b.rvProfileActRecentPosts.adapter = adapter
 
         getPostCount()
         getFollowerCount()
         getFollowingCount()
         checkFollow()
+
+        b.tvSeeAllProfAct.setOnClickListener {
+            if(b.btnProfileActFollow.text.toString().lowercase() == "unfollow") {
+                val i = Intent(this, ShowPostsActivity::class.java)
+                i.putExtra("isFromAct", true)
+                startActivity(i)
+            }
+        }
+
+        b.linearProfileActPosts.setOnClickListener {
+            if(b.btnProfileActFollow.text.toString().lowercase() == "unfollow") {
+                val i = Intent(this, ShowPostsActivity::class.java)
+                i.putExtra("isFromAct", true)
+                startActivity(i)
+            }
+        }
 
         b.linearProfileActFollowing.setOnClickListener {
             if(b.btnProfileActFollow.text.toString().lowercase() == "unfollow") {
@@ -467,6 +481,11 @@ class UserProfileActivity : BaseActivity() {
                     {
                         b.btnProfileActFollow.text = "UnFollow"
                         b.btnProfileActFollow.background = getDrawable(R.drawable.btn_back_outlined)
+
+                        if(b.btnProfileActFollow.text.toString().lowercase() == "unfollow") {
+                            b.rvProfileActRecentPosts.layoutManager = GridLayoutManager(applicationContext, 3)
+                            b.rvProfileActRecentPosts.adapter = adapter
+                        }
                     }
                 }
 
