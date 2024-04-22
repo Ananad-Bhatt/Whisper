@@ -5,6 +5,7 @@ import adapters.GlobalStaticAdapter
 import adapters.HomeRecyclerViewAdapter
 import adapters.ProfileRecyclerViewAdapter
 import android.app.Dialog
+import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -14,6 +15,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.google.firebase.database.DataSnapshot
@@ -66,35 +68,105 @@ class UserProfileActivity : BaseActivity() {
 
         b.btnProfileActFollow.setOnClickListener {
 
-            if(b.btnProfileActFollow.text.toString().lowercase() == "unfollow")
+            if(GlobalStaticAdapter.accountType2 == "PRIVATE") {
+                if (b.btnProfileActFollow.text.toString().lowercase() == "unfollow") {
+
+                    val builder = AlertDialog.Builder(this)
+                    builder.setTitle("Are you sure wanted to unfollow ${GlobalStaticAdapter.userName2}")
+                    builder.setMessage("This account is private so, You need to request again to follow")
+                    builder.setCancelable(true)
+                    builder.setPositiveButton("Yes") { dialogInterface, _ ->
+                        dialogInterface.dismiss()
+
+                        b.btnProfileActFollow.text = "Follow"
+
+                        DatabaseAdapter.followingTable.child(GlobalStaticAdapter.key)
+                            .child(GlobalStaticAdapter.key2)
+                            .removeValue()
+
+                        DatabaseAdapter.followerTable.child(GlobalStaticAdapter.key2)
+                            .child(GlobalStaticAdapter.key2)
+                            .removeValue()
+                    }
+
+                    builder.setNegativeButton("No") { d, _ ->
+                        d.dismiss()
+                    }
+
+                    builder.create()
+                    builder.show()
+
+                } else {
+                    b.btnProfileActFollow.text = "Requested"
+
+                    DatabaseAdapter.followingTable.child(GlobalStaticAdapter.key)
+                        .child(GlobalStaticAdapter.key2)
+                        .child("FOLLOWING")
+                        .setValue(false)
+
+                    DatabaseAdapter.followerTable.child(GlobalStaticAdapter.key2)
+                        .child(GlobalStaticAdapter.key)
+                        .child("FOLLOWER")
+                        .setValue(false)
+
+                }
+            }
+            else if(GlobalStaticAdapter.accountType2 == "NOT VISIBLE")
             {
-                b.btnProfileActFollow.text = "Follow"
-                b.btnProfileActFollow.background = getDrawable(R.drawable.btn_back_fill)
+                val builder = AlertDialog.Builder(this)
+                builder.setTitle("Are you sure wanted to unfollow ${GlobalStaticAdapter.userName2}")
+                builder.setMessage("This account is not visible so, You'll be unable to follow again")
+                builder.setCancelable(true)
+                builder.setPositiveButton("Yes") { dialogInterface, _ ->
+                    dialogInterface.dismiss()
 
-                DatabaseAdapter.followingTable.child(GlobalStaticAdapter.key)
-                    .child(GlobalStaticAdapter.key2)
-                    .removeValue()
+                    DatabaseAdapter.followingTable.child(GlobalStaticAdapter.key)
+                        .child(GlobalStaticAdapter.key2)
+                        .removeValue()
 
-                DatabaseAdapter.followerTable.child(GlobalStaticAdapter.key2)
-                    .child(GlobalStaticAdapter.key2)
-                    .removeValue()
+                    DatabaseAdapter.followerTable.child(GlobalStaticAdapter.key2)
+                        .child(GlobalStaticAdapter.key2)
+                        .removeValue()
 
+                    val i = Intent(this, MainActivity::class.java)
+                    startActivity(i)
+                }
+
+                builder.setNegativeButton("No") { d, _ ->
+                    d.dismiss()
+                }
+
+                builder.create()
+                builder.show()
             }
             else
             {
-                b.btnProfileActFollow.text = "UnFollow"
-                b.btnProfileActFollow.background = getDrawable(R.drawable.btn_back_outlined)
+                if (b.btnProfileActFollow.text.toString().lowercase() == "unfollow") {
 
-                DatabaseAdapter.followingTable.child(GlobalStaticAdapter.key)
-                    .child(GlobalStaticAdapter.key2)
-                    .child("FOLLOWING")
-                    .setValue(true)
+                    b.btnProfileActFollow.text = "Follow"
 
-                DatabaseAdapter.followerTable.child(GlobalStaticAdapter.key2)
-                    .child(GlobalStaticAdapter.key)
-                    .child("FOLLOWER")
-                    .setValue(true)
+                    DatabaseAdapter.followingTable.child(GlobalStaticAdapter.key)
+                        .child(GlobalStaticAdapter.key2)
+                        .removeValue()
 
+                    DatabaseAdapter.followerTable.child(GlobalStaticAdapter.key2)
+                        .child(GlobalStaticAdapter.key2)
+                        .removeValue()
+
+                } else {
+                    b.btnProfileActFollow.text = "UnFollow"
+
+                    DatabaseAdapter.followingTable.child(GlobalStaticAdapter.key)
+                        .child(GlobalStaticAdapter.key2)
+                        .child("FOLLOWING")
+                        .setValue(true)
+
+                    DatabaseAdapter.followerTable.child(GlobalStaticAdapter.key2)
+                        .child(GlobalStaticAdapter.key)
+                        .child("FOLLOWER")
+                        .setValue(true)
+
+                }
             }
         }
 
