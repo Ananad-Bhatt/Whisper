@@ -312,15 +312,23 @@ class UserProfileActivity : BaseActivity() {
             } else {
                 b.btnProfileActFollow.text = "Requested"
 
+                //Following table
                 DatabaseAdapter.followingTable.child(GlobalStaticAdapter.key)
                     .child(GlobalStaticAdapter.key2)
                     .child("FOLLOWING")
                     .setValue(false)
 
+                //Follower Table
                 DatabaseAdapter.followerTable.child(GlobalStaticAdapter.key2)
                     .child(GlobalStaticAdapter.key)
                     .child("FOLLOWER")
                     .setValue(false)
+
+                //Notification table
+                DatabaseAdapter.notificationTable.child(GlobalStaticAdapter.key2)
+                    .child(GlobalStaticAdapter.key)
+                    .child("FOLLOW_REQUEST").child("NOTIFICATION")
+                    .setValue("${GlobalStaticAdapter.userName} has requested to follow you")
 
             }
         }
@@ -479,12 +487,18 @@ class UserProfileActivity : BaseActivity() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if(snapshot.exists())
                     {
-                        b.btnProfileActFollow.text = "UnFollow"
-                        b.btnProfileActFollow.background = getDrawable(R.drawable.btn_back_outlined)
+                        val isFollow = snapshot.child("FOLLOWING")
+                            .getValue(Boolean::class.java)!!
 
-                        if(b.btnProfileActFollow.text.toString().lowercase() == "unfollow") {
-                            b.rvProfileActRecentPosts.layoutManager = GridLayoutManager(applicationContext, 3)
+                        if(isFollow) {
+                            b.btnProfileActFollow.text = "UnFollow"
+
+                            b.rvProfileActRecentPosts.layoutManager =
+                                GridLayoutManager(applicationContext, 3)
                             b.rvProfileActRecentPosts.adapter = adapter
+                        }
+                        else{
+                            b.btnProfileActFollow.text = "Requested"
                         }
                     }
                 }
