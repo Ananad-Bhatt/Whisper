@@ -1,7 +1,7 @@
 package models
 
 data class NotificationModel (
-    var image:Int,
+    var image:String,
     var message:String,
     var key:String
 )
