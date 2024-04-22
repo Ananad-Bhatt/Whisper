@@ -166,6 +166,8 @@ class ProfileFragment : Fragment() {
 
                             for(s in snapshot.children)
                             {
+                                val timeStamp = s.key!!
+
                                 val title = s.child("USERNAME").getValue(String::class.java)!!
 
                                 val image = s.child("IMAGE").getValue(String::class.java)
@@ -181,7 +183,7 @@ class ProfileFragment : Fragment() {
                                     s.child("USER_IMAGE").getValue(String::class.java)
                                         ?: getString(R.string.image_not_found)
 
-                                posts.add(HomeModel(title, userImage, cap, image, score))
+                                posts.add(HomeModel(GlobalStaticAdapter.key, timeStamp, title, userImage, cap, image, score))
                                 adapter.notifyItemInserted(posts.size)
                             }
 

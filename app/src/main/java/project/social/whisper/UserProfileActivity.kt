@@ -353,6 +353,8 @@ class UserProfileActivity : BaseActivity() {
 
                             for(s in snapshot.children)
                             {
+                                val timeStamp = s.key!!
+
                                 val title = s.child("USERNAME").getValue(String::class.java)!!
 
                                 val image = s.child("IMAGE").getValue(String::class.java)
@@ -368,7 +370,7 @@ class UserProfileActivity : BaseActivity() {
                                     s.child("USER_IMAGE").getValue(String::class.java)
                                         ?: getString(R.string.image_not_found)
 
-                                posts.add(HomeModel(title, userImage, cap, image, score))
+                                posts.add(HomeModel(GlobalStaticAdapter.key2, timeStamp, title, userImage, cap, image, score))
                                 adapter.notifyItemInserted(posts.size)
                             }
                         }

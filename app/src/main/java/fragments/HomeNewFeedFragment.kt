@@ -136,6 +136,9 @@ class HomeNewFeedFragment : Fragment() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
                         for (sn in snapshot.children) {
+
+                            val timeStamp = sn.key!!
+
                             val title = sn.child("USERNAME").getValue(String::class.java)!!
 
                             val image = sn.child("IMAGE").getValue(String::class.java)
@@ -151,7 +154,7 @@ class HomeNewFeedFragment : Fragment() {
                                 sn.child("USER_IMAGE").getValue(String::class.java)
                                     ?: getString(R.string.image_not_found)
 
-                            posts.add(HomeModel(title, userImage, cap, image, score))
+                            posts.add(HomeModel(following, timeStamp, title, userImage, cap, image, score))
                             adapter.notifyItemInserted(posts.size)
 
                         }
