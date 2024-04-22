@@ -6,5 +6,6 @@ data class SearchModel (
     val userUid: String,
     val userKey: String,
     val about: String,
-    val fcm: String
+    val fcm: String,
+    val accType: String
 )

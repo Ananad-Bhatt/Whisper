@@ -93,7 +93,10 @@ class ManageAccountsFragment : Fragment() {
 
                             val about = s.child("ABOUT").getValue(String::class.java)?:""
 
-                            accounts.add(SearchModel(userName, imgUrl, uid, userKey, about, fcm))
+                            val accType = snapshot.child("ACCOUNT_TYPE")
+                                .getValue(String::class.java) ?: "PUBLIC"
+
+                            accounts.add(SearchModel(userName, imgUrl, uid, userKey, about, fcm, accType))
                             ad.notifyItemInserted(accounts.size)
                         }
                     }

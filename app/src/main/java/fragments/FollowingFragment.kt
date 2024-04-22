@@ -132,7 +132,10 @@ class FollowingFragment : Fragment() {
                         val about = snapshot.child("ABOUT").getValue(String::class.java)
                             ?: ""
 
-                        followings.add(SearchModel(userName, image, uid, key, about, fcm))
+                        val accType = snapshot.child("ACCOUNT_TYPE")
+                            .getValue(String::class.java) ?: "PUBLIC"
+
+                        followings.add(SearchModel(userName, image, uid, key, about, fcm, accType))
                         adapter.notifyItemInserted(followings.size)
                     }
                 }

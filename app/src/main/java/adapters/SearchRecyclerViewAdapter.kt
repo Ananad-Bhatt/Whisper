@@ -44,6 +44,7 @@ class SearchRecyclerViewAdapter(private val context:Context,private val searchRe
             GlobalStaticAdapter.fcmToken2 = searchResults[position].fcm
             GlobalStaticAdapter.imageUrl2 = searchResults[position].userImg
             GlobalStaticAdapter.about2 = searchResults[position].about
+            GlobalStaticAdapter.accountType2 = searchResults[position].accType
 
             context.startActivity(i)
         }

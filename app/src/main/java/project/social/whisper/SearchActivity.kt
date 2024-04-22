@@ -138,6 +138,11 @@ class SearchActivity : BaseActivity() {
 
                                                         val about = i.child("ABOUT").getValue(String::class.java)
                                                             ?: ""
+
+                                                        val accType = i.child("ACCOUNT_TYPE")
+                                                            .getValue(String::class.java)
+                                                            ?: "PUBLIC"
+
                                                         Log.d("BLOCK_ERROR", "Hello2")
                                                         if ((userName.lowercase()).contains(query.lowercase())) {
                                                             Log.d("BLOCK_ERROR", "Yes")
@@ -148,7 +153,8 @@ class SearchActivity : BaseActivity() {
                                                                     uid,
                                                                     key,
                                                                     about,
-                                                                    fcm
+                                                                    fcm,
+                                                                    accType
                                                                 )
                                                             )
 
