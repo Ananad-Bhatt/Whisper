@@ -37,16 +37,18 @@ class SearchRecyclerViewAdapter(private val context:Context,private val searchRe
 
         holder.container.setOnClickListener {
 
-            val i = Intent(context, UserProfileActivity::class.java)
-            GlobalStaticAdapter.userName2 = holder.userName.text.toString()
-            GlobalStaticAdapter.uid2 = searchResults[position].userUid
-            GlobalStaticAdapter.key2 = searchResults[position].userKey
-            GlobalStaticAdapter.fcmToken2 = searchResults[position].fcm
-            GlobalStaticAdapter.imageUrl2 = searchResults[position].userImg
-            GlobalStaticAdapter.about2 = searchResults[position].about
-            GlobalStaticAdapter.accountType2 = searchResults[position].accType
+            if(GlobalStaticAdapter.key != searchResults[position].userKey) {
+                val i = Intent(context, UserProfileActivity::class.java)
+                GlobalStaticAdapter.userName2 = holder.userName.text.toString()
+                GlobalStaticAdapter.uid2 = searchResults[position].userUid
+                GlobalStaticAdapter.key2 = searchResults[position].userKey
+                GlobalStaticAdapter.fcmToken2 = searchResults[position].fcm
+                GlobalStaticAdapter.imageUrl2 = searchResults[position].userImg
+                GlobalStaticAdapter.about2 = searchResults[position].about
+                GlobalStaticAdapter.accountType2 = searchResults[position].accType
 
-            context.startActivity(i)
+                context.startActivity(i)
+            }
         }
 
     }

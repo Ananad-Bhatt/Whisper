@@ -70,15 +70,19 @@ class NotificationAdapter(private val context: Context, private val notification
 
                 h.accept.setOnClickListener {
 
-//                    DatabaseAdapter.followingTable.child(notify.key)
-//                        .child(GlobalStaticAdapter.key)
-//                        .child("FOLLOWING")
-//                        .setValue(true)
-//
-//                    DatabaseAdapter.followerTable.child(GlobalStaticAdapter.key)
-//                        .child(notify.key)
-//                        .child("FOLLOWER")
-//                        .setValue(true)
+                    DatabaseAdapter.followingTable.child(notify.key)
+                        .child(GlobalStaticAdapter.key)
+                        .child("FOLLOWING")
+                        .setValue(true)
+
+                    DatabaseAdapter.followerTable.child(GlobalStaticAdapter.key)
+                        .child(notify.key)
+                        .child("FOLLOWER")
+                        .setValue(true)
+
+                    DatabaseAdapter.notificationTable.child(GlobalStaticAdapter.key)
+                        .child(notify.key).child("FOLLOW_REQUEST")
+                        .removeValue()
 
                     h.accept.text = "ACCEPTED"
                     h.accept.isEnabled = false
@@ -86,6 +90,11 @@ class NotificationAdapter(private val context: Context, private val notification
                 }
 
                 h.reject.setOnClickListener {
+
+                    DatabaseAdapter.notificationTable.child(GlobalStaticAdapter.key)
+                        .child(notify.key).child("FOLLOW_REQUEST")
+                        .removeValue()
+
                     h.reject.text = "DECLINED"
                     h.reject.isEnabled = false
                     h.accept.visibility = View.GONE

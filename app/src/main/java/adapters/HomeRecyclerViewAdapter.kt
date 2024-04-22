@@ -35,8 +35,7 @@ class HomeRecyclerViewAdapter (private val postList:ArrayList<HomeModel>, privat
         var isUpClickable = true
         var isDownClickable = true
 
-        val key = if(GlobalStaticAdapter.key == postList[position].key) GlobalStaticAdapter.key2
-                        else GlobalStaticAdapter.key
+        val key = GlobalStaticAdapter.key
 
         val dbPath = DatabaseAdapter.scoreTable.child(postList[position].key)
             .child(postList[position].timeStamp).child(key)

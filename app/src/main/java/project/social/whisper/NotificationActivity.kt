@@ -41,32 +41,35 @@ class NotificationActivity : BaseActivity() {
                         {
                             DatabaseAdapter.keyUidTable.child(s.key!!)
                                 .addListenerForSingleValueEvent(object: ValueEventListener{
-                                    override fun onDataChange(snapshot: DataSnapshot) {
-                                        if(snapshot.exists())
+                                    override fun onDataChange(snapshot2: DataSnapshot) {
+                                        if(snapshot2.exists())
                                         {
-                                            val uid = snapshot
+                                            val uid = snapshot2
                                                 .getValue(String::class.java)!!
+
+                                            Log.d("NOTI_ERROR", uid)
 
                                             DatabaseAdapter.userDetailsTable
                                                 .child(uid).child(s.key!!)
                                                 .addListenerForSingleValueEvent(object: ValueEventListener {
                                                     override fun onDataChange(snapshot1: DataSnapshot) {
-                                                        if (!snapshot1.exists()) {
-                                                            val userName: String =
-                                                                snapshot1.child("USER_NAME").getValue(String::class.java)!!
+                                                        if (snapshot1.exists()) {
 
                                                             val image: String =
                                                                 snapshot1.child("IMAGE").getValue(String::class.java)
                                                                     ?: getString(R.string.image_not_found)
 
+                                                            Log.d("NOTI_ERROR", image)
+
                                                             for(sn in s.children) {
                                                                 val msg = sn.child("NOTIFICATION")
                                                                     .getValue(String::class.java)!!
 
+                                                                Log.d("NOTI_ERROR", msg)
+
                                                                 notifications.add(NotificationModel(image, msg, s.key!!))
                                                                 adapter.notifyItemInserted(notifications.size)
                                                             }
-
                                                         }
                                                     }
 
@@ -89,10 +92,6 @@ class NotificationActivity : BaseActivity() {
                 }
 
             })
-    }
-
-    private fun getUserDetails(uid: String, key: String) {
-
     }
 
     override fun getSelectedTheme(): String {

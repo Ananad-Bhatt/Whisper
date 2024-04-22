@@ -34,7 +34,7 @@ class ShowPostsActivity : BaseActivity() {
             b.tvPostActUserName.text = GlobalStaticAdapter.userName
 
         b.rvShowAllPosts.layoutManager = GridLayoutManager(this, 3)
-        adapter = ProfileRecyclerViewAdapter(posts, applicationContext)
+        adapter = ProfileRecyclerViewAdapter(posts, this)
         b.rvShowAllPosts.adapter = adapter
 
         getAllPosts()
@@ -48,7 +48,6 @@ class ShowPostsActivity : BaseActivity() {
                 .addListenerForSingleValueEvent(object: ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         if(snapshot.exists()){
-                            val post = snapshot.childrenCount
 
                             for(s in snapshot.children)
                             {

@@ -47,6 +47,13 @@ class ProfileSettingAccountFragment : Fragment() {
         // Inflate the layout for this fragment
         b = FragmentProfileSettingAccountBinding.inflate(inflater, container, false)
 
+        try {
+            b.spProfileAccountSetting.onItemSelectedListener = SpinnerStateChangeListener()
+        }catch (e:Exception)
+        {
+            Log.d("DB_ERROR",e.toString())
+        }
+
         when(GlobalStaticAdapter.accountType)
         {
             "PUBLIC" -> b.spProfileAccountSetting.setSelection(0)
@@ -93,13 +100,6 @@ class ProfileSettingAccountFragment : Fragment() {
         }catch(e:Exception)
         {
             Log.d("SPINNER",e.toString())
-        }
-
-        try {
-            b.spProfileAccountSetting.onItemSelectedListener = SpinnerStateChangeListener()
-        }catch (e:Exception)
-        {
-            Log.d("DB_ERROR",e.toString())
         }
 
         return b.root
@@ -272,6 +272,7 @@ class ProfileSettingAccountFragment : Fragment() {
 
     inner class SpinnerStateChangeListener : OnItemSelectedListener{
         override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+
             val type = when(position)
             {
                 0 -> "PUBLIC"
@@ -280,13 +281,20 @@ class ProfileSettingAccountFragment : Fragment() {
                 else -> "PUBLIC"
             }
 
-            try {
-                DatabaseAdapter.userDetailsTable.child(uid).child(key).child("ACCOUNT_TYPE")
-                    .setValue(type)
-            }catch(e:Exception)
+            if(GlobalStaticAdapter.accountType != type)
             {
-                Log.d("DB_ERROR",e.toString())
+                Log.d("SPINNER_ERROR", "W ${GlobalStaticAdapter.accountType} + $type")
             }
+//
+//            try {
+//                DatabaseAdapter.userDetailsTable.child(uid).child(key).child("ACCOUNT_TYPE")
+//                    .setValue(type)
+//
+//                GlobalStaticAdapter.accountType = type
+//            }catch(e:Exception)
+//            {
+//                Log.d("DB_ERROR",e.toString())
+//            }
         }
 
         override fun onNothingSelected(parent: AdapterView<*>?) {

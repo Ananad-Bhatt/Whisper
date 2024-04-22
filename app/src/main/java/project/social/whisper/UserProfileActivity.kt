@@ -42,7 +42,7 @@ class UserProfileActivity : BaseActivity() {
         Glide.with(applicationContext).load(GlobalStaticAdapter.imageUrl2).into(b.imgProfileActUserImage)
         b.txtProfileActAbout.text = GlobalStaticAdapter.about2
 
-        adapter = ProfileRecyclerViewAdapter(posts, applicationContext)
+        adapter = ProfileRecyclerViewAdapter(posts, this)
 
         getPostCount()
         getFollowerCount()
@@ -312,18 +312,6 @@ class UserProfileActivity : BaseActivity() {
 
             } else {
                 b.btnProfileActFollow.text = "Requested"
-
-                //Following table
-                DatabaseAdapter.followingTable.child(GlobalStaticAdapter.key)
-                    .child(GlobalStaticAdapter.key2)
-                    .child("FOLLOWING")
-                    .setValue(false)
-
-                //Follower Table
-                DatabaseAdapter.followerTable.child(GlobalStaticAdapter.key2)
-                    .child(GlobalStaticAdapter.key)
-                    .child("FOLLOWER")
-                    .setValue(false)
 
                 //Notification table
                 DatabaseAdapter.notificationTable.child(GlobalStaticAdapter.key2)
