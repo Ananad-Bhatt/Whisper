@@ -58,14 +58,17 @@ class FollowingFragment : Fragment() {
             b.rvFollowingFrag.adapter = adapter
 
             val args = arguments
+            val isFromAct = args?.getBoolean("isFromAct") ?: false
             val isFollower = args?.getBoolean("isFollower")!!
 
+            val key = if(isFromAct) GlobalStaticAdapter.key2 else GlobalStaticAdapter.key
+
             if(isFollower) {
-                dbPath = DatabaseAdapter.followerTable.child(GlobalStaticAdapter.key)
+                dbPath = DatabaseAdapter.followerTable.child(key)
                 b.tvFollowFrag.text = "Followers"
             }
             else
-                dbPath = DatabaseAdapter.followingTable.child(GlobalStaticAdapter.key)
+                dbPath = DatabaseAdapter.followingTable.child(key)
 
             dbPath.addListenerForSingleValueEvent(object :ValueEventListener{
                     override fun onDataChange(snapshot: DataSnapshot) {

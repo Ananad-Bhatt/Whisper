@@ -9,6 +9,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -18,6 +19,7 @@ import com.bumptech.glide.Glide
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import fragments.FollowingFragment
 import models.HomeModel
 import project.social.whisper.databinding.ActivityUserProfileBinding
 
@@ -32,6 +34,7 @@ class UserProfileActivity : BaseActivity() {
 
         b = ActivityUserProfileBinding.inflate(layoutInflater)
         setContentView(b.root)
+        b.profileActContainer.visibility = View.GONE
 
         b.txtProfileActUserName.text = GlobalStaticAdapter.userName2
         Glide.with(applicationContext).load(GlobalStaticAdapter.imageUrl2).into(b.imgProfileActUserImage)
@@ -45,6 +48,41 @@ class UserProfileActivity : BaseActivity() {
         getFollowerCount()
         getFollowingCount()
         checkFollow()
+
+        b.linearProfileActFollowing.setOnClickListener {
+            if(b.btnProfileActFollow.text.toString().lowercase() == "unfollow") {
+                b.profileActContainer.visibility = View.VISIBLE
+                val args = Bundle()
+                args.putBoolean("isFollower", false)
+
+                val frag = FollowingFragment()
+                frag.arguments = args
+
+                val fm1 = supportFragmentManager
+                val ft1 = fm1.beginTransaction()
+                ft1.replace(R.id.profile_act_container, frag)
+                ft1.addToBackStack(null)
+                ft1.commit()
+            }
+        }
+
+        b.linearProfileActFollowers.setOnClickListener {
+            if(b.btnProfileActFollow.text.toString().lowercase() == "unfollow") {
+                b.profileActContainer.visibility = View.VISIBLE
+                val args = Bundle()
+                args.putBoolean("isFollower", true)
+                args.putBoolean("isFromAct", true)
+
+                val frag = FollowingFragment()
+                frag.arguments = args
+
+                val fm1 = supportFragmentManager
+                val ft1 = fm1.beginTransaction()
+                ft1.replace(R.id.profile_act_container, frag)
+                ft1.addToBackStack(null)
+                ft1.commit()
+            }
+        }
 
         b.btnProfileActFollow.setOnClickListener {
 
