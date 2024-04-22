@@ -76,8 +76,31 @@ class ProfileFragment : Fragment() {
 
         b.linearProfileFollowing.setOnClickListener {
 
+            val args = Bundle()
+            args.putBoolean("isFollower", false)
 
+            val frag = FollowingFragment()
+            frag.arguments = args
 
+            val fm1 = requireActivity().supportFragmentManager
+            val ft1 = fm1.beginTransaction()
+            ft1.replace(R.id.main_container, frag)
+            ft1.addToBackStack(null)
+            ft1.commit()
+        }
+
+        b.linearProfileFollowers.setOnClickListener {
+            val args = Bundle()
+            args.putBoolean("isFollower", true)
+
+            val frag = FollowingFragment()
+            frag.arguments = args
+
+            val fm1 = requireActivity().supportFragmentManager
+            val ft1 = fm1.beginTransaction()
+            ft1.replace(R.id.main_container, frag)
+            ft1.addToBackStack(null)
+            ft1.commit()
         }
 
         return b.root
