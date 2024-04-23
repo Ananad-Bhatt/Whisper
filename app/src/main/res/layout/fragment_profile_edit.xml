@@ -69,6 +69,7 @@
                 android:id="@+id/edt_edit_profile_user_name"
                 android:layout_marginTop="10dp"
                 android:hint="@string/username"
+                android:maxLength="20"
                 style="@style/EDITTEXT" />
 
             <TextView
@@ -101,6 +102,7 @@
                 android:inputType="textMultiLine"
                 android:layout_marginTop="10dp"
                 android:hint="@string/about"
+                android:maxLength="60"
                 android:maxLines="10"
                 android:maxHeight="@dimen/_75sdp"
                 android:isScrollContainer="false" />

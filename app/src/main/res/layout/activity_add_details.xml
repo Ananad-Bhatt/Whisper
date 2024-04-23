@@ -52,6 +52,7 @@
                     android:layout_marginTop="@dimen/_30sdp"
                     android:autofillHints="emailAddress"
                     android:inputType="textEmailAddress"
+                    android:maxLength="20"
                     android:drawableStart="@drawable/username"
                     android:drawablePadding="@dimen/_10sdp" />
 

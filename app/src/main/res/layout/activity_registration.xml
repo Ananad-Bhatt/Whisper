@@ -96,6 +96,7 @@
                     style="@style/EDITTEXT"
                     android:hint="@string/email_hint"
                     android:layout_marginTop="@dimen/_30sdp"
+                    android:maxLength="50"
                     android:autofillHints="emailAddress"
                     android:inputType="textEmailAddress"
                     android:drawableStart="@drawable/email"
@@ -107,6 +108,7 @@
                     android:hint="@string/password_hint"
                     android:autofillHints="password"
                     android:inputType="textPassword"
+                    android:maxLength="20"
                     android:layout_marginTop="@dimen/_10sdp"
                     android:drawableStart="@drawable/password"
                     android:drawablePadding="@dimen/_10sdp" />
@@ -117,6 +119,7 @@
                     android:hint="@string/confirm_password"
                     android:autofillHints="password"
                     android:inputType="textPassword"
+                    android:maxLength="20"
                     android:layout_marginTop="@dimen/_10sdp"
                     android:drawableStart="@drawable/password"
                     android:drawablePadding="@dimen/_10sdp" />

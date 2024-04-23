@@ -129,6 +129,7 @@
                 android:inputType="textMultiLine"
                 android:isScrollContainer="true"
                 android:maxLines="15"
+                android:maxLength="1000"
                 android:padding="10dp"
                 android:textSize="@dimen/_14ssp" />
         </RelativeLayout>

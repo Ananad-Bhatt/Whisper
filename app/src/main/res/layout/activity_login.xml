@@ -98,6 +98,7 @@
                     android:layout_marginTop="@dimen/_30sdp"
                     android:autofillHints="emailAddress"
                     android:inputType="textEmailAddress"
+                    android:maxLength="50"
                     android:drawableStart="@drawable/email"
                     android:drawablePadding="@dimen/_10sdp" />
 
@@ -108,6 +109,7 @@
                     android:autofillHints="password"
                     android:inputType="textPassword"
                     android:layout_marginTop="@dimen/_10sdp"
+                    android:maxLength="20"
                     android:drawableStart="@drawable/password"
                     android:drawablePadding="@dimen/_10sdp" />
 
