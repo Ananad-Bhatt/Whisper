@@ -34,7 +34,7 @@ class ChatRecyclerViewAdapter(private val context: Context, private val usersLis
         holder.title.text = usersList[position].title
 
         if(!usersList[position].subTitle.contains("https://firebasestorage.googleapis.com"))
-            holder.subTitle.text = usersList[position].subTitle
+            holder.subTitle.text = "Text Message"
         else
             holder.subTitle.text = "Image"
 
@@ -45,6 +45,8 @@ class ChatRecyclerViewAdapter(private val context: Context, private val usersLis
             GlobalStaticAdapter.key2 = usersList[position].key
             GlobalStaticAdapter.uid2 = usersList[position].uid
             GlobalStaticAdapter.fcmToken2 = usersList[position].fcm
+            GlobalStaticAdapter.accountType2 = usersList[position].type
+            GlobalStaticAdapter.about2 = usersList[position].about
             context.startActivity(i)
         }
     }

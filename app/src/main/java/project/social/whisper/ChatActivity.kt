@@ -457,8 +457,10 @@ class ChatActivity : BaseActivity() {
         }
 
         b.tvChatActUserName.setOnClickListener {
-            val i = Intent(this, UserProfileActivity::class.java)
-            startActivity(i)
+            if(GlobalStaticAdapter.accountType2 != "NOT VISIBLE") {
+                val i = Intent(this, UserProfileActivity::class.java)
+                startActivity(i)
+            }
         }
 
         //Decline Requests buttons

@@ -125,7 +125,13 @@ class ChatRequestFragment : Fragment() {
 
                                 val fcm = snapshot.child("FCM_TOKEN").getValue(String::class.java)?:""
 
-                                users.add(ChatRecyclerModel(userName, imgUrl, k.lastMessage, k.key, k.uid, fcm))
+                                val type = snapshot.child("ACCOUNT_TYPE")
+                                    .getValue(String::class.java) ?: "PUBLIC"
+
+                                val about = snapshot.child("ABOUT")
+                                    .getValue(String::class.java) ?: ""
+
+                                users.add(ChatRecyclerModel(userName,about, imgUrl, k.lastMessage, k.key, k.uid, fcm, type))
 
                                 Log.d("IDK","ADDED")
                                 if(users.size == usersKey.size)

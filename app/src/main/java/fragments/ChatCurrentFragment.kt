@@ -200,14 +200,22 @@ class ChatCurrentFragment : Fragment() {
                                         snapshot.child("FCM_TOKEN").getValue(String::class.java)
                                             ?: ""
 
+                                    val type = snapshot.child("ACCOUNT_TYPE")
+                                        .getValue(String::class.java) ?: "PUBLIC"
+
+                                    val about = snapshot.child("ABOUT")
+                                        .getValue(String::class.java) ?: ""
+
                                     users.add(
                                         ChatRecyclerModel(
                                             userName,
+                                            about,
                                             imgUrl,
                                             k.lastMessage,
                                             k.key,
                                             k.uid,
-                                            fcm
+                                            fcm,
+                                            type
                                         )
                                     )
                                     Log.d("IDK", "ADDED")
