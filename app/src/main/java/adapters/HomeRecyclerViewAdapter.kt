@@ -1,6 +1,8 @@
 package adapters
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import models.HomeModel
+import project.social.whisper.MainActivity
 import project.social.whisper.R
 import services.NotificationService
 
@@ -41,8 +44,43 @@ class HomeRecyclerViewAdapter (private val postList:ArrayList<HomeModel>, privat
 
         val key = GlobalStaticAdapter.key
 
+        if(key == postList[position].key)
+            holder.del.visibility = View.VISIBLE
+
         val dbPath = DatabaseAdapter.scoreTable.child(postList[position].key)
             .child(postList[position].timeStamp).child(key)
+
+        holder.del.setOnClickListener {
+
+            val builder = androidx.appcompat.app.AlertDialog.Builder(context)
+            builder.setTitle("Delete Post")
+            builder.setMessage("Are sure want to delete this post?")
+            builder.setCancelable(true)
+            builder.setPositiveButton("Yes") { dialogInterface, _ ->
+                dialogInterface.dismiss()
+
+                DatabaseAdapter.postTable.child(GlobalStaticAdapter.key)
+                    .child(postList[position].timeStamp)
+                    .removeValue()
+
+                DatabaseAdapter.scoreTable.child(GlobalStaticAdapter.key)
+                    .child(postList[position].timeStamp)
+                    .removeValue()
+
+                DatabaseAdapter.postImage.child(GlobalStaticAdapter.key)
+                    .child(postList[position].timeStamp)
+                    .delete()
+
+                notifyItemRemoved(holder.adapterPosition)
+            }
+
+            builder.setNegativeButton("No") { d, _ ->
+                d.dismiss()
+            }
+
+            builder.create()
+            builder.show()
+        }
 
         dbPath.addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -171,6 +209,7 @@ class HomeRecyclerViewAdapter (private val postList:ArrayList<HomeModel>, privat
         val upVote: ImageButton = itemView.findViewById(R.id.home_frag_post_up)
         val downVote: ImageButton = itemView.findViewById(R.id.home_frag_post_down)
         val score: TextView = itemView.findViewById(R.id.home_frag_post_score)
+        val del: ImageButton = itemView.findViewById(R.id.ib_del_post)
         //val comment: ImageButton = itemView.findViewById(R.id.home_frag_post_comment)
     }
 }

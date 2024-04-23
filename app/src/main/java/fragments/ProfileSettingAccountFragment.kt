@@ -140,6 +140,10 @@ class ProfileSettingAccountFragment : Fragment() {
                 .child(GlobalStaticAdapter.key)
                 .removeValue()
 
+            //Post Storage
+            DatabaseAdapter.postImage.child(GlobalStaticAdapter.uid)
+                .delete()
+
             //Chat Room
             DatabaseAdapter.chatRooms.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -263,6 +267,10 @@ class ProfileSettingAccountFragment : Fragment() {
             //FEEDBACK
             DatabaseAdapter.feedbackTable.child(GlobalStaticAdapter.key)
                 .removeValue()
+
+            //User Images
+            DatabaseAdapter.userImage.child(GlobalStaticAdapter.key)
+                .delete()
 
             val i = Intent(requireActivity(), StartUpActivity::class.java)
             requireActivity().startActivity(i)
