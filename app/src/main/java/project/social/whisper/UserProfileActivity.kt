@@ -312,7 +312,7 @@ class UserProfileActivity : BaseActivity() {
                         .removeValue()
 
                     DatabaseAdapter.followerTable.child(GlobalStaticAdapter.key2)
-                        .child(GlobalStaticAdapter.key2)
+                        .child(GlobalStaticAdapter.key)
                         .removeValue()
 
                     val i = Intent(this, MainActivity::class.java)
@@ -357,7 +357,7 @@ class UserProfileActivity : BaseActivity() {
                     .removeValue()
 
                 DatabaseAdapter.followerTable.child(GlobalStaticAdapter.key2)
-                    .child(GlobalStaticAdapter.key2)
+                    .child(GlobalStaticAdapter.key)
                     .removeValue()
 
                 val i = Intent(this, MainActivity::class.java)
@@ -382,7 +382,7 @@ class UserProfileActivity : BaseActivity() {
                     .removeValue()
 
                 DatabaseAdapter.followerTable.child(GlobalStaticAdapter.key2)
-                    .child(GlobalStaticAdapter.key2)
+                    .child(GlobalStaticAdapter.key)
                     .removeValue()
 
             } else {
