@@ -301,6 +301,9 @@ class UserProfileActivity : BaseActivity() {
                     DatabaseAdapter.followerTable.child(GlobalStaticAdapter.key2)
                         .child(GlobalStaticAdapter.key2)
                         .removeValue()
+
+                    val i = Intent(this, MainActivity::class.java)
+                    startActivity(i)
                 }
 
                 builder.setNegativeButton("No") { d, _ ->
@@ -488,9 +491,11 @@ class UserProfileActivity : BaseActivity() {
                         if(isFollow) {
                             b.btnProfileActFollow.text = "UnFollow"
 
-                            b.rvProfileActRecentPosts.layoutManager =
-                                GridLayoutManager(applicationContext, 3)
-                            b.rvProfileActRecentPosts.adapter = adapter
+                            if(isFollow || GlobalStaticAdapter.accountType2 == "PUBLIC") {
+                                b.rvProfileActRecentPosts.layoutManager =
+                                    GridLayoutManager(applicationContext, 3)
+                                b.rvProfileActRecentPosts.adapter = adapter
+                            }
                         }
                         else{
                             b.btnProfileActFollow.text = "Requested"

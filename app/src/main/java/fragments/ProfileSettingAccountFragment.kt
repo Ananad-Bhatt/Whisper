@@ -281,20 +281,15 @@ class ProfileSettingAccountFragment : Fragment() {
                 else -> "PUBLIC"
             }
 
-            if(GlobalStaticAdapter.accountType != type)
+            try {
+                DatabaseAdapter.userDetailsTable.child(uid).child(key).child("ACCOUNT_TYPE")
+                    .setValue(type)
+
+                GlobalStaticAdapter.accountType = type
+            }catch(e:Exception)
             {
-                Log.d("SPINNER_ERROR", "W ${GlobalStaticAdapter.accountType} + $type")
+                Log.d("DB_ERROR",e.toString())
             }
-//
-//            try {
-//                DatabaseAdapter.userDetailsTable.child(uid).child(key).child("ACCOUNT_TYPE")
-//                    .setValue(type)
-//
-//                GlobalStaticAdapter.accountType = type
-//            }catch(e:Exception)
-//            {
-//                Log.d("DB_ERROR",e.toString())
-//            }
         }
 
         override fun onNothingSelected(parent: AdapterView<*>?) {
