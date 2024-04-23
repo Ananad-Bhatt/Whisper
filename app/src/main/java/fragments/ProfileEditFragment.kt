@@ -127,7 +127,8 @@ class ProfileEditFragment : Fragment() {
         b.btnEditProfileDone.setOnClickListener {
             if(b.edtEditProfileUserName.text.toString() != "" && b.edtEditProfileAbout.text.toString() != "")
             {
-                if(b.txtDetIsAvailable.text.toString() != "User name is already exist") {
+                if(b.txtDetIsAvailable.text.toString() != "User name is already exist"
+                    || b.edtEditProfileUserName.text.toString() == GlobalStaticAdapter.userName) {
                     DatabaseAdapter.userDetailsTable.child(uid).child(key).child("USER_NAME")
                         .setValue(b.edtEditProfileUserName.text.toString())
 
