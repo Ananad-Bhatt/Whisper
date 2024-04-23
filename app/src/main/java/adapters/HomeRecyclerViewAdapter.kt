@@ -13,6 +13,9 @@ import com.bumptech.glide.Glide
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import models.HomeModel
 import project.social.whisper.R
 import services.NotificationService
@@ -135,7 +138,15 @@ class HomeRecyclerViewAdapter (private val postList:ArrayList<HomeModel>, privat
 
                                         Log.d("UID_ERROR", fcm)
 
-                                        NotificationService.sendNotification("${GlobalStaticAdapter.userName} Has upvoted your post", fcm, userName)
+                                        runBlocking {
+                                            launch(Dispatchers.IO) {
+                                                NotificationService.sendNotification(
+                                                    "${GlobalStaticAdapter.userName} Has upvoted your post",
+                                                    fcm,
+                                                    userName
+                                                )
+                                            }
+                                        }
                                     }
                                 }
 

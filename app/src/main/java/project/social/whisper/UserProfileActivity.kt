@@ -22,6 +22,9 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import fragments.FollowingFragment
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import models.HomeModel
 import project.social.whisper.databinding.ActivityUserProfileBinding
 import services.NotificationService
@@ -336,10 +339,16 @@ class UserProfileActivity : BaseActivity() {
                     .setValue("${GlobalStaticAdapter.userName} has requested to follow you")
 
                 //Sending Notification
-                NotificationService
-                    .sendNotification("${GlobalStaticAdapter.userName} has requested to follow you",
-                        GlobalStaticAdapter.fcmToken2,
-                        GlobalStaticAdapter.userName)
+                runBlocking {
+                    launch(Dispatchers.IO) {
+                        NotificationService
+                            .sendNotification(
+                                "${GlobalStaticAdapter.userName} has requested to follow you",
+                                GlobalStaticAdapter.fcmToken2,
+                                GlobalStaticAdapter.userName
+                            )
+                    }
+                }
 
             }
         }
