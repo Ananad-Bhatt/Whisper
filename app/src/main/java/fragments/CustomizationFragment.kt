@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import project.social.whisper.R
 import project.social.whisper.databinding.FragmentCustomizationBinding
@@ -46,38 +47,59 @@ class CustomizationFragment : Fragment() {
                 sharedPreferences.edit().apply {
                     putString("theme","primary1")
                 }.apply()
+
+                Toast.makeText(requireActivity(), "Restart App to Apply", Toast.LENGTH_LONG)
+                    .show()
             }
 
             b.primary2Color.setOnClickListener {
                 sharedPreferences.edit().apply {
                     putString("theme","primary2")
                 }.apply()
+
+                Toast.makeText(requireActivity(), "Restart App to Apply", Toast.LENGTH_LONG)
+                    .show()
             }
             b.primary3Color.setOnClickListener {
                 sharedPreferences.edit().apply {
                     putString("theme","primary3")
                 }.apply()
+
+                Toast.makeText(requireActivity(), "Restart App to Apply", Toast.LENGTH_LONG)
+                    .show()
             }
             b.primary4Color.setOnClickListener {
                 sharedPreferences.edit().apply {
                     putString("theme","primary4")
                 }.apply()
+
+                Toast.makeText(requireActivity(), "Restart App to Apply", Toast.LENGTH_LONG)
+                    .show()
             }
             b.primary5Color.setOnClickListener {
                 sharedPreferences.edit().apply {
                     putString("theme","primary5")
                 }.apply()
+
+                Toast.makeText(requireActivity(), "Restart App to Apply", Toast.LENGTH_LONG)
+                    .show()
             }
             b.primary6Color.setOnClickListener {
                 sharedPreferences.edit().apply {
                     putString("theme","primary6")
                 }.apply()
+
+                Toast.makeText(requireActivity(), "Restart App to Apply", Toast.LENGTH_LONG)
+                    .show()
             }
 
             b.whiteColor.setOnClickListener {
                 sharedPreferences2.edit().apply{
                     putString("theme_wb", "light")
                 }.apply()
+
+                Toast.makeText(requireActivity(), "Restart App to Apply", Toast.LENGTH_LONG)
+                    .show()
             }
 
             b.blackColor.setOnClickListener {
@@ -85,12 +107,18 @@ class CustomizationFragment : Fragment() {
                     putString("theme_wb", "dark")
                 }.apply()
 
+                Toast.makeText(requireActivity(), "Restart App to Apply", Toast.LENGTH_LONG)
+                    .show()
+
             }
 
             b.systemDefaultColor.setOnClickListener {
                 sharedPreferences2.edit().apply{
                     putString("theme_wb", "system")
                 }.apply()
+
+                Toast.makeText(requireActivity(), "Restart App to Apply", Toast.LENGTH_LONG)
+                    .show()
             }
         }
 
