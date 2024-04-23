@@ -1,6 +1,7 @@
 package adapters
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -85,10 +86,10 @@ class HomeRecyclerViewAdapter (private val postList:ArrayList<HomeModel>, privat
                 //Notification
                 val postKey = postList[position].key
                 val userName = postList[position].title
-                if(key != GlobalStaticAdapter.key) {
+                if(postKey != GlobalStaticAdapter.key) {
                     DatabaseAdapter.notificationTable.child(postList[position].key)
                         .child(key).child("UPVOTE").child("NOTIFICATION")
-                        .setValue(postList[position].timeStamp)
+                        .setValue("${GlobalStaticAdapter.userName} Has Up Voted your post")
 
                     sendNotificationToUser(postKey, userName)
                 }
@@ -108,14 +109,6 @@ class HomeRecyclerViewAdapter (private val postList:ArrayList<HomeModel>, privat
                 DatabaseAdapter.postTable.child(postList[position].key)
                     .child(postList[position].timeStamp).child("SCORE")
                     .setValue(score)
-
-                //Notification
-                val postKey = postList[position].key
-                if(key != GlobalStaticAdapter.key) {
-                    DatabaseAdapter.notificationTable.child(postKey)
-                        .child(key).child("DOWNVOTE").child("NOTIFICATION")
-                        .setValue(postList[position].timeStamp)
-                }
 
                 dbPath.child("UPVOTED").setValue(false)
             }
@@ -140,7 +133,9 @@ class HomeRecyclerViewAdapter (private val postList:ArrayList<HomeModel>, privat
                                         val fcm = s.child("FCM_TOKEN")
                                             .getValue(String::class.java) ?: ""
 
-                                        NotificationService.sendNotification("$userName Has upvoted your post", fcm, userName)
+                                        Log.d("UID_ERROR", fcm)
+
+                                        NotificationService.sendNotification("${GlobalStaticAdapter.userName} Has upvoted your post", fcm, userName)
                                     }
                                 }
 
