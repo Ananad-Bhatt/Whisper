@@ -47,10 +47,20 @@ class UserProfileActivity : BaseActivity() {
         getPostCount()
         getFollowerCount()
         getFollowingCount()
-        checkFollow()
+
+        if(GlobalStaticAdapter.accountType2 == "PUBLIC")
+        {
+            b.rvProfileActRecentPosts.layoutManager =
+                GridLayoutManager(applicationContext, 3)
+            b.rvProfileActRecentPosts.adapter = adapter
+        }
+        else {
+            checkFollow()
+        }
 
         b.tvSeeAllProfAct.setOnClickListener {
-            if(b.btnProfileActFollow.text.toString().lowercase() == "unfollow") {
+            if(b.btnProfileActFollow.text.toString().lowercase() == "unfollow"
+                || GlobalStaticAdapter.accountType2 == "PUBLIC") {
                 val i = Intent(this, ShowPostsActivity::class.java)
                 i.putExtra("isFromAct", true)
                 startActivity(i)
@@ -58,7 +68,8 @@ class UserProfileActivity : BaseActivity() {
         }
 
         b.linearProfileActPosts.setOnClickListener {
-            if(b.btnProfileActFollow.text.toString().lowercase() == "unfollow") {
+            if(b.btnProfileActFollow.text.toString().lowercase() == "unfollow"
+                || GlobalStaticAdapter.accountType2 == "PUBLIC") {
                 val i = Intent(this, ShowPostsActivity::class.java)
                 i.putExtra("isFromAct", true)
                 startActivity(i)
@@ -66,7 +77,8 @@ class UserProfileActivity : BaseActivity() {
         }
 
         b.linearProfileActFollowing.setOnClickListener {
-            if(b.btnProfileActFollow.text.toString().lowercase() == "unfollow") {
+            if(b.btnProfileActFollow.text.toString().lowercase() == "unfollow"
+                || GlobalStaticAdapter.accountType2 == "PUBLIC") {
                 val i = Intent(this, FollowingActivity::class.java)
                 i.putExtra("isFollower", false)
                 startActivity(i)
@@ -74,7 +86,8 @@ class UserProfileActivity : BaseActivity() {
         }
 
         b.linearProfileActFollowers.setOnClickListener {
-            if(b.btnProfileActFollow.text.toString().lowercase() == "unfollow") {
+            if(b.btnProfileActFollow.text.toString().lowercase() == "unfollow"
+                || GlobalStaticAdapter.accountType2 == "PUBLIC") {
                 val i = Intent(this, FollowingActivity::class.java)
                 i.putExtra("isFollower", true)
                 startActivity(i)
@@ -491,11 +504,9 @@ class UserProfileActivity : BaseActivity() {
                         if(isFollow) {
                             b.btnProfileActFollow.text = "UnFollow"
 
-                            if(isFollow || GlobalStaticAdapter.accountType2 == "PUBLIC") {
-                                b.rvProfileActRecentPosts.layoutManager =
-                                    GridLayoutManager(applicationContext, 3)
-                                b.rvProfileActRecentPosts.adapter = adapter
-                            }
+                            b.rvProfileActRecentPosts.layoutManager =
+                                GridLayoutManager(applicationContext, 3)
+                            b.rvProfileActRecentPosts.adapter = adapter
                         }
                         else{
                             b.btnProfileActFollow.text = "Requested"
