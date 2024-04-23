@@ -24,85 +24,98 @@
         android:layout_marginTop="@dimen/_50sdp"
         android:background="@drawable/tool_back">
 
-        <RelativeLayout
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_20sdp">
+            android:orientation="vertical">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/img_edit_profile_user_image"
-                android:layout_width="@dimen/_140sdp"
-                android:layout_height="@dimen/_140sdp"
-                android:layout_centerInParent="true"
-                android:src="@drawable/ic_launcher_background" />
-
-            <ImageView
-                android:id="@+id/img_btn_edit_profile_camera"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/camera_rounded"
-                android:layout_alignEnd="@+id/img_edit_profile_user_image"
-                android:layout_alignBottom="@+id/img_edit_profile_user_image"
-                android:backgroundTint="#00FF0000"/>
-        </RelativeLayout>
+                android:layout_marginTop="@dimen/_20sdp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/img_edit_profile_user_image"
+                    android:layout_width="@dimen/_140sdp"
+                    android:layout_height="@dimen/_140sdp"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_launcher_background" />
+
+                <ImageView
+                    android:id="@+id/img_btn_edit_profile_camera"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/camera_rounded"
+                    android:layout_alignEnd="@+id/img_edit_profile_user_image"
+                    android:layout_alignBottom="@+id/img_edit_profile_user_image"
+                    android:backgroundTint="#00FF0000"/>
+            </RelativeLayout>
 
 
-        <TextView
-            android:layout_width="@dimen/_250sdp"
-            android:layout_height="wrap_content"
-            style="@style/TEXT"
-            android:text="@string/username"
-            android:textSize="@dimen/_17ssp"
-            android:layout_marginTop="35dp"
-            android:layout_gravity="center"/>
+            <TextView
+                android:layout_width="@dimen/_250sdp"
+                android:layout_height="wrap_content"
+                style="@style/TEXT"
+                android:text="@string/username"
+                android:textSize="@dimen/_17ssp"
+                android:layout_marginTop="35dp"
+                android:layout_gravity="center"/>
 
-        <EditText
-            android:id="@+id/edt_edit_profile_user_name"
-            android:layout_marginTop="10dp"
-            android:hint="@string/username"
-            style="@style/EDITTEXT" />
+            <EditText
+                android:id="@+id/edt_edit_profile_user_name"
+                android:layout_marginTop="10dp"
+                android:hint="@string/username"
+                style="@style/EDITTEXT" />
 
-        <TextView
-            android:id="@+id/txt_det_is_available"
-            android:layout_width="@dimen/_250sdp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone"
-            android:gravity="start|center"
-            android:drawablePadding="5dp"
-            android:layout_marginTop="5dp"
-            android:paddingHorizontal="10dp"
-            android:textSize="@dimen/_12ssp"/>
-
-
-        <TextView
-            android:layout_width="@dimen/_250sdp"
-            android:layout_height="wrap_content"
-            style="@style/TEXT"
-            android:text="@string/about"
-            android:textSize="@dimen/_17ssp"
-            android:layout_marginTop="20dp"
-            android:layout_gravity="center"/>
-
-        <EditText
-            android:id="@+id/edt_edit_profile_about"
-            style="@style/EDITTEXT"
-            android:minHeight="@dimen/_45sdp"
-            android:layout_height="wrap_content"
-            android:inputType="textMultiLine"
-            android:layout_marginTop="10dp"
-            android:hint="@string/about"
-            android:maxLines="10"
-            android:maxHeight="@dimen/_75sdp"
-            android:isScrollContainer="false" />
+            <TextView
+                android:id="@+id/txt_det_is_available"
+                android:layout_width="@dimen/_250sdp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:gravity="start|center"
+                android:drawablePadding="5dp"
+                android:layout_marginTop="5dp"
+                android:paddingHorizontal="10dp"
+                android:textSize="@dimen/_12ssp"/>
 
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_edit_profile_done"
-            style="@style/BUTTON_FILL"
-            android:layout_marginTop="35dp"
-            android:layout_marginBottom="@dimen/_50sdp"
-            android:text="@string/done_edit"/>
+            <TextView
+                android:layout_width="@dimen/_250sdp"
+                android:layout_height="wrap_content"
+                style="@style/TEXT"
+                android:text="@string/about"
+                android:textSize="@dimen/_17ssp"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center"/>
+
+            <EditText
+                android:id="@+id/edt_edit_profile_about"
+                style="@style/EDITTEXT"
+                android:minHeight="@dimen/_45sdp"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:layout_marginTop="10dp"
+                android:hint="@string/about"
+                android:maxLines="10"
+                android:maxHeight="@dimen/_75sdp"
+                android:isScrollContainer="false" />
+
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_edit_profile_done"
+                style="@style/BUTTON_FILL"
+                android:layout_marginTop="35dp"
+                android:layout_marginBottom="@dimen/_50sdp"
+                android:text="@string/done_edit"/>
+
+        </LinearLayout>
+
+        </ScrollView>
 
     </LinearLayout>
 
