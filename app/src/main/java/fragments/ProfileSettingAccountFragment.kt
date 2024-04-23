@@ -54,6 +54,20 @@ class ProfileSettingAccountFragment : Fragment() {
             Log.d("DB_ERROR",e.toString())
         }
 
+        try {
+            if(isAdded) {
+                val ad = ArrayAdapter(
+                    requireActivity(), android.R.layout.simple_list_item_1,
+                    resources.getStringArray(R.array.account_type_array)
+                )
+
+                b.spProfileAccountSetting.adapter = ad
+            }
+        }catch(e:Exception)
+        {
+            Log.d("SPINNER",e.toString())
+        }
+
         when(GlobalStaticAdapter.accountType)
         {
             "PUBLIC" -> b.spProfileAccountSetting.setSelection(0)
@@ -86,20 +100,6 @@ class ProfileSettingAccountFragment : Fragment() {
                     })
 
             }
-        }
-
-        try {
-            if(isAdded) {
-                val ad = ArrayAdapter(
-                    requireActivity(), android.R.layout.simple_list_item_1,
-                    resources.getStringArray(R.array.account_type_array)
-                )
-
-                b.spProfileAccountSetting.adapter = ad
-            }
-        }catch(e:Exception)
-        {
-            Log.d("SPINNER",e.toString())
         }
 
         return b.root
