@@ -31,4 +31,7 @@ Libraries/Dependecies I used :
 Here are screenshots and all the tables of an application.
   [WHISPER_DOCUMENTATION](https://github.com/HET-SHUKLA/Whisper/files/15125943/WHISPER_DOCUMENTATION_GITHUB.pdf)
 
+From here you can download the application (Note : Video call, Voice call and GEMINI AI might not work because free trial of Zegocloud and Gemini API is expired)
+  [APK](https://drive.google.com/file/d/1cJdGB4zTX88li6ND9aCXjhRY4BHeRHf2/view?usp=sharing)
+
 
